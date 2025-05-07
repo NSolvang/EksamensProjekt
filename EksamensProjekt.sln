@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EksamensProjekt", "EksamensProjekt\EksamensProjekt.csproj", "{38F143D7-466E-467B-9C7E-FDE2A3CCF574}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerAPI", "ServerAPI\ServerAPI.csproj", "{C5FE6E19-A321-4D6D-9573-309981F69E66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{C5DCDF5F-79DA-4986-B455-C7F9364D17A3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{38F143D7-466E-467B-9C7E-FDE2A3CCF574}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38F143D7-466E-467B-9C7E-FDE2A3CCF574}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38F143D7-466E-467B-9C7E-FDE2A3CCF574}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38F143D7-466E-467B-9C7E-FDE2A3CCF574}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5FE6E19-A321-4D6D-9573-309981F69E66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5FE6E19-A321-4D6D-9573-309981F69E66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5FE6E19-A321-4D6D-9573-309981F69E66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5FE6E19-A321-4D6D-9573-309981F69E66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5DCDF5F-79DA-4986-B455-C7F9364D17A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5DCDF5F-79DA-4986-B455-C7F9364D17A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5DCDF5F-79DA-4986-B455-C7F9364D17A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5DCDF5F-79DA-4986-B455-C7F9364D17A3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
