@@ -3,11 +3,11 @@ namespace Core;
 public class Subgoal
 {
  
-    private int SubgoalID { get; set; }
-    private string Name { get; set; }
-    private string Description { get; set; }
-    private string Status { get; set; }
-    private DateTime Deadline { get; set; }
-    private string Note { get; set; }
+    public int SubgoalID { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public string Status { get; set; }
+    public DateTime Deadline { get; set; }
+    public string Note { get; set; }
     
 }

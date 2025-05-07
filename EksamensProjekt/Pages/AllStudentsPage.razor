@@ -1,6 +1,51 @@
 @page "/AllStudentsPage"
+@using Core
+@using EksamensProjekt.Service
+@inject NavigationManager nav
+@inject IUser mService
+
+
 <h3>AllStudentsPage</h3>
+<button @onclick="AddUser">Opret bruger</button>
+
+<table class="table">
+
+    <tbody>
+    @foreach (var user in users)
+    {
+        <tr>
+            <td><h2>@user.Name</h2></td>
+            <td>@user.Role</td>
+            <td><button class="btn-primary" @onclick="() => DeleteById(user)">Fjern bruger</button></td>
+        </tr>
+    }
+    </tbody>
+</table>
 
 @code {
+
+    private User[]? users = new User[0];
     
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAll();
+    }
+    
+    private async Task DeleteById(User user)
+    {
+        await mService.DeleteById(user.UserId);
+        await LoadAll();
+
+    }
+
+    private void AddUser()
+    {
+        nav.NavigateTo("CreateUserPage");  
+    }
+    
+    private async Task LoadAll()
+    {
+         users = await mService.GetAll();
+    }
 }

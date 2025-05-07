@@ -1,6 +1,69 @@
 @page "/CreateUserPage"
-<h3>CreateUserPagexd</h3>
+@using Core
+@using EksamensProjekt.Service
+@inject NavigationManager nav
+@inject IUser mService
+
+<h3>Opret bruger</h3>
+
+<EditForm EditContext="@editContext" OnSubmit="@HandleSubmit" class="row p-3">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="col-md-12 mb-3">
+        <label for="Name">Navn</label>
+        <InputText id="Name" @bind-Value="user.Name" class="form-control" />
+    </div>
+    <div class="col-md-12 mb-3">
+        <label for="Username">Brugernavn</label>
+        <InputText id="Username" @bind-Value="user.UserName" class="form-control" />
+    </div>
+    <div class="col-md-12 mb-3">
+        <label for="Password">Adgangskode</label>
+        <InputText id="Password" @bind-Value="user.Password" class="form-control" />
+    </div>
+    
+    <div class="col-md-6 mb-3">
+        <label for="Role">Rolle</label>
+        <InputSelect id="Role" @bind-Value="user.Role" class="form-control">
+            @foreach (var role in roles)
+            {
+                <option value="@role">@role</option>
+            }
+        </InputSelect>
+    </div>
+    
+    <div class="col-12 mb-3">
+        <button type="submit" class="btn btn-primary">Gem ændringer</button>
+    </div>
+    
+    <button class="btn btn-secondary" @onclick="NavigateAllStudentPage">Fortryd ændringer</button>
+</EditForm>
 
 @code {
     
+    private User user = new()
+    {
+        Role = ""
+    };
+
+    private string[] roles = {"Elev","Køkkenchef","Admin","Faglært kok"};
+    
+    private EditContext editContext;
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(mService);
+    }
+
+    public async Task HandleSubmit()
+    {
+        await mService.AddUser(user);
+        nav.NavigateTo("/AllStudentsPage");
+    }
+    
+    private void NavigateAllStudentPage()
+    {
+        nav.NavigateTo("/AllStudentsPage");
+    }
 }

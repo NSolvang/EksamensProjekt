@@ -2,10 +2,10 @@ namespace Core;
 
 public class Studentplan
 {
-    private int StudentplanID { get; set; }
-    private string Name { get; set; }
-    private string Description { get; set; }
-    private int UserID { get; set; }
-    private int SubgoalID { get; set; }
+    public int StudentplanID { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public int UserID { get; set; }
+    public int SubgoalID { get; set; }
     
 }
