@@ -20,7 +20,10 @@
         <tr>
             <td><h2>@user.Name</h2></td>
             <td>@user.Role</td>
-            <td><button class="btn-primary" @onclick="() => DeleteById(user)">Fjern bruger</button></td>
+            @if (currentUser?.Role == "Admin")
+            {
+                <td><button class="btn-primary" @onclick="() => DeleteById(user)">Fjern bruger</button></td>
+            }
         </tr>
     }
     </tbody>
