@@ -1,17 +1,22 @@
 using Core;
+using Blazored.LocalStorage;
 
 namespace EksamensProjekt.Service;
 
 public class ServiceMock : IUser
 {
+    private readonly ILocalStorageService _localStorage;
+    
     private List<User> users = new();
     public async Task<User[]> GetAll()
     {
         return users.ToArray();
     }
     
-    public ServiceMock()
+    public ServiceMock(ILocalStorageService localStorage)
     {
+        _localStorage = localStorage;
+
         if (users.Count == 0)
         {
             users.Add(new User

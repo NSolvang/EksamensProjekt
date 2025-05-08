@@ -78,9 +78,27 @@ else
 
     private async Task HandleSubmit()
     {
-        await mService.AddUser(user);
-        nav.NavigateTo("/AllStudentsPage");
+        // Validér formularen før submit
+        if (editContext.Validate())
+        {
+            await mService.AddUser(user);
+            
+            if (user.Role == "Elev")
+            {
+                nav.NavigateTo("/AllStudentsPage");
+            }
+            else
+            {
+                nav.NavigateTo("/Medarbejdere");
+            }
+        }
+        else
+        {
+            // Hvis formularen ikke er valid, håndter det her
+            Console.WriteLine("Formularen er ikke valid.");
+        }
     }
+
 
     private void NavigateAllStudentPage()
     {
