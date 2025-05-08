@@ -1,4 +1,5 @@
 ﻿@using Core
+@using Blazored.LocalStorage
 @using EksamensProjekt.Service
 @implements IDisposable
 
@@ -26,13 +27,13 @@
                         @if (currentUser.Role == "Admin")
                         {
                             <div class="nav-item px-3">
-                                <NavLink class="nav-link" href="CreateUserPage">
-                                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Opret Elev
+                                <NavLink class="nav-link" href="AllStudentsPage">
+                                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Oversigt
                                 </NavLink>
                             </div>
                             <div class="nav-item px-3">
-                                <NavLink class="nav-link" href="AllStudentsPage">
-                                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Oversigt
+                                <NavLink class="nav-link" href="CreateUserPage">
+                                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Opret Elev
                                 </NavLink>
                             </div>
                         }
@@ -65,11 +66,20 @@
     [Inject] private ILogin LoginService { get; set; } = default!;
     [Inject] private AuthStateService AuthState { get; set; } = default!;
     [Inject] private NavigationManager navManager { get; set; } = default!;
+    [Inject] private ILocalStorageService localStorage { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
+        // Check login status from localStorage
+        var isLoggedIn = await localStorage.GetItemAsync<bool>("isLoggedIn");
+
+        if (isLoggedIn)
+        {
+            await UpdateUserState();
+        }
+
         AuthState.AuthStateChanged += OnAuthStateChanged;
-        await UpdateUserState();
+        isLoading = false;
     }
 
     private async void OnAuthStateChanged()
@@ -79,15 +89,18 @@
 
     private async Task UpdateUserState()
     {
-        isLoading = true;
         currentUser = await LoginService.GetUserLoggedIn();
-        isLoading = false;
         await InvokeAsync(StateHasChanged);
     }
 
     private async Task OnLogout()
     {
         await LoginService.LogOut();
+
+        // Remove login status from localStorage
+        await localStorage.RemoveItemAsync("isLoggedIn");
+
+        // Navigate to login page
         navManager.NavigateTo("/LoginPage", forceLoad: true);
     }
 

@@ -1,5 +1,5 @@
 @page "/"
-@page "/LoginPage/{target:alpha?}"
+@page "/LoginPage/"
 @using EksamensProjekt.Service
 @inject NavigationManager navManager
 @inject ILogin LoginService
@@ -56,18 +56,7 @@
     string errorText = "";
     bool showError = false;
     bool isProcessing = false;
-
-    [Parameter]
-    public string? target { get; set; }
-
-    protected override void OnInitialized()
-    {
-        if (string.IsNullOrEmpty(target))
-        {
-            target = "Marked";
-        }
-    }
-
+    
     private async Task OnClickLogin()
     {
         showError = false;
@@ -93,6 +82,7 @@
             {
                 var loggedInUser = await LoginService.GetUserLoggedIn();
                 
+                // Naviger baseret på brugerens rolle
                 switch (loggedInUser?.Role)
                 {
                     case "Admin":
