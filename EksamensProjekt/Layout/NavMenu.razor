@@ -1,44 +1,95 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Core
+@using EksamensProjekt.Service
+@implements IDisposable
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand me-5" href="">
             <i class="bi bi-recycle"></i> Comwell Kokke Uddannelse
         </a>
-        <div class="@NavMenuCssClass nav-scrollable">
-            <nav class="nav flex-row justify-content-center">
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="marked">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Opret Elev
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="mineannoncer">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Oversigt
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="minebuys">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Kurser
-                    </NavLink>
-                </div>
-                
-            </nav>
-        </div>
+
+        @if (!isLoading)
+        {
+            <div class="@NavMenuCssClass nav-scrollable">
+                <nav class="nav flex-row justify-content-center">
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                            <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                        </NavLink>
+                    </div>
+
+                    @if (currentUser != null)
+                    {
+                        @if (currentUser.Role == "Admin")
+                        {
+                            <div class="nav-item px-3">
+                                <NavLink class="nav-link" href="CreateUserPage">
+                                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Opret Elev
+                                </NavLink>
+                            </div>
+                            <div class="nav-item px-3">
+                                <NavLink class="nav-link" href="AllStudentsPage">
+                                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Oversigt
+                                </NavLink>
+                            </div>
+                        }
+                        else if (currentUser.Role == "Køkkenchef" || currentUser.Role == "Faglært kok")
+                        {
+                            <div class="nav-item px-3">
+                                <NavLink class="nav-link" href="AllStudentsPage">
+                                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Oversigt
+                                </NavLink>
+                            </div>
+                        }
+                        <div class="nav-item px-3 d-flex align-items-center">
+                            <a role="button" class="nav-link text-white" @onclick="OnLogout">
+                                <i class="bi bi-box-arrow-right"></i> Log ud
+                            </a>
+                        </div>
+                    }
+                </nav>
+            </div>
+        }
     </div>
 </div>
 
 @code {
     private bool collapseNavMenu = true;
-
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private User? currentUser;
+    private bool isLoading = true;
 
-    private void ToggleNavMenu()
+    [Inject] private ILogin LoginService { get; set; } = default!;
+    [Inject] private AuthStateService AuthState { get; set; } = default!;
+    [Inject] private NavigationManager navManager { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
     {
-        collapseNavMenu = !collapseNavMenu;
+        AuthState.AuthStateChanged += OnAuthStateChanged;
+        await UpdateUserState();
     }
 
+    private async void OnAuthStateChanged()
+    {
+        await UpdateUserState();
+    }
+
+    private async Task UpdateUserState()
+    {
+        isLoading = true;
+        currentUser = await LoginService.GetUserLoggedIn();
+        isLoading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnLogout()
+    {
+        await LoginService.LogOut();
+        navManager.NavigateTo("/LoginPage", forceLoad: true);
+    }
+
+    public void Dispose()
+    {
+        AuthState.AuthStateChanged -= OnAuthStateChanged;
+    }
 }

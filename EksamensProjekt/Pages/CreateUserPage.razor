@@ -7,76 +7,76 @@
 
 <h1>Opret bruger</h1>
 
-<EditForm EditContext="@editContext" OnValidSubmit="@HandleSubmit" class="row p-3">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+@if (isLoading)
+{
+    <p>Indlæser...</p>
+}
+else if (string.IsNullOrEmpty(currentUser?.Role) || currentUser.Role != "Admin")
+{
+    <p>Adgang nægtet</p>
+}
+else
+{
+    <EditForm EditContext="@editContext" OnValidSubmit="@HandleSubmit" class="row p-3">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <div class="col-md-12 mb-3">
-        <label for="Name">Navn</label>
-        <InputText id="Name" @bind-Value="user.Name" class="form-control" />
-        <ValidationMessage For="@(() => user.Name)" />
-    </div>
+        <div class="col-md-12 mb-3">
+            <label for="Name">Navn</label>
+            <InputText id="Name" @bind-Value="user.Name" class="form-control" />
+            <ValidationMessage For="@(() => user.Name)" />
+        </div>
 
-    <div class="col-md-12 mb-3">
-        <label for="Username">Brugernavn</label>
-        <InputText id="Username" @bind-Value="user.UserName" class="form-control" />
-        <ValidationMessage For="@(() => user.UserName)" />
-    </div>
+        <div class="col-md-12 mb-3">
+            <label for="Username">Brugernavn</label>
+            <InputText id="Username" @bind-Value="user.UserName" class="form-control" />
+            <ValidationMessage For="@(() => user.UserName)" />
+        </div>
 
-    <div class="col-md-12 mb-3">
-        <label for="Password">Adgangskode</label>
-        <InputText id="Password" @bind-Value="user.Password" class="form-control" />
-        <ValidationMessage For="@(() => user.Password)" />
-    </div>
+        <div class="col-md-12 mb-3">
+            <label for="Password">Adgangskode</label>
+            <InputText id="Password" @bind-Value="user.Password" class="form-control" />
+            <ValidationMessage For="@(() => user.Password)" />
+        </div>
 
-    <div class="col-md-6 mb-3">
-        <label for="Role">Rolle</label>
-        <InputSelect id="Role" @bind-Value="user.Role" class="form-control">
-            <option value="">-- Vælg en rolle --</option>
-            @foreach (var role in roles)
-            {
-                <option value="@role">@role</option>
-            }
-        </InputSelect>
-        <ValidationMessage For="@(() => user.Role)" />
-    </div>
+        <div class="col-md-6 mb-3">
+            <label for="Role">Rolle</label>
+            <InputSelect id="Role" @bind-Value="user.Role" class="form-control">
+                <option value="">-- Vælg en rolle --</option>
+                @foreach (var role in roles)
+                {
+                    <option value="@role">@role</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => user.Role)" />
+        </div>
 
-    <div class="col-12 mb-3">
-        <button type="submit" class="btn btn-primary">Gem ændringer</button>
-    </div>
+        <div class="col-12 mb-3">
+            <button type="submit" class="btn btn-primary">Gem ændringer</button>
+        </div>
 
-    <button type="button" class="btn btn-secondary" @onclick="NavigateAllStudentPage">Fortryd ændringer</button>
-</EditForm>
+        <button type="button" class="btn btn-secondary" @onclick="NavigateAllStudentPage">Fortryd ændringer</button>
+    </EditForm>
+}
 
 @code {
-    private User user = new()
-    {
-        Role = ""
-    };
-
+    private User user = new() { Role = "" };
     private string[] roles = { "Elev", "Køkkenchef", "Admin", "Faglært kok" };
-
-    private EditContext editContext;
-
+    private EditContext editContext = default!;
     private User? currentUser;
-    
-    protected override void OnInitialized()
-    {
-        editContext = new EditContext(user);
-    }
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
-
-        if (currentUser?.Role != "Admin")
+        if (currentUser?.Role == "Admin")
         {
-            nav.NavigateTo("/");
-            return;
+            editContext = new EditContext(user);
         }
+        isLoading = false;
     }
 
-    public async Task HandleSubmit()
+    private async Task HandleSubmit()
     {
         await mService.AddUser(user);
         nav.NavigateTo("/AllStudentsPage");
