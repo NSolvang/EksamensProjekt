@@ -2,6 +2,7 @@
 @using Core
 @using EksamensProjekt.Service
 @inject NavigationManager nav
+@inject ILogin LoginService
 @inject IUser mService
 
 <h1>Opret bruger</h1>
@@ -57,8 +58,18 @@
 
     private EditContext editContext;
 
-    protected override void OnInitialized()
+    private User? currentUser;
+
+    protected override async Task OnInitializedAsync()
     {
+        currentUser = await LoginService.GetUserLoggedIn();
+
+        if (currentUser?.Role != "Admin")
+        {
+            nav.NavigateTo("/");
+            return;
+        }
+        
         editContext = new EditContext(user);
     }
 

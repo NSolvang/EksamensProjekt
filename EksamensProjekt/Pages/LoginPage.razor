@@ -1,6 +1,124 @@
-@page "/LoginPage"
-<h3>LoginPage</h3>
+@page "/"
+@page "/LoginPage/{target:alpha?}"
+@using EksamensProjekt.Service
+@inject NavigationManager navManager
+@inject ILogin LoginService
+
+<link href="css/Login.css" rel="stylesheet" />
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h2>Velkommen tilbage</h2>
+            <p>Indtast venligst dine informationer for at logge ind</p>
+        </div>
+
+        <div class="form-group">
+            <label>Brugernavn</label>
+            <div class="input-with-icon">
+                <i class="fas fa-user"></i>
+                <InputText class="form-control" @bind-Value="username" placeholder="Indtast dit brugernavn" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Adgangskode</label>
+            <div class="input-with-icon">
+                <i class="fas fa-lock"></i>
+                <InputText class="form-control" type="password" @bind-Value="password" placeholder="••••••••" />
+            </div>
+        </div>
+
+        <button class="login-button" @onclick="OnClickLogin" disabled="@isProcessing">
+            @if (isProcessing)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span>Logging in...</span>
+            }
+            else
+            {
+                <span>Login <i class="fas fa-arrow-right"></i></span>
+            }
+        </button>
+
+        @if (showError)
+        {
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i> @errorText
+            </div>
+        }
+    </div>
+</div>
 
 @code {
+    string username = "";
+    string password = "";
+    string errorText = "";
+    bool showError = false;
+    bool isProcessing = false;
     
+    [Parameter]
+    public string? target { get; set; }   
+
+    protected override void OnInitialized()
+    {
+
+        if (string.IsNullOrEmpty(target))
+        {
+            target = "Marked";
+        }
+    }
+
+    private async Task OnClickLogin()
+    {
+        showError = false;
+        isProcessing = true;
+    
+        try
+        {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                errorText = "Indtast venligst brugernavn og adgangskode";
+                showError = true;
+                return;
+            }
+
+            var success = await LoginService.Login(username, password);
+
+            if (!success)
+            {
+                errorText = "Forkert brugernavn eller adgangskode";
+                showError = true;
+            }
+            else
+            {
+                var loggedInUser = await LoginService.GetUserLoggedIn();
+
+                switch (loggedInUser?.Role)
+                {
+                    case "Admin":
+                    case "Køkkenchef":
+                        navManager.NavigateTo("/AllStudentsPage");
+                        break;
+                    case "Faglært kok":
+                    case "Elev":
+                        navManager.NavigateTo("/"); // Midlertidig tom side
+                        break;
+                    default:
+                        navManager.NavigateTo("/"); // fallback
+                        break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorText = "Login error: " + ex.Message;
+            showError = true;
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
+
 }
