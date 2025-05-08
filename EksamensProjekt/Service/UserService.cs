@@ -30,6 +30,11 @@ public class UserService : IUser
         await client.DeleteAsync($"{serverUrl}/api/User/{id}");
     }
 
+    public List<User> GetUsers()
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task AddUser(User user)
     {
         await client.PutAsJsonAsync($"{serverUrl}/api/User", user);

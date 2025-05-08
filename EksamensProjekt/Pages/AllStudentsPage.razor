@@ -1,12 +1,16 @@
 @page "/AllStudentsPage"
 @using Core
 @using EksamensProjekt.Service
+@inject ILogin LoginService
 @inject NavigationManager nav
 @inject IUser mService
 
 
 <h3>AllStudentsPage</h3>
-<button @onclick="AddUser">Opret bruger</button>
+@if (currentUser?.Role == "Admin")
+{
+    <button @onclick="AddUser">Opret bruger</button>
+}
 
 <table class="table">
 
@@ -23,6 +27,7 @@
 </table>
 
 @code {
+    private User? currentUser;
 
     private User[]? users = new User[0];
 
@@ -30,6 +35,15 @@
     
     protected override async Task OnInitializedAsync()
     {
+        currentUser = await LoginService.GetUserLoggedIn();
+
+        if (currentUser == null ||
+            (currentUser.Role != "Admin" && currentUser.Role != "Køkkenchef"))
+        {
+            nav.NavigateTo("/");
+            return;
+        }
+
         await LoadAll();
     }
     

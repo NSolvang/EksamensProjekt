@@ -10,4 +10,6 @@ public interface IUser
     Task AddUser(User user);
     
     Task DeleteById(int id);
+    
+    List<User> GetUsers();
 }
