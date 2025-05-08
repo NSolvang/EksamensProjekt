@@ -1,4 +1,4 @@
-@page "/AllStudentsPage"
+@page "/Medarbejdere"
 @using Core
 @using EksamensProjekt.Service
 @inject ILogin LoginService
@@ -23,12 +23,6 @@
             @if (currentUser?.Role == "Admin")
             {
                 <td><button class="btn-primary" @onclick="() => DeleteById(user)">Fjern bruger</button></td>
-            }
-            @if (user.Role == "Elev")
-            {
-                <button class="btn btn-secondary me-2" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{user.UserId}"))">
-                    Se elevplan
-                </button>
             }
         </tr>
     }
@@ -68,7 +62,7 @@
     
     private async Task LoadAll()
     {
-         users = await mService.GetAll();
-         users = users.Where(e => e.Role == "Elev").ToArray();
+        users = await mService.GetAll();
+        users = users.Where(e => e.Role != "Elev").ToArray();
     }
 }
