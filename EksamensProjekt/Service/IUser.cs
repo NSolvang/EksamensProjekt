@@ -5,7 +5,7 @@ public interface IUser
 {
     Task<User[]> GetAll();
     
-    Task GetUserById(int id);
+    Task<User> GetUserById(int id); 
     
     Task AddUser(User user);
     
