@@ -1,6 +1,47 @@
-@page "/StudentplanPage"
-<h3>StudentplanPage</h3>
+@page "/StudentplanPage/{userId:int}"
+@using Core
+@using EksamensProjekt.Service
+@inject ILogin LoginService
+@inject NavigationManager nav
+@inject IUser mService
+
+<h3>Elevplan</h3>
+
+@if (user == null)
+{
+    <p>Bruger ikke fundet.</p>
+}
+else if (user.Studentplan == null)
+{
+    <p>Ingen elevplan for @user.Name.</p>
+}
+else
+{
+    <table class="table">
+        <tr><td><strong>ID</strong></td><td>@user.Studentplan.StudentplanID</td></tr>
+        <tr><td><strong>Navn</strong></td><td>@user.Studentplan.Name</td></tr>
+        <tr><td><strong>Beskrivelse</strong></td><td>@user.Studentplan.Description</td></tr>
+    </table>
+}
 
 @code {
-    
+    [Parameter]
+    public int userId { get; set; }
+
+    private User? user;
+    private User? currentUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUser = await LoginService.GetUserLoggedIn();
+
+        if (currentUser == null ||
+            (currentUser.Role != "Admin" && currentUser.Role != "Køkkenchef"))
+        {
+            nav.NavigateTo("/");
+            return;
+        }
+
+        user = await mService.GetUserById(userId);
+    }
 }
