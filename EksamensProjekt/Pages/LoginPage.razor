@@ -56,13 +56,12 @@
     string errorText = "";
     bool showError = false;
     bool isProcessing = false;
-    
+
     [Parameter]
-    public string? target { get; set; }   
+    public string? target { get; set; }
 
     protected override void OnInitialized()
     {
-
         if (string.IsNullOrEmpty(target))
         {
             target = "Marked";
@@ -73,7 +72,7 @@
     {
         showError = false;
         isProcessing = true;
-    
+
         try
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
@@ -93,7 +92,7 @@
             else
             {
                 var loggedInUser = await LoginService.GetUserLoggedIn();
-
+                
                 switch (loggedInUser?.Role)
                 {
                     case "Admin":
@@ -102,10 +101,10 @@
                         break;
                     case "Faglært kok":
                     case "Elev":
-                        navManager.NavigateTo("/"); // Midlertidig tom side
+                        navManager.NavigateTo("/"); 
                         break;
                     default:
-                        navManager.NavigateTo("/"); // fallback
+                        navManager.NavigateTo("/"); 
                         break;
                 }
             }
@@ -120,5 +119,4 @@
             isProcessing = false;
         }
     }
-
 }
