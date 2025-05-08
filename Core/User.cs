@@ -20,4 +20,7 @@ public class User
     
     [Required(ErrorMessage = "Navn er påkrævet")]
     public string Name { get; set; }
+    
+    public Studentplan Studentplan { get; set; }
+
 }

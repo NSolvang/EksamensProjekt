@@ -52,17 +52,18 @@ public class ServiceMock : IUser
         }
     }
 
+
     public List<User> GetUsers()
     {
         return users;
     }
     
-
-    public Task GetUserById(int id)
+    public Task<User> GetUserById(int id)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(users.FirstOrDefault(u => u.UserId == id));
     }
 
+    
     public async Task AddUser(User user)
     {
         int max = 0;
@@ -70,6 +71,15 @@ public class ServiceMock : IUser
             max = users.Select(user => user.UserId).Max();
         user.UserId = max + 1;
         users.Add(user);
+
+        user.Studentplan = new Studentplan
+        {
+            StudentplanID = user.UserId,
+            UserID = user.UserId,
+            Name = $"{user.Name}s plan",
+            Description = "Standard elevplan",
+            SubgoalID = 0
+        };
     }
 
     public async Task DeleteById(int id)

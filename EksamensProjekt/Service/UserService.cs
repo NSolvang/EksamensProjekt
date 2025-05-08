@@ -19,7 +19,7 @@ public class UserService : IUser
         return await client.GetFromJsonAsync<User[]>($"{serverUrl}/api/User");
     }
 
-    public Task GetUserById(int id)
+    public Task<User> GetUserById(int id)
     {
         throw new NotImplementedException();
     }
