@@ -30,6 +30,7 @@ namespace EksamensProjekt.Service
             if (user != null)
             {
                 await localStorage.SetItemAsync("user", user);
+                await localStorage.SetItemAsync("isLoggedIn", true);
                 
                 // Notificer andre komponenter om ændringen i auth state
                 authStateService.NotifyAuthStateChanged();
@@ -50,6 +51,7 @@ namespace EksamensProjekt.Service
         public async Task LogOut()
         {
             await localStorage.RemoveItemAsync("user");
+            await localStorage.RemoveItemAsync("isLoggedIn");
             
             // Notificer om ændring
             authStateService.NotifyAuthStateChanged();

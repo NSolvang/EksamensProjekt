@@ -55,6 +55,14 @@
                                 </NavLink>
                             </div>
                         }
+                        else if (currentUser.Role == "Elev")
+                        {
+                            <div class="nav-item px-3">
+                                <NavLink class="nav-link" href="@($"/StudentplanPage/{currentUser?.UserId}")">
+                                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Studieplan
+                                </NavLink>
+                            </div>
+                        }
                         <div class="nav-item px-3 d-flex align-items-center">
                             <a role="button" class="nav-link text-white" @onclick="OnLogout">
                                 <i class="bi bi-box-arrow-right"></i> Log ud
@@ -80,14 +88,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Check login status from localStorage
-        var isLoggedIn = await localStorage.GetItemAsync<bool>("isLoggedIn");
+        // Check login status and update user state
+        currentUser = await LoginService.GetUserLoggedIn();
 
-        if (isLoggedIn)
-        {
-            await UpdateUserState();
-        }
-
+        // Subscribe to auth state changes
         AuthState.AuthStateChanged += OnAuthStateChanged;
         isLoading = false;
     }
@@ -106,9 +110,6 @@
     private async Task OnLogout()
     {
         await LoginService.LogOut();
-
-        // Remove login status from localStorage
-        await localStorage.RemoveItemAsync("isLoggedIn");
 
         // Navigate to login page
         navManager.NavigateTo("/LoginPage", forceLoad: true);
