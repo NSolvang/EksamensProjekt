@@ -1,8 +1,10 @@
 @page "/"
 @page "/LoginPage/"
 @using EksamensProjekt.Service
+@using Blazored.LocalStorage
 @inject NavigationManager navManager
 @inject ILogin LoginService
+@inject ILocalStorageService localStorage
 
 <link href="css/Login.css" rel="stylesheet" />
 
@@ -56,7 +58,22 @@
     string errorText = "";
     bool showError = false;
     bool isProcessing = false;
-    
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if user is already logged in
+        var isLoggedIn = await localStorage.GetItemAsync<bool>("isLoggedIn");
+        if (isLoggedIn)
+        {
+            var loggedInUser = await LoginService.GetUserLoggedIn();
+            if (loggedInUser != null)
+            {
+                // Redirect to appropriate page based on role
+                RedirectBasedOnRole(loggedInUser.Role);
+            }
+        }
+    }
+
     private async Task OnClickLogin()
     {
         showError = false;
@@ -81,21 +98,13 @@
             else
             {
                 var loggedInUser = await LoginService.GetUserLoggedIn();
-                
-                // Naviger baseret på brugerens rolle
-                switch (loggedInUser?.Role)
+                if (loggedInUser != null)
                 {
-                    case "Admin":
-                    case "Køkkenchef":
-                        navManager.NavigateTo("/AllStudentsPage");
-                        break;
-                    case "Faglært kok":
-                    case "Elev":
-                        navManager.NavigateTo("/"); 
-                        break;
-                    default:
-                        navManager.NavigateTo("/"); 
-                        break;
+                    // Sæt isLoggedIn flag
+                    await localStorage.SetItemAsync("isLoggedIn", true);
+
+                    // Naviger baseret på brugerens rolle
+                    RedirectBasedOnRole(loggedInUser.Role);
                 }
             }
         }
@@ -107,6 +116,24 @@
         finally
         {
             isProcessing = false;
+        }
+    }
+
+    private void RedirectBasedOnRole(string role)
+    {
+        switch (role)
+        {
+            case "Admin":
+            case "Køkkenchef":
+            case "Faglært kok":
+                navManager.NavigateTo("/AllStudentsPage");
+                break;
+            case "Elev":
+                navManager.NavigateTo("/StudentplanPage/{userId:int}");
+                break;
+            default:
+                navManager.NavigateTo("/");
+                break;
         }
     }
 }
