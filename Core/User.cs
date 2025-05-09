@@ -5,7 +5,6 @@ namespace Core;
 public class User
 {
     
-    
     public int UserId { get; set; }
     
     [Required(ErrorMessage = "Brugernavn er påkrævet")]
@@ -23,4 +22,9 @@ public class User
     
     public Studentplan Studentplan { get; set; }
 
+}
+
+public class Student : User
+{
+    
 }

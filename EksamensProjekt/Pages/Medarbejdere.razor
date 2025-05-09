@@ -6,19 +6,17 @@
 @inject IUser mService
 
 
-<h3>AllStudentsPage</h3>
-@if (currentUser?.Role == "Admin")
-{
-    <button @onclick="AddUser">Opret bruger</button>
-}
-
 <table class="table">
 
     <tbody>
+    <tr>
+        <td><strong>Navn</strong></td>
+        <td><strong>Rolle</strong></td>
+    </tr>
     @foreach (var user in users)
     {
         <tr>
-            <td><h2>@user.Name</h2></td>
+            <td>@user.Name</td>
             <td>@user.Role</td>
             @if (currentUser?.Role == "Admin")
             {
