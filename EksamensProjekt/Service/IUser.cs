@@ -7,6 +7,8 @@ public interface IUser
     
     Task<User> GetUserById(int id); 
     
+    Task<Student> GetStudentById(int id);
+    
     Task AddUser(User user);
     
     Task DeleteById(int id);

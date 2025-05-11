@@ -24,7 +24,12 @@ public class UserService : IUser
         throw new NotImplementedException();
     }
 
-    
+    public Task<Student> GetStudentById(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+
     public async Task DeleteById(int id)
     {
         await client.DeleteAsync($"{serverUrl}/api/User/{id}");

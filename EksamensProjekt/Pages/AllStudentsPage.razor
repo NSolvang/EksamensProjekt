@@ -11,19 +11,21 @@
     <tr>
         <td><strong>Navn</strong></td>
         <td><strong>Rolle</strong></td>
+        <td><strong>Årgang</strong></td>
     </tr>
-    @foreach (var user in users)
+    @foreach (var student in students)
     {
         <tr>
-            <td>@user.Name</td>
-            <td>@user.Role</td>
+            <td>@student.Name</td>
+            <td>@student.Role</td>
+            <td>@student.DateOfStart.Year</td>
             @if (currentUser?.Role == "Admin")
             {
-                <td><button class="btn-primary" @onclick="() => DeleteById(user)">Fjern bruger</button></td>
+                <td><button class="btn-primary" @onclick="() => DeleteById(student)">Fjern bruger</button></td>
             }
-            @if (user.Role == "Elev")
+            @if (student.Role == "Elev")
             {
-                <button class="btn btn-secondary me-2" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{user.UserId}"))">
+                <button class="btn btn-secondary me-2" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{student.UserId}"))">
                     Se elevplan
                 </button>
             }
@@ -35,7 +37,7 @@
 @code {
     private User? currentUser;
 
-    private User[]? users = new User[0];
+    private Student[]? students = new Student[0];
     
     protected override async Task OnInitializedAsync()
     {
@@ -65,7 +67,13 @@
     
     private async Task LoadAll()
     {
-         users = await mService.GetAll();
-         users = users.Where(e => e.Role == "Elev").ToArray();
+        // Henter alle brugere
+        var allUsers = await mService.GetAll();
+
+        // Her filtrer vi og tager kun alle students
+        students = allUsers.OfType<Student>()
+            .Where(e => e.Role == "Elev")
+            .ToArray();
     }
+
 }

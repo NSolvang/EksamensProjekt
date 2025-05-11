@@ -46,7 +46,7 @@ public class ServiceMock : IUser
                 Name = "Kok"
             });
             
-            users.Add(new User
+            users.Add(new Student
             {
                 UserId = 4,
                 UserName = "elev",
@@ -67,6 +67,15 @@ public class ServiceMock : IUser
     {
         return Task.FromResult(users.FirstOrDefault(u => u.UserId == id));
     }
+    
+    public Task<Student?> GetStudentById(int id)
+    {
+        var student = users
+            .OfType<Student>()        // Filtrér kun de objekter, der faktisk er af typen Student
+            .FirstOrDefault(s => s.UserId == id);
+
+        return Task.FromResult(student);
+    }
 
     
     public async Task AddUser(User user)
@@ -77,14 +86,18 @@ public class ServiceMock : IUser
         user.UserId = max + 1;
         users.Add(user);
 
-        user.Studentplan = new Studentplan
+        if (user is Student student)
         {
-            StudentplanID = user.UserId,
-            UserID = user.UserId,
-            Name = $"{user.Name}s plan",
-            Description = "Standard elevplan",
-            SubgoalID = 0
-        };
+            student.Studentplan = new Studentplan
+            {
+                StudentplanID = user.UserId,
+                UserID = user.UserId,
+                Name = $"{user.Name}s plan",
+                Description = "Standard elevplan",
+                SubgoalID = 0
+            };
+        }
+      
     }
 
     public async Task DeleteById(int id)
