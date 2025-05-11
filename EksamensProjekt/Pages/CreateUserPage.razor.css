@@ -1,0 +1,160 @@
+/* Main container styling */
+h1 {
+    color: #d4af37; /* Gold color */
+    text-align: center;
+    margin: 1.5rem 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Form container */
+.edit-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Gold shimmer effect for form */
+.edit-form::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+            to bottom right,
+            rgba(212, 175, 55, 0.05) 0%,
+            rgba(212, 175, 55, 0) 60%
+    );
+    transform: rotate(30deg);
+    pointer-events: none;
+    animation: shimmer 8s infinite linear;
+    z-index: 1;
+}
+
+@keyframes shimmer {
+    0% { transform: rotate(30deg) translate(-30%, -30%); }
+    100% { transform: rotate(30deg) translate(70%, 70%); }
+}
+
+/* Form elements styling */
+.form-control {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-top: 0.3rem;
+    background-color: #f8f5f0; /* Light beige background */
+}
+
+.form-control:focus {
+    border-color: #d4af37;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    background-color: white;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #5a5a5a;
+    font-size: 0.95rem;
+}
+
+/* Button styling */
+.btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    margin-right: 1rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #d4af37 0%, #f0d05e 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #c9a227 0%, #e8c750 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.3);
+}
+
+.btn-secondary {
+    background-color: #f0e6d2; /* Light beige */
+    color: #5a5a5a;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.btn-secondary:hover {
+    background-color: #e8d9b5; /* Slightly darker beige */
+    color: #2c3e50;
+}
+
+/* Validation styling */
+.validation-message {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    display: flex;
+    align-items: center;
+}
+
+.validation-message::before {
+    content: "⚠";
+    margin-right: 0.5rem;
+}
+
+.validation-summary {
+    color: #d32f2f;
+    background-color: #fff9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #d32f2f;
+    font-size: 0.9rem;
+}
+
+/* Loading and access denied styling */
+p {
+    text-align: center;
+    color: #7a7a7a;
+    font-size: 1.1rem;
+    margin: 2rem 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .edit-form {
+        padding: 1.5rem;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 1rem;
+        margin-right: 0;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+}

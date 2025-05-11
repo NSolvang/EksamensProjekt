@@ -3,24 +3,25 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: #ffffff;
+    background: #ffffff; /* Lyse beige baggrund */
 }
 
+
 .login-card {
-    background: linear-gradient(135deg, #14bff4 0%, #4a00e0 100%);
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+    border: 1px solid rgb(255, 204, 1);
+    border-radius: 30px;
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.15);
     padding: 40px;
     width: 100%;
     max-width: 400px;
     transition: all 0.5s ease;
     position: relative;
     overflow: hidden;
-    color: white;
+    color: #333;
 }
 
-/* Multi-layer shimmer effect */
+/* Luxurious gold shimmer effect */
 .login-card::before,
 .login-card::after {
     content: '';
@@ -31,62 +32,47 @@
     height: 200%;
     background: linear-gradient(
             to bottom right,
-            rgba(255, 255, 255, 0.15) 0%,
-            rgba(255, 255, 255, 0) 60%
+            rgba(212, 175, 55, 0.08) 0%,
+            rgba(212, 175, 55, 0) 60%
     );
     transform: rotate(30deg);
     pointer-events: none;
-    will-change: transform; /* Optimize for hardware acceleration */
 }
 
 .login-card::after {
     background: linear-gradient(
             to top left,
-            rgba(255, 255, 255, 0.1) 0%,
-            rgba(255, 255, 255, 0) 60%
+            rgba(212, 175, 55, 0.05) 0%,
+            rgba(212, 175, 55, 0) 60%
     );
     transform: rotate(-15deg);
 }
 
-/* Continuous animation with multiple directions */
 @keyframes shimmer-primary {
-    0% {
-        transform: rotate(30deg) translate(-30%, -30%);
-    }
-    100% {
-        transform: rotate(30deg) translate(70%, 70%);
-    }
+    0% { transform: rotate(30deg) translate(-30%, -30%); }
+    100% { transform: rotate(30deg) translate(70%, 70%); }
 }
 
 @keyframes shimmer-secondary {
-    0% {
-        transform: rotate(-15deg) translate(-40%, -40%);
-    }
-    100% {
-        transform: rotate(-15deg) translate(60%, 60%);
-    }
+    0% { transform: rotate(-15deg) translate(-40%, -40%); }
+    100% { transform: rotate(-15deg) translate(60%, 60%); }
 }
 
 .login-card::before {
-    animation: shimmer-primary 8s infinite linear;
+    animation: shimmer-primary 7s infinite linear;
 }
 
 .login-card::after {
-    animation: shimmer-secondary 12s infinite linear;
+    animation: shimmer-secondary 8s infinite linear;
 }
 
-/* Hover effects */
 .login-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 50px rgba(212, 175, 55, 0.2);
+    border-color: rgba(212, 175, 55, 0.5);
 }
 
-.login-card:hover::before,
-.login-card:hover::after {
-    animation-duration: 6s, 9s; /* Slightly faster on hover */
-}
-
-/* Rest of your existing styles... */
+/* Header styling */
 .login-header {
     text-align: center;
     margin-bottom: 30px;
@@ -95,16 +81,19 @@
 }
 
 .login-header h2 {
-    color: white;
+    color: #d4af37; /* Guld farve */
     margin-bottom: 8px;
     font-weight: 600;
+    font-size: 28px;
+    letter-spacing: 0.5px;
 }
 
 .login-header p {
-    color: rgba(255, 255, 255, 0.8);
+    color: #7a7a7a;
     font-size: 14px;
 }
 
+/* Form elements */
 .form-group {
     margin-bottom: 20px;
     position: relative;
@@ -114,7 +103,7 @@
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    color: white;
+    color: #5a5a5a;
     font-weight: 500;
     font-size: 14px;
 }
@@ -128,53 +117,52 @@
     left: 15px;
     top: 50%;
     transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.8);
+    color: #d4af37; /* Guld farve */
 }
 
 .form-control {
     width: 100%;
     padding: 12px 15px 12px 40px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
     font-size: 14px;
     transition: all 0.3s ease;
-    color: white;
+    color: #333;
 }
 
 .form-control::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: #b0b0b0;
 }
 
 .form-control:focus {
     outline: none;
-    border-color: white;
-    background: rgb(255, 255, 255);
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
+/* Checkbox and links */
 .form-options {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin: 20px 0;
     font-size: 13px;
-    position: relative;
-    z-index: 1;
 }
 
 .remember-me {
     display: flex;
     align-items: center;
-    color: rgba(255, 255, 255, 0.8);
+    color: #7a7a7a;
 }
 
 .remember-me input {
+    accent-color: #d4af37; /* Guld farve til checkbox */
     margin-right: 8px;
 }
 
 .forgot-password {
-    color: white;
+    color: #d4af37;
     text-decoration: none;
     font-weight: 500;
 }
@@ -183,55 +171,56 @@
     text-decoration: underline;
 }
 
+/* Button styling */
 .login-button {
     width: 100%;
-    padding: 12px;
-    background: white;
-    color: #8e2de2;
+    padding: 14px;
+    background: linear-gradient(135deg, #d4af37 0%, #f0d05e 100%);
+    color: white;
     border: none;
     border-radius: 8px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    position: relative;
-    z-index: 1;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .login-button:hover {
-    background: rgba(255, 255, 255, 0.9);
+    background: linear-gradient(135deg, #ffc202 0%, #e8c750 100%);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Error message */
 .error-message {
     margin-top: 20px;
     padding: 10px 15px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: #fff9f9;
     color: #d32f2f;
     border-radius: 8px;
     font-size: 14px;
     display: flex;
     align-items: center;
-    position: relative;
-    z-index: 1;
+    border-left: 4px solid #d32f2f;
 }
 
 .error-message i {
     margin-right: 8px;
+    color: #d32f2f;
 }
 
+/* Signup link */
 .signup-link {
     text-align: center;
     margin-top: 25px;
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.8);
-    position: relative;
-    z-index: 1;
+    color: #7a7a7a;
 }
 
 .signup-link a {
-    color: white;
+    color: #d4af37;
     text-decoration: none;
     font-weight: 600;
 }

@@ -6,26 +6,27 @@
 @inject IUser mService
 
 
-<table class="table">
-
-    <tbody>
-    <tr>
-        <td><strong>Navn</strong></td>
-        <td><strong>Rolle</strong></td>
-    </tr>
-    @foreach (var user in users)
-    {
-        <tr>
-            <td>@user.Name</td>
-            <td>@user.Role</td>
+<h3>Oversigt over Medarbejder</h3>
+@foreach (var user in users)
+{
+    <div class="employee-card" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{user.UserId}"))">
+        <div class="employee-info">
+            <img src="https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop" alt="">
+            <h2>@user.Name</h2>
+            <span>@user.Role </span>
+            <span>Hotel:Aarhus</span>
             @if (currentUser?.Role == "Admin")
             {
                 <td><button class="btn-primary" @onclick="() => DeleteById(user)">Fjern bruger</button></td>
             }
-        </tr>
-    }
-    </tbody>
-</table>
+        </div>
+        <div class="employee-progress">
+            <div class="employee-progress-bar">
+            </div>
+        </div>
+    </div>
+}
+
 
 @code {
     private User? currentUser;

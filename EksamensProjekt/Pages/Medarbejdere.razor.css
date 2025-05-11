@@ -1,0 +1,205 @@
+/* Main container styling */
+h3 {
+    color: #d4af37; /* Guld farve */
+    text-align: center;
+    margin: 1.5rem 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Grid layout for employee cards */
+.employee-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2.5rem;
+    padding: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #f8f5f0; /* Lys beige baggrund */
+    border-radius: 15px;
+}
+
+/* Employee card styling - Luxury design */
+.employee-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.1);
+    padding: 1.8rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.employee-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.15);
+    border: 1px solid #d4af37; /* Guld ramme */
+}
+
+/* Gold shimmer effect */
+.employee-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+            to bottom right,
+            rgba(212, 175, 55, 0.05) 0%,
+            rgba(212, 175, 55, 0) 60%
+    );
+    transform: rotate(30deg);
+    pointer-events: none;
+    animation: shimmer 8s infinite linear;
+    z-index: 1;
+}
+
+@keyframes shimmer {
+    0% { transform: rotate(30deg) translate(-30%, -30%); }
+    100% { transform: rotate(30deg) translate(70%, 70%); }
+}
+
+/* Employee info section */
+.employee-info {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.employee-info img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #d4af37; /* Guld ramme */
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+}
+
+.employee-details {
+    flex: 1;
+}
+
+.employee-info h2 {
+    color: #2c3e50;
+    margin: 0 0 0.3rem 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.employee-info span {
+    color: #7a7a7a;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 0.4rem;
+    position: relative;
+    padding-left: 1.4em;
+    font-style: italic;
+}
+
+.employee-info span::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.8em;
+    height: 0.8em;
+    background-color: #d4af37; /* Guld prik */
+    border-radius: 50%;
+    opacity: 0.8;
+}
+
+/* Button styling - Gold theme */
+.btn-primary {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: 60px;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #c9a227 0%, #e8c750 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.3);
+}
+
+/* Progress bar styling - Gold theme */
+.employee-progress {
+    margin-top: 1.2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.employee-progress-bar {
+    height: 6px;
+    background: #f0e6d2; /* Lys beige */
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.employee-progress-bar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: var(--progress, 65%);
+    background: linear-gradient(90deg, #d4af37, #f0d05e); /* Guld gradient */
+    border-radius: 3px;
+    animation: progress-animate 1.5s ease-out;
+}
+
+@keyframes progress-animate {
+    from { width: 0; }
+    to { width: var(--progress, 65%); }
+}
+
+/* Different progress levels */
+.employee-card:nth-child(1) .employee-progress-bar::after { --progress: 75%; }
+.employee-card:nth-child(2) .employee-progress-bar::after { --progress: 45%; }
+.employee-card:nth-child(3) .employee-progress-bar::after { --progress: 90%; }
+.employee-card:nth-child(4) .employee-progress-bar::after { --progress: 60%; }
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .employee-container {
+        grid-template-columns: 1fr;
+        gap: 1.8rem;
+        padding: 1rem;
+    }
+
+    .employee-card {
+        padding: 1.5rem;
+    }
+
+    .employee-info img {
+        width: 70px;
+        height: 70px;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+}
