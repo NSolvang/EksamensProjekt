@@ -20,11 +20,12 @@ public class User
     [Required(ErrorMessage = "Navn er påkrævet")]
     public string Name { get; set; }
     
-    public Studentplan Studentplan { get; set; }
-
 }
 
 public class Student : User
 {
+    public Studentplan Studentplan { get; set; }
     
+    //Dato for hvornår eleven starter
+    public DateTime DateOfStart { get; set; } = DateTime.Today;
 }

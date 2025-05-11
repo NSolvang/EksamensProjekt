@@ -7,20 +7,21 @@
 
 <h3>Elevplan</h3>
 
-@if (user == null)
+@if (student == null)
 {
     <p>Bruger ikke fundet.</p>
 }
-else if (user.Studentplan == null)
+else if (student.Studentplan == null)
 {
-    <p>Ingen elevplan for @user.Name.</p>
+    <p>Ingen elevplan for @student.Name.</p>
 }
 else
 {
     <table class="table">
-        <tr><td><strong>ID</strong></td><td>@user.Studentplan.StudentplanID</td></tr>
-        <tr><td><strong>Navn</strong></td><td>@user.Studentplan.Name</td></tr>
-        <tr><td><strong>Beskrivelse</strong></td><td>@user.Studentplan.Description</td></tr>
+        <tr><td><strong>ID</strong></td><td>@student.Studentplan.StudentplanID</td></tr>
+        <tr><td><strong>Navn</strong></td><td>@student.Studentplan.Name</td></tr>
+        <tr><td><strong>Beskrivelse</strong></td><td>@student.Studentplan.Description</td></tr>
+        <tr><td><strong>Årgang</strong></td><td>@student.DateOfStart.Year</td></tr>
     </table>
 }
 
@@ -28,7 +29,7 @@ else
     [Parameter]
     public int userId { get; set; }
 
-    private User? user;
+    private Student? student;
     private User? currentUser;
 
     protected override async Task OnInitializedAsync()
@@ -42,6 +43,6 @@ else
             return;
         }
 
-        user = await mService.GetUserById(userId);
+        student = await mService.GetStudentById(userId);
     }
 }

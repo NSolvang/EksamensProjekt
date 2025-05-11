@@ -78,23 +78,30 @@ else
 
     private async Task HandleSubmit()
     {
-        // Validér formularen før submit
         if (editContext.Validate())
         {
-            await mService.AddUser(user);
-            
             if (user.Role == "Elev")
             {
+                // Opret en Student baseret på User
+                var student = new Student
+                {
+                    Name = user.Name,
+                    Role = user.Role,
+                    Password = user.Password,
+                    UserName = user.UserName
+                };
+
+                await mService.AddUser(student);
                 nav.NavigateTo("/AllStudentsPage");
             }
             else
             {
+                await mService.AddUser(user);
                 nav.NavigateTo("/Medarbejdere");
             }
         }
         else
         {
-            // Hvis formularen ikke er valid, håndter det her
             Console.WriteLine("Formularen er ikke valid.");
         }
     }
