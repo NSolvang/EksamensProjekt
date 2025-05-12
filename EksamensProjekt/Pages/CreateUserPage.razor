@@ -38,6 +38,11 @@ else
             <InputText id="Password" @bind-Value="user.Password" class="form-control" />
             <ValidationMessage For="@(() => user.Password)" />
         </div>
+        <div class="col-md-12 mb-3">
+            <label for="ProfilePicture">Profilbillede</label>
+            <InputText id="ProfilePicture" @bind-Value="user.ProfilePicture" class="form-control" />
+            <ValidationMessage For="@(() => user.ProfilePicture)" />
+        </div>
 
         <div class="col-md-6 mb-3">
             <label for="Role">Rolle</label>
@@ -60,7 +65,7 @@ else
 }
 
 @code {
-    private User user = new() { Role = "" };
+    private User user = new() { Role = "", };
     private string[] roles = { "Elev", "Køkkenchef", "Admin", "Faglært kok" };
     private EditContext editContext = default!;
     private User? currentUser;

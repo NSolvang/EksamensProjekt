@@ -25,7 +25,8 @@ public class ServiceMock : IUser
                 UserName = "admin",
                 Password = "admin123",
                 Role = "Admin",
-                Name = "Admin Test"
+                Name = "Admin Test",
+                ProfilePicture = "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
             });
             
             users.Add(new User
@@ -34,7 +35,8 @@ public class ServiceMock : IUser
                 UserName = "headchef",
                 Password = "headchef123",
                 Role = "Køkkenchef",
-                Name = "KøkkenChef"
+                Name = "KøkkenChef",
+                ProfilePicture = "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
             });
             
             users.Add(new User
@@ -43,7 +45,8 @@ public class ServiceMock : IUser
                 UserName = "kok",
                 Password = "kok12345",
                 Role = "Faglært kok",
-                Name = "Kok"
+                Name = "Kok",
+                ProfilePicture = "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
             });
             
             users.Add(new Student
@@ -52,7 +55,8 @@ public class ServiceMock : IUser
                 UserName = "elev",
                 Password = "elev1234",
                 Role = "Elev",
-                Name = "Elev"
+                Name = "Elev",
+                ProfilePicture = "https://media.istockphoto.com/id/1763926700/photo/portrait-of-smiling-smart-school-boy-wearing-braces-on-teeth-looking-at-camera-education.jpg?s=612x612&w=0&k=20&c=kDQg5b1no9fvjtsmdme9aB-oRd3xmXroT4577FL2pb4="
             });
         }
     }
