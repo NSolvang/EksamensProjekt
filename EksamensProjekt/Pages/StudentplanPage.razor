@@ -17,12 +17,23 @@ else if (student.Studentplan == null)
 }
 else
 {
-    <table class="table">
-        <tr><td><strong>ID</strong></td><td>@student.Studentplan.StudentplanID</td></tr>
-        <tr><td><strong>Navn</strong></td><td>@student.Studentplan.Name</td></tr>
-        <tr><td><strong>Beskrivelse</strong></td><td>@student.Studentplan.Description</td></tr>
-        <tr><td><strong>Årgang</strong></td><td>@student.DateOfStart.Year</td></tr>
-    </table>
+    
+    <div class="profile-container">
+        <div class="profile-header">
+            <img src="@student.ProfilePicture" class="profile-image" />
+            <div class="profile-info">
+                <h3>@student.Name’s Profil</h3>
+                <h4 class="role">@student.Role</h4>
+                <h4>@student.DateOfStart.Year</h4>
+            </div>
+            <td><button class="btn-primary" @onclick="() => DeleteById(student)">Rediger</button></td>
+            
+            @if (currentUser?.Role == "Admin")
+            {
+                <td><button class="btn-primary" @onclick="() => DeleteById(student)">Fjern bruger</button></td>
+            }
+        </div>
+    </div>
 }
 
 @code {
@@ -44,5 +55,12 @@ else
         }
 
         student = await mService.GetStudentById(userId);
+    }
+    
+    private async Task DeleteById(User user)
+    {
+        await mService.DeleteById(user.UserId);
+        nav.NavigateTo("/AllStudentsPage");
+
     }
 }
