@@ -5,40 +5,30 @@
 @inject NavigationManager nav
 @inject IUser mService
 
-<table class="table">
+<h3>Oversigt over Elever</h3>
+@foreach (var student in students)
+{
+    <div class="student-card" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{student.UserId}"))">
+        <div class="student-info">
+            <img src="https://media.istockphoto.com/id/1763926700/photo/portrait-of-smiling-smart-school-boy-wearing-braces-on-teeth-looking-at-camera-education.jpg?s=612x612&w=0&k=20&c=kDQg5b1no9fvjtsmdme9aB-oRd3xmXroT4577FL2pb4=" alt="">
+            <h2>@student.Name</h2>
+            <span>@student.Role </span>
+            <span>Hotel:Aarhus</span>
+            <span>@student.DateOfStart.Year</span>
+        </div>
+        <div class="student-progress">
+            <div class="student-progress-bar">
+            </div>
+        </div>
+    </div>
+}
 
-    <tbody>
-    <tr>
-        <td><strong>Navn</strong></td>
-        <td><strong>Rolle</strong></td>
-        <td><strong>Årgang</strong></td>
-    </tr>
-    @foreach (var student in students)
-    {
-        <tr>
-            <td>@student.Name</td>
-            <td>@student.Role</td>
-            <td>@student.DateOfStart.Year</td>
-            @if (currentUser?.Role == "Admin")
-            {
-                <td><button class="btn-primary" @onclick="() => DeleteById(student)">Fjern bruger</button></td>
-            }
-            @if (student.Role == "Elev")
-            {
-                <button class="btn btn-secondary me-2" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{student.UserId}"))">
-                    Se elevplan
-                </button>
-            }
-        </tr>
-    }
-    </tbody>
-</table>
 
 @code {
     private User? currentUser;
 
     private Student[]? students = new Student[0];
-    
+
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
@@ -52,7 +42,7 @@
 
         await LoadAll();
     }
-    
+
     private async Task DeleteById(User user)
     {
         await mService.DeleteById(user.UserId);
@@ -62,9 +52,9 @@
 
     private void AddUser()
     {
-        nav.NavigateTo("CreateUserPage");  
+        nav.NavigateTo("CreateUserPage");
     }
-    
+
     private async Task LoadAll()
     {
         // Henter alle brugere

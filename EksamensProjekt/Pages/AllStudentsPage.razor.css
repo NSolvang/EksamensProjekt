@@ -1,0 +1,189 @@
+/* Main container styling */
+h3 {
+    text-align: center;
+    color: #d4af37; /* Guld farve */
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.all-students-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #f8f5f0; /* Lys beige baggrund */
+}
+
+/* Page title styling */
+.all-students-title {
+    color: #d4af37; /* Guld farve */
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Grid layout for student cards */
+.students-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Student card styling - Luxury design */
+.student-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.1);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.student-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2);
+    border: 2px solid #d4af37;
+}
+
+/* Student info section */
+.student-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.student-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.student-info img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #d4af37; /* Guld ramme */
+    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.2);
+}
+
+.student-info h2 {
+    color: #2c3e50;
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.student-info h3 {
+    color: #7a7a7a;
+    font-size: 1rem;
+    font-weight: 500;
+    font-style: italic;
+}
+
+.student-info span {
+    display: flex;
+    align-items: center;
+    color: #7a7a7a;
+    font-size: 0.9rem;
+    position: relative;
+    padding-left: 1.2em;
+}
+
+.student-info span::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.8em;
+    height: 0.8em;
+    background-color: #d4af37; /* Guld prik */
+    border-radius: 50%;
+    opacity: 0.8;
+}
+
+/* Progress bar styling - Gold theme */
+.student-progress {
+    margin-top: 1.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.student-progress-bar {
+    height: 8px;
+    background: #f0e6d2; /* Lys beige */
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.student-progress-bar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: var(--progress, 65%);
+    background: linear-gradient(90deg, #d4af37, #f0d05e); /* Guld gradient */
+    border-radius: 4px;
+    animation: progress-animate 1.5s ease-out;
+}
+
+@keyframes progress-animate {
+    from { width: 0; }
+    to { width: var(--progress, 65%); }
+}
+
+/* Gold shimmer effect */
+.student-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+            to bottom right,
+            rgba(212, 175, 55, 0.05) 0%,
+            rgba(212, 175, 55, 0) 60%
+    );
+    transform: rotate(30deg);
+    pointer-events: none;
+    animation: shimmer 8s infinite linear;
+    z-index: 1;
+}
+
+@keyframes shimmer {
+    0% { transform: rotate(30deg) translate(-30%, -30%); }
+    100% { transform: rotate(30deg) translate(70%, 70%); }
+}
+
+/* Different progress levels */
+.student-card:nth-child(1) .student-progress-bar::after { --progress: 75%; }
+.student-card:nth-child(2) .student-progress-bar::after { --progress: 45%; }
+.student-card:nth-child(3) .student-progress-bar::after { --progress: 90%; }
+.student-card:nth-child(4) .student-progress-bar::after { --progress: 60%; }
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .students-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .student-info img {
+        width: 80px;
+        height: 80px;
+    }
+}

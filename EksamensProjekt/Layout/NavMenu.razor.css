@@ -1,43 +1,79 @@
 .navbar-nav {
     display: flex;
-    justify-content: center;  
-    align-items: center;      
+    justify-content: center;
+    align-items: center;
     width: 100%;
+    background-color: #f8f5f0; /* Lys beige baggrund */
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2); /* Guld accentlinje */
+}
+
+.navbar-brand img {
+    height: 45px; /* Lidt større logo */
+    width: auto;
+    object-fit: contain;
+    padding: 5px 0;
+    filter: drop-shadow(0 2px 4px rgba(212, 175, 55, 0.2)); /* Guld skyggeeffekt */
 }
 
 .nav-item {
-    font-size: 0.9rem;
-    padding-bottom: 0.5rem;
+    color: #5a5a5a;
+    font-size: 0.95rem;
+    padding: 0 0.8rem;
     display: flex;
-    justify-content: center; 
-    align-items: center;     
-    height: 2.8rem;         
+    justify-content: center;
+    align-items: center;
+    height: 3rem;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
 }
 
 .nav-item ::deep a {
-    color: #d7d7d7;
-    border-radius: 8px;      
-    height: 2.0rem;           
+    color: #5a5a5a;
+    border-radius: 6px;
+    height: 2.5rem;
     display: flex;
-    align-items: center;      
-    justify-content: center;  
-    line-height: 1.25rem;     
-    padding-left: 10px;
-    padding-right: 10px;      
+    align-items: center;
+    justify-content: center;
+    line-height: 1.25rem;
+    padding: 0 1rem;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
+.nav-item ::deep a::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: #d4af37; /* Guld understregning */
+    transition: width 0.3s ease;
+}
 
 .nav-item ::deep a.active {
-    background-color: rgba(255, 255, 255, 0.37);
-    color: white;
+    color: #d4af37; /* Guld farve for aktiv link */
+    background-color: transparent;
+}
+
+.nav-item ::deep a.active::before {
+    width: 70%; /* Understregning ved aktivt link */
 }
 
 .nav-item ::deep a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
+    color: #d4af37; /* Guld farve ved hover */
+    background-color: transparent;
 }
 
-/* CSS for stor skærm */
+.nav-item ::deep a:hover::before {
+    width: 70%; /* Understregning ved hover */
+}
+
+/* Stor skærm styling */
 @media (min-width: 641px) {
     .navbar-toggler {
         display: none;
@@ -56,10 +92,28 @@
     nav.nav.flex-row {
         display: flex;
         flex-direction: row;
+        justify-content: space-between;
+        max-width: 1200px;
+        margin: 0 auto;
     }
-
 
     .navbar-nav {
-        justify-content: center;
+        justify-content: flex-end;
+        padding: 0 2rem;
     }
+
+    .navbar-brand {
+        margin-right: auto;
+        padding-left: 2rem;
+    }
+}
+
+/* Luksus hover effekt */
+.nav-item ::deep a:hover {
+    text-shadow: 0 0 5px rgba(212, 175, 55, 0.3); /* Guld glød effekt */
+}
+
+/* Active state fordybelse */
+.nav-item ::deep a.active {
+    font-weight: 600;
 }
