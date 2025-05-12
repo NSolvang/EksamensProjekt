@@ -10,6 +10,8 @@ public class User
     [Required(ErrorMessage = "Brugernavn er påkrævet")]
     public string UserName { get; set; }
     
+    public string ProfilePicture { get; set; }
+    
     [Required(ErrorMessage = "Adgangskode er påkrævet")]
    /*[StringLength(10, MinimumLength = 8, ErrorMessage = "Adgangskoden skal være mellem 8 og 10 tegn")]*/
     public string Password { get; set; }

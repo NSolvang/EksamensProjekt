@@ -9,9 +9,9 @@
 <h3>Oversigt over Medarbejder</h3>
 @foreach (var user in users)
 {
-    <div class="employee-card" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{user.UserId}"))">
+    <div class="employee-card" @onclick="@(() => nav.NavigateTo($"/MyProfilePage/{user.UserId}"))">
         <div class="employee-info">
-            <img src="https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop" alt="">
+            <img src=@user.ProfilePicture alt="">
             <h2>@user.Name</h2>
             <span>@user.Role </span>
             <span>Hotel:Aarhus</span>
