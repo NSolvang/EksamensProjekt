@@ -5,7 +5,7 @@
 @inject NavigationManager nav
 @inject IUser mService
 
-<h3>Oversigt over Elever</h3>
+<h3>OVERSIGT OVER ELEVER</h3>
 @foreach (var student in students)
 {
     <div class="student-card" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{student.UserId}"))">

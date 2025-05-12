@@ -56,7 +56,8 @@ public class ServiceMock : IUser
                 Password = "elev1234",
                 Role = "Elev",
                 Name = "Elev",
-                ProfilePicture = "https://media.istockphoto.com/id/1763926700/photo/portrait-of-smiling-smart-school-boy-wearing-braces-on-teeth-looking-at-camera-education.jpg?s=612x612&w=0&k=20&c=kDQg5b1no9fvjtsmdme9aB-oRd3xmXroT4577FL2pb4="
+                ProfilePicture = "https://media.istockphoto.com/id/1763926700/photo/portrait-of-smiling-smart-school-boy-wearing-braces-on-teeth-looking-at-camera-education.jpg?s=612x612&w=0&k=20&c=kDQg5b1no9fvjtsmdme9aB-oRd3xmXroT4577FL2pb4=",
+                Studentplan = new Studentplan()
             });
         }
     }
