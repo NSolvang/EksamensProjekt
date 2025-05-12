@@ -1,0 +1,120 @@
+/* Main container */
+.profile-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Profile header section */
+.profile-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: center;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 3px solid #d4af37; /* Guld ramme */
+}
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #d4af37; /* Guld ramme */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.profile-info h3 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.role {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffdf05, #e8c750);
+    color: white;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin: 0 0 1rem 0;
+    font-weight: 500;
+}
+
+.userid {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Button styling */
+.btn-primary {
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    align-self: flex-start;
+    margin-top: auto;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    opacity: 0.9;
+}
+
+/* Profile sections */
+.profile-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #eaeaea;
+}
+
+.section-title {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f1f1f1;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-info {
+        text-align: center;
+    }
+
+    .btn-primary {
+        align-self: center;
+    }
+
+    .role {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
