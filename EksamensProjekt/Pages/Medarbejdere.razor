@@ -15,10 +15,6 @@
             <h2>@user.Name</h2>
             <span>@user.Role </span>
             <span>Hotel:Aarhus</span>
-            @if (currentUser?.Role == "Admin")
-            {
-                <td><button class="btn-primary" @onclick="() => DeleteById(user)">Fjern bruger</button></td>
-            }
         </div>
         <div class="employee-progress">
             <div class="employee-progress-bar">
@@ -47,17 +43,6 @@
         await LoadAll();
     }
     
-    private async Task DeleteById(User user)
-    {
-        await mService.DeleteById(user.UserId);
-        await LoadAll();
-
-    }
-
-    private void AddUser()
-    {
-        nav.NavigateTo("CreateUserPage");  
-    }
     
     private async Task LoadAll()
     {
