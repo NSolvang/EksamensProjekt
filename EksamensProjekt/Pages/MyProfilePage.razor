@@ -18,10 +18,10 @@ else
                 <h3>@user.Name’s Profil</h3>
                 <h4 class="role">@user.Role</h4>
             </div>
-            <td><button class="btn-primary" @onclick="() => DeleteById(user)">redigere</button></td>
             
             @if (currentUser?.Role == "Admin")
             {
+                <td><button class="btn-primary" @onclick="() => DeleteById(user)">redigere</button></td>
                 <td><button class="btn-primary" @onclick="() => DeleteById(user)">Fjern bruger</button></td>
             }
         </div>
@@ -42,7 +42,7 @@ else
         currentUser = await LoginService.GetUserLoggedIn();
 
         if (currentUser == null ||
-            (currentUser.Role != "Admin" && currentUser.Role != "Køkkenchef"))
+            (currentUser.Role != "Admin" && currentUser.Role != "Køkkenchef" && currentUser.Role != "Kok"))
         {
             nav.NavigateTo("/");
             return;

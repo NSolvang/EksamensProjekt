@@ -2,6 +2,7 @@
 @page "/LoginPage/"
 @using EksamensProjekt.Service
 @using Blazored.LocalStorage
+@using Core
 @inject NavigationManager navManager
 @inject ILogin LoginService
 @inject ILocalStorageService localStorage
@@ -53,6 +54,7 @@
 </div>
 
 @code {
+    private User user;
     string username = "";
     string password = "";
     string errorText = "";
@@ -121,15 +123,16 @@
 
     private void RedirectBasedOnRole(string role)
     {
+
         switch (role)
         {
             case "Admin":
             case "Køkkenchef":
-            case "Faglært kok":
+            case "Kok":
                 navManager.NavigateTo("/AllStudentsPage");
                 break;
             case "Elev":
-                navManager.NavigateTo("/StudentplanPage/{userId:int}");
+                navManager.NavigateTo("/StudentplanPage/{UserId:int}");
                 break;
             default:
                 navManager.NavigateTo("/");

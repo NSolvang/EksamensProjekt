@@ -34,7 +34,7 @@
         currentUser = await LoginService.GetUserLoggedIn();
 
         if (currentUser == null ||
-            (currentUser.Role != "Admin" && currentUser.Role != "Køkkenchef"))
+            (currentUser.Role != "Admin" && currentUser.Role != "Køkkenchef" && currentUser.Role != "Kok"))
         {
             nav.NavigateTo("/");
             return;
@@ -42,19 +42,7 @@
 
         await LoadAll();
     }
-
-    private async Task DeleteById(User user)
-    {
-        await mService.DeleteById(user.UserId);
-        await LoadAll();
-
-    }
-
-    private void AddUser()
-    {
-        nav.NavigateTo("CreateUserPage");
-    }
-
+    
     private async Task LoadAll()
     {
         // Henter alle brugere

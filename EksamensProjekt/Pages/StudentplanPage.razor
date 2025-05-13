@@ -25,10 +25,10 @@ else
                 <h4 class="role">@student.Role</h4>
                 <h4>@student.DateOfStart.Year</h4>
             </div>
-            <td><button class="btn-primary" @onclick="() => EditStudent(student)">Rediger</button></td>
             
             @if (currentUser?.Role == "Admin")
             {
+                <td><button class="btn-primary" @onclick="() => EditStudent(student)">Rediger</button></td>
                 <td><button class="btn-primary" @onclick="() => DeleteById(student)">Fjern bruger</button></td>
             }
         </div>
@@ -117,7 +117,7 @@ else
         currentUser = await LoginService.GetUserLoggedIn();
 
         if (currentUser == null ||
-            (currentUser.Role != "Admin" && currentUser.Role != "Køkkenchef"))
+            (currentUser.Role != "Admin" && currentUser.Role != "Køkkenchef" && currentUser.Role != "Kok"))
         {
             nav.NavigateTo("/");
             return;

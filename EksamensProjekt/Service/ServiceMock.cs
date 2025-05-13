@@ -44,7 +44,7 @@ public class ServiceMock : IUser
                 UserId = 3,
                 UserName = "kok",
                 Password = "kok12345",
-                Role = "Faglært kok",
+                Role = "Kok",
                 Name = "Kok",
                 ProfilePicture = "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
             });
@@ -96,10 +96,8 @@ public class ServiceMock : IUser
             student.Studentplan = new Studentplan
             {
                 StudentplanID = user.UserId,
-                UserID = user.UserId,
                 Name = $"{user.Name}s plan",
                 Description = "Standard elevplan",
-                SubgoalID = 0
             };
         }
       
