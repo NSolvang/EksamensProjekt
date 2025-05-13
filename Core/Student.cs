@@ -1,9 +1,12 @@
 namespace Core;
 
-public class Student  : User
+public class Student : User
 {
     public Studentplan Studentplan { get; set; }
-    
+
     //Dato for hvornår eleven starter
     public DateTime DateOfStart { get; set; } = DateTime.Today;
+
+    public DateTime DateOfEnd { get; set; }
+    
 }

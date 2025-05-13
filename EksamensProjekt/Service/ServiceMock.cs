@@ -26,6 +26,7 @@ public class ServiceMock : IUser
                 Password = "admin123",
                 Role = "Admin",
                 Name = "Admin Test",
+                Location = "Århus",
                 ProfilePicture = "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
             });
             
@@ -36,6 +37,7 @@ public class ServiceMock : IUser
                 Password = "headchef123",
                 Role = "Køkkenchef",
                 Name = "KøkkenChef",
+                Location = "Århus",
                 ProfilePicture = "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
             });
             
@@ -46,6 +48,7 @@ public class ServiceMock : IUser
                 Password = "kok12345",
                 Role = "Kok",
                 Name = "Kok",
+                Location = "Århus",
                 ProfilePicture = "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
             });
             
@@ -56,6 +59,7 @@ public class ServiceMock : IUser
                 Password = "elev1234",
                 Role = "Elev",
                 Name = "Elev",
+                Location = "Århus",
                 ProfilePicture = "https://media.istockphoto.com/id/1763926700/photo/portrait-of-smiling-smart-school-boy-wearing-braces-on-teeth-looking-at-camera-education.jpg?s=612x612&w=0&k=20&c=kDQg5b1no9fvjtsmdme9aB-oRd3xmXroT4577FL2pb4=",
                 Studentplan = new Studentplan()
             });
