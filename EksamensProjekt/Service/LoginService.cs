@@ -10,11 +10,13 @@ public class LoginService : ILogin
     private readonly string serverUrl = "http://localhost:5186/";
     private readonly HttpClient client;
     private readonly ILocalStorageService localStorage;
+    private readonly AuthStateService authStateService;  
 
-    public LoginService(HttpClient httpClient, ILocalStorageService localStorageService)
+    public LoginService(HttpClient httpClient, ILocalStorageService localStorageService, AuthStateService authState)
     {
         client = httpClient;
         localStorage = localStorageService;
+        authStateService = authState;  
     }
 
     public async Task<User?> GetUserLoggedIn()
@@ -43,6 +45,10 @@ public class LoginService : ILogin
                 if (user != null)
                 {
                     await localStorage.SetItemAsync("user", user);
+                    
+                    // Notificer alle subscribers om auth state change
+                    authStateService.NotifyAuthStateChanged();
+                    
                     return true;
                 }
             }
@@ -73,6 +79,9 @@ public class LoginService : ILogin
             {
                 Console.WriteLine("Logout failed on the server side.");
             }
+            
+            // Notificer alle subscribers om auth state change
+            authStateService.NotifyAuthStateChanged();
         }
         catch (Exception ex)
         {
@@ -80,7 +89,6 @@ public class LoginService : ILogin
         }
     }
 }
-
 
 public class LoginRequest
 {
