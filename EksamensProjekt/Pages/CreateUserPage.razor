@@ -43,7 +43,11 @@ else
             <InputText id="ProfilePicture" @bind-Value="user.ProfilePicture" class="form-control" />
             <ValidationMessage For="@(() => user.ProfilePicture)" />
         </div>
-
+        <div class="col-md-12 mb-3">
+            <label for="Location">Lokation</label>
+            <InputText id="Location" @bind-Value="user.Location" class="form-control" />
+            <ValidationMessage For="@(() => user.Location)" />
+        </div>
         <div class="col-md-6 mb-3">
             <label for="Role">Rolle</label>
             <InputSelect id="Role" @bind-Value="user.Role" class="form-control">
@@ -55,7 +59,7 @@ else
             </InputSelect>
             <ValidationMessage For="@(() => user.Role)" />
         </div>
-
+        
         <div class="col-12 mb-3">
             <button type="submit" class="btn btn-primary">Opret Bruger</button>
         </div>
@@ -68,7 +72,7 @@ else
     private User user = new() { Role = "", };
     private string[] roles = { "Elev", "Køkkenchef", "Admin", "Kok" };
     private EditContext editContext = default!;
-    private User? currentUser;
+    private User? currentUser; 
     private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
