@@ -110,14 +110,19 @@ else
     private bool isWelcomePackReceived = false;
     private DateTime welcomePackDate = DateTime.Now;
     private string welcomePackNotes = "";
-    
+
 
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
 
-        if (currentUser == null ||
-            (currentUser.Role != "Admin" && currentUser.Role != "Køkkenchef" && currentUser.Role != "Kok"))
+        if (currentUser == null)
+        {
+            nav.NavigateTo("/");
+            return;
+        }
+
+        if (currentUser.Role == "Elev" && currentUser.UserId != userId)
         {
             nav.NavigateTo("/");
             return;
