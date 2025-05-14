@@ -54,7 +54,7 @@ else
     private async Task DeleteById(User user)
     {
         await mService.DeleteById(user.UserId);
-        nav.NavigateTo("/Medarbejdere");
+        nav.NavigateTo("/EmployeePage");
 
     }
 }

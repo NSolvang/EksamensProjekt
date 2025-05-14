@@ -46,7 +46,7 @@ else
         <div class="col-md-6 mb-3">
             <label for="Location">Lokation</label>
             <InputSelect id="Location" @bind-Value="user.Location" class="form-control">
-                <option value="">-- Vælg et hotel --</option>
+                <option value="">-- Vælg lokation --</option>
                 @foreach (var location in locations)
                 {
                     <option value="@location">@location</option>
@@ -94,7 +94,7 @@ else
     private List<string> locations = new()
     {
         "Aarhus", "Borupgaard", "Bygholm Park", "Centralværkstedet", "Copenhagen Portside",
-        "H.C.Andersen Odense", "Holte", "Hvide Hus Aalborg", "Kellers Park", "Klarskovgaard",
+        "H.C. Andersen Odense", "Holte", "Hvide Hus Aalborg", "Kellers Park", "Klarskovgaard",
         "Kolding", "Kongebrogaarden", "Kongens Lyngby", "Køge Strand", "Middelfart",
         "Rebild Bakker", "Roskilde"
     };
@@ -124,7 +124,7 @@ else
             }
             else
             {
-                nav.NavigateTo("/Medarbejdere");
+                nav.NavigateTo("/EmployeePage");
             }
             
         }
