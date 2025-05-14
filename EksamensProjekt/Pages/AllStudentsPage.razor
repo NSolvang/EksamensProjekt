@@ -6,15 +6,15 @@
 @inject IUser mService
 
 <h3>OVERSIGT OVER ELEVER</h3>
-@foreach (var student in students)
+@foreach (var user in users)
 {
-    <div class="student-card" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{student.UserId}"))">
+    <div class="student-card" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{user.UserId}"))">
         <div class="student-info">
-            <img src=@student.ProfilePicture alt="">
-            <h2>@student.Name</h2>
-            <span>@student.Role </span>
-            <span>@student.Location</span>
-            <span>@student.DateOfStart.Year</span>
+            <img src=@user.ProfilePicture alt="">
+            <h2>@user.Name</h2>
+            <span>@user.Role </span>
+            <span>@user.Location</span>
+            <span>@user.DateOfStart.Year</span>
         </div>
         <div class="student-progress">
             <div class="student-progress-bar">
@@ -27,7 +27,7 @@
 @code {
     private User? currentUser;
 
-    private Student[]? students = new Student[0];
+    private User[]? users = new User[0];
 
     protected override async Task OnInitializedAsync()
     {
@@ -48,8 +48,8 @@
         // Henter alle brugere
         var allUsers = await mService.GetAll();
 
-        // Her filtrer vi og tager kun alle students
-        students = allUsers.OfType<Student>()
+        // Her filtrer vi og tager kun alle elever
+        users = allUsers
             .Where(e => e.Role == "Elev")
             .ToArray();
     }

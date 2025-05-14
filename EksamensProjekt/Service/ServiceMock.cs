@@ -52,7 +52,7 @@ public class ServiceMock : IUser
                 ProfilePicture = "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
             });
             
-            users.Add(new Student
+            users.Add(new User
             {
                 UserId = 4,
                 UserName = "elev",
@@ -77,16 +77,6 @@ public class ServiceMock : IUser
         return Task.FromResult(users.FirstOrDefault(u => u.UserId == id));
     }
     
-    public Task<Student?> GetStudentById(int id)
-    {
-        var student = users
-            .OfType<Student>()        // Filtrér kun de objekter, der faktisk er af typen Student
-            .FirstOrDefault(s => s.UserId == id);
-
-        return Task.FromResult(student);
-    }
-
-    
     public async Task AddUser(User user)
     {
         int max = 0;
@@ -95,16 +85,15 @@ public class ServiceMock : IUser
         user.UserId = max + 1;
         users.Add(user);
 
-        if (user is Student student)
+        if (user.Role == "Elev")
         {
-            student.Studentplan = new Studentplan
+            user.Studentplan = new Studentplan()
             {
                 StudentplanID = user.UserId,
                 Name = $"{user.Name}s plan",
                 Description = "Standard elevplan",
             };
         }
-      
     }
 
     public async Task DeleteById(int id)
