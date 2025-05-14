@@ -23,7 +23,21 @@ public class ServiceMock : IUser
     public ServiceMock(ILocalStorageService localStorage)
     {
         _localStorage = localStorage;
-        
+
+        if (users.Count == 0)
+        {
+            users.Add(new User
+            {
+                UserId = 1,
+                UserName = "admin",
+                Password = "admin123",
+                Role = "Admin",
+                Name = "Admin Test",
+                Location = "Århus",
+                ProfilePicture =
+                    "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
+            });
+        }
     }
     
     public Task<User> GetUserById(int id)
