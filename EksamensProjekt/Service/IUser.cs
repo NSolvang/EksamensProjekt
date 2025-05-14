@@ -13,6 +13,4 @@ public interface IUser
     
     //Fjerner bruger, hvor user.UserId == id
     Task DeleteById(int id);
-    
-    List<User> GetUsers();
 }

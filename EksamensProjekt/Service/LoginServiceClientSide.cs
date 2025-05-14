@@ -25,7 +25,8 @@ namespace EksamensProjekt.Service
 
         public async Task<bool> Login(string userName, string password)
         {
-            var user = userService.GetUsers().FirstOrDefault(u => u.UserName == userName && u.Password == password);
+            var users = await userService.GetAll(); // venter på at få User[]
+            var user = users.FirstOrDefault(u => u.UserName == userName && u.Password == password);
 
             if (user != null)
             {
