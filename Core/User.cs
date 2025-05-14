@@ -25,4 +25,11 @@ public class User
     [Required(ErrorMessage = "Navn er påkrævet")]
     public string Name { get; set; }
     
+    public Studentplan? Studentplan { get; set; }
+
+    //Dato for hvornår eleven starter
+    public DateTime DateOfStart { get; set; } = DateTime.Today;
+
+    public DateTime DateOfEnd { get; set; } = DateTime.Today.AddYears(3).AddMonths(3);
+
 }

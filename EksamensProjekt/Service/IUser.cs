@@ -8,8 +8,6 @@ public interface IUser
     
     Task<User> GetUserById(int id); 
     
-     Task<Student> GetStudentById(int id);
-    
     //Tilføjer ny User og tildeler dem et id
     Task AddUser(User user);
     

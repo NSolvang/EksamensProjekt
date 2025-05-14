@@ -7,29 +7,28 @@
 
 <h3>Elevplan</h3>
 
-@if (student == null)
+@if (users == null)
 {
     <p>Bruger ikke fundet.</p>
 }
-else if (student.Studentplan == null)
+else if (users.Studentplan == null)
 {
-    <p>Ingen elevplan for @student.Name.</p>
+    <p>Ingen elevplan for @users.Name.</p>
 }
 else
 {
     <div class="profile-container">
         <div class="profile-header">
-            <img src="@student.ProfilePicture" class="profile-image" />
+            <img src="@users.ProfilePicture" class="profile-image" />
             <div class="profile-info">
-                <h3>@student.Name's Profil</h3>
-                <h4 class="role">@student.Role</h4>
-                <h4>@student.DateOfStart.Year</h4>
+                <h3>@users.Name's Profil</h3>
+                <h4 class="role">@users.Role</h4>
+                <h4>@users.DateOfStart.Year</h4>
             </div>
             
             @if (currentUser?.Role == "Admin")
             {
-                <td><button class="btn-primary" @onclick="() => EditStudent(student)">Rediger</button></td>
-                <td><button class="btn-primary" @onclick="() => DeleteById(student)">Fjern bruger</button></td>
+                <td><button class="btn-primary" @onclick="() => DeleteById(users)">Fjern bruger</button></td>
             }
         </div>
         
@@ -96,7 +95,7 @@ else
     [Parameter]
     public int userId { get; set; }
 
-    private Student? student;
+    private User? users;
     private User? currentUser;
     
     // Tilstand for dropdown-tabellen
@@ -128,7 +127,7 @@ else
             return;
         }
 
-        student = await mService.GetStudentById(userId);
+        users = await mService.GetUserById(userId);
     }
     
     private async Task DeleteById(User user)
@@ -137,13 +136,6 @@ else
         nav.NavigateTo("/AllStudentsPage");
     }
     
-    // Metode til at redigere studerende - manglede i original kode
-    private void EditStudent(Student student)
-    {
-        // Implementér redigering her
-        nav.NavigateTo($"/EditStudent/{student.UserId}");
-    }
-
     private void ToggleTable(string tableName)
     {
         if (tableName == "beforeFirstDay")

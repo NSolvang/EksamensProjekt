@@ -66,6 +66,20 @@ else
             <ValidationMessage For="@(() => user.Role)" />
         </div>
         
+        @if (user.Role == "Elev")
+        {
+            <div class="col-md-12 mb-3">
+                <label for="StartTime">Start tidspunkt</label>
+                <InputDate id="StartTime" @bind-Value="user.DateOfStart" class="form-control" />
+                <ValidationMessage For="@(() => user.DateOfStart)" />
+            </div>
+            <div class="col-md-12 mb-3">
+                <label for="EndTime">Slut tidspunkt</label>
+                <InputDate id="EndTime" @bind-Value="user.DateOfEnd" class="form-control" />
+                <ValidationMessage For="@(() => user.DateOfEnd)" />
+            </div>
+        }
+        
         <div class="col-12 mb-3">
             <button type="submit" class="btn btn-primary">Opret Bruger</button>
         </div>
@@ -102,28 +116,17 @@ else
     {
         if (editContext.Validate())
         {
+            await mService.AddUser(user);
             if (user.Role == "Elev")
             {
-                // Opret en Student baseret på User
-                var student = new Student
-                {
-                    Name = user.Name,
-                    Role = user.Role,
-                    ProfilePicture = user.ProfilePicture,
-                    Password = user.Password,
-                    UserName = user.UserName,
-                    Location = user.Location
-                        
-                };
-
-                await mService.AddUser(student);
                 nav.NavigateTo("/AllStudentsPage");
+ 
             }
             else
             {
-                await mService.AddUser(user);
                 nav.NavigateTo("/Medarbejdere");
             }
+            
         }
         else
         {
