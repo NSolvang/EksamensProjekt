@@ -24,7 +24,7 @@ public class ServiceMock : IUser
     {
         _localStorage = localStorage;
 
-        if (users.Count == 0)
+        if (!users.Any(u => u.Role == "Admin"))
         {
             users.Add(new User
             {
