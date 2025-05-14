@@ -10,66 +10,20 @@ public class ServiceMock : IUser
     private List<User> users = new();
     public async Task<User[]> GetAll()
     {
+        var storedUsers = await _localStorage.GetItemAsync<User[]>("users");
+
+        if (storedUsers != null)
+        {
+            users = storedUsers.ToList();
+        }
+
         return users.ToArray();
     }
     
     public ServiceMock(ILocalStorageService localStorage)
     {
         _localStorage = localStorage;
-
-        if (users.Count == 0)
-        {
-            users.Add(new User
-            {
-                UserId = 1,
-                UserName = "admin",
-                Password = "admin123",
-                Role = "Admin",
-                Name = "Admin Test",
-                Location = "Århus",
-                ProfilePicture = "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
-            });
-            
-            users.Add(new User
-            {
-                UserId = 2,
-                UserName = "headchef",
-                Password = "headchef123",
-                Role = "Køkkenchef",
-                Name = "KøkkenChef",
-                Location = "Århus",
-                ProfilePicture = "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
-            });
-            
-            users.Add(new User
-            {
-                UserId = 3,
-                UserName = "kok",
-                Password = "kok12345",
-                Role = "Kok",
-                Name = "Kok",
-                Location = "Århus",
-                ProfilePicture = "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
-            });
-            
-            users.Add(new User
-            {
-                UserId = 4,
-                UserName = "elev",
-                Password = "elev1234",
-                Role = "Elev",
-                Name = "Elev",
-                Location = "Århus",
-                ProfilePicture = "https://media.istockphoto.com/id/1763926700/photo/portrait-of-smiling-smart-school-boy-wearing-braces-on-teeth-looking-at-camera-education.jpg?s=612x612&w=0&k=20&c=kDQg5b1no9fvjtsmdme9aB-oRd3xmXroT4577FL2pb4=",
-                Studentplan = new Studentplan()
-            });
-        }
-    }
-
-
-    public List<User> GetUsers()
-    {
-        return users;
+        
     }
     
     public Task<User> GetUserById(int id)
@@ -94,11 +48,13 @@ public class ServiceMock : IUser
                 Description = "Standard elevplan",
             };
         }
+        await _localStorage.SetItemAsync("users", users);
     }
 
     public async Task DeleteById(int id)
     {
         users.RemoveAll(user => user.UserId == id);
+        await _localStorage.SetItemAsync("users", users);
     }
     
 }
