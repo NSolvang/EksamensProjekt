@@ -72,7 +72,7 @@
             if (loggedInUser != null)
             {
                 // Redirect to appropriate page based on role
-                RedirectBasedOnRole(loggedInUser.Role);
+                RedirectBasedOnRole(loggedInUser);
             }
         }
     }
@@ -107,7 +107,7 @@
                     await localStorage.SetItemAsync("isLoggedIn", true);
 
                     // Naviger baseret på brugerens rolle
-                    RedirectBasedOnRole(loggedInUser.Role);
+                    RedirectBasedOnRole(loggedInUser); 
                 }
             }
         }
@@ -122,10 +122,9 @@
         }
     }
 
-    private void RedirectBasedOnRole(string role)
+    private void RedirectBasedOnRole(User user)
     {
-        
-        switch (role)
+        switch (user.Role)
         {
             case "Admin":
             case "Køkkenchef":
@@ -133,7 +132,7 @@
                 navManager.NavigateTo("/AllStudentsPage");
                 break;
             case "Elev":
-                navManager.NavigateTo("/StudentplanPage/{UserId:int}");
+                navManager.NavigateTo($"/StudentplanPage/{user.UserId}");
                 break;
             default:
                 navManager.NavigateTo("/");
