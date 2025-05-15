@@ -31,8 +31,8 @@ public class User
     public Studentplan? Studentplan { get; set; }
 
     //Dato for hvornår eleven starter
-    public DateTime DateOfStart { get; set; } = DateTime.Today;
+    public DateOnly DateOfStart { get; set; } 
 
-    public DateTime DateOfEnd { get; set; } = DateTime.Today.AddYears(3).AddMonths(3);
+    public DateOnly DateOfEnd { get; set; } 
 
 }

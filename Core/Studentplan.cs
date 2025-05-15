@@ -6,6 +6,6 @@ public class Studentplan
     public string Name { get; set; }
     public string Description { get; set; }
     
-    public List<Subgoal> Subgoal { get; set; }
+    public List<Goal> Goal { get; set; }
     
 }
