@@ -38,19 +38,21 @@ else
             <InputText id="Password" @bind-Value="user.Password" class="form-control" />
             <ValidationMessage For="@(() => user.Password)" />
         </div>
+
         <div class="col-md-12 mb-3">
             <label for="ProfilePicture">Profilbillede</label>
             <InputText id="ProfilePicture" @bind-Value="user.ProfilePicture" class="form-control" />
             <ValidationMessage For="@(() => user.ProfilePicture)" />
         </div>
+
         <div class="col-md-6 mb-3">
             <label for="Location">Lokation</label>
             <div class="location-input-group">
-                <InputSelect id="Location" @bind-Value="user.Location" class="form-control">
+                <InputSelect id="Location" @bind-Value="SelectedLocationId" class="form-control">
                     <option value="">-- Vælg lokation --</option>
                     @foreach (var location in locations)
                     {
-                        <option value="@location">@location</option>
+                        <option value="@location.LocationId">@location.Name</option>
                     }
                 </InputSelect>
                 <button type="button" class="btn-add-location" @onclick="ShowAddLocationDialog" title="Tilføj ny lokation">
@@ -59,6 +61,7 @@ else
             </div>
             <ValidationMessage For="@(() => user.Location)" />
         </div>
+
         <div class="col-md-6 mb-3">
             <label for="Role">Rolle</label>
             <InputSelect id="Role" @bind-Value="user.Role" class="form-control">
@@ -83,6 +86,17 @@ else
                 <InputDate id="EndTime" @bind-Value="user.DateOfEnd" class="form-control" />
                 <ValidationMessage For="@(() => user.DateOfEnd)" />
             </div>
+            <div class="col-md-6 mb-3">
+                <label for="Role">Tidligere uddannelse</label>
+                <InputSelect id="Role" @bind-Value="user.Education" class="form-control">
+                    <option value="">-- Vælg en uddannelse --</option>
+                    @foreach (var education in educations)
+                    {
+                        <option value="@education">@education</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => user.Education)" />
+            </div>
         }
 
         <div class="col-12 mb-3">
@@ -93,7 +107,6 @@ else
     </EditForm>
 }
 
-@* Modal for tilføjelse af ny lokation *@
 @if (showAddLocationModal)
 {
     <div class="custom-modal-backdrop">
@@ -129,21 +142,40 @@ else
 @code {
     private User user = new() { Role = "", };
     private string[] roles = { "Elev", "Køkkenchef", "Admin", "Kok" };
-    private List<string> locations = new()
+    private string[] educations = { "HHX", "STX", "HTX", "HF", "EUX", "Folkeskole" };
+    private List<Location> locations = new()
     {
-        "Aarhus", "Borupgaard", "Bygholm Park", "Centralværkstedet", "Copenhagen Portside",
-        "H.C. Andersen Odense", "Holte", "Hvide Hus Aalborg", "Kellers Park", "Klarskovgaard",
-        "Kolding", "Kongebrogaarden", "Kongens Lyngby", "Køge Strand", "Middelfart",
-        "Rebild Bakker", "Roskilde"
+        new Location { LocationId = 1, Name = "Aarhus" },
+        new Location { LocationId = 2, Name = "Borupgaard" },
+        new Location { LocationId = 3, Name = "Bygholm Park" },
+        new Location { LocationId = 4, Name = "Centralværkstedet" },
+        new Location { LocationId = 5, Name = "Copenhagen Portside" },
+        new Location { LocationId = 6, Name = "H.C. Andersen Odense" },
+        new Location { LocationId = 7, Name = "Holte" },
+        new Location { LocationId = 8, Name = "Hvide Hus Aalborg" },
+        new Location { LocationId = 9, Name = "Kellers Park" },
+        new Location { LocationId = 10, Name = "Klarskovgaard" },
+        new Location { LocationId = 11, Name = "Kolding" },
+        new Location { LocationId = 12, Name = "Kongebrogaarden" },
+        new Location { LocationId = 13, Name = "Kongens Lyngby" },
+        new Location { LocationId = 14, Name = "Køge Strand" },
+        new Location { LocationId = 15, Name = "Middelfart" },
+        new Location { LocationId = 16, Name = "Rebild Bakker" },
+        new Location { LocationId = 17, Name = "Roskilde" }
     };
     private EditContext editContext = default!;
     private User? currentUser;
     private bool isLoading = true;
 
-    // Variabler til modal for ny lokation
     private bool showAddLocationModal = false;
     private string newLocationName = string.Empty;
     private string locationErrorMessage = string.Empty;
+
+    private int SelectedLocationId
+    {
+        get => user.Location?.LocationId ?? 0;
+        set => user.Location = locations.FirstOrDefault(l => l.LocationId == value);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -160,16 +192,7 @@ else
         if (editContext.Validate())
         {
             await mService.AddUser(user);
-            if (user.Role == "Elev")
-            {
-                nav.NavigateTo("/AllStudentsPage");
-
-            }
-            else
-            {
-                nav.NavigateTo("/EmployeePage");
-            }
-
+            nav.NavigateTo(user.Role == "Elev" ? "/AllStudentsPage" : "/EmployeePage");
         }
         else
         {
@@ -182,7 +205,6 @@ else
         nav.NavigateTo("/AllStudentsPage");
     }
 
-    // Metoder til håndtering af ny lokation
     private void ShowAddLocationDialog()
     {
         showAddLocationModal = true;
@@ -205,23 +227,22 @@ else
             return;
         }
 
-        if (locations.Contains(newLocationName, StringComparer.OrdinalIgnoreCase))
+        if (locations.Any(l => l.Name.Equals(newLocationName, StringComparison.OrdinalIgnoreCase)))
         {
             locationErrorMessage = "Denne lokation eksisterer allerede";
             return;
         }
 
-        // Tilføj den nye lokation til listen
-        locations.Add(newLocationName);
-        locations.Sort(); // Sorter listen alfabetisk
+        var newId = locations.Max(l => l.LocationId) + 1;
+        var newLocation = new Location { LocationId = newId, Name = newLocationName };
 
-        // Vælg den nye lokation automatisk
-        user.Location = newLocationName;
+        locations.Add(newLocation);
+        locations = locations.OrderBy(l => l.Name).ToList();
 
-        // Luk modal
+        user.Location = newLocation;
+
         CloseAddLocationDialog();
 
-        // Her kunne du også gemme den nye lokation i databasen hvis nødvendigt
-        // await LocationService.AddLocation(newLocationName);
+        // Hvis nødvendigt: await LocationService.AddLocation(newLocation);
     }
 }

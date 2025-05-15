@@ -20,7 +20,10 @@ public class User
     public string Password { get; set; }
     
     [Required(ErrorMessage = "Lokation er påkrævet")]
-    public string Location { get; set; }
+    public Location? Location { get; set; }
+    
+    [Required(ErrorMessage = "Uddannelse er påkrævet")]
+    public string Education { get; set; }
     
     [Required(ErrorMessage = "Navn er påkrævet")]
     public string Name { get; set; }

@@ -26,14 +26,14 @@ public class ServiceMock : IUser
 
         if (!users.Any(u => u.Role == "Admin"))
         {
-            users.Add(new User
+            users.Add(new User 
             {
                 UserId = 1,
                 UserName = "admin",
                 Password = "admin123",
                 Role = "Admin",
                 Name = "Admin Test",
-                Location = "Århus",
+                Location = new Location{Name = "Aarhus"},
                 ProfilePicture =
                     "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
             });
