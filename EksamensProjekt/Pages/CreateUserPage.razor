@@ -45,13 +45,18 @@ else
         </div>
         <div class="col-md-6 mb-3">
             <label for="Location">Lokation</label>
-            <InputSelect id="Location" @bind-Value="user.Location" class="form-control">
-                <option value="">-- Vælg lokation --</option>
-                @foreach (var location in locations)
-                {
-                    <option value="@location">@location</option>
-                }
-            </InputSelect>
+            <div class="location-input-group">
+                <InputSelect id="Location" @bind-Value="user.Location" class="form-control">
+                    <option value="">-- Vælg lokation --</option>
+                    @foreach (var location in locations)
+                    {
+                        <option value="@location">@location</option>
+                    }
+                </InputSelect>
+                <button type="button" class="btn-add-location" @onclick="ShowAddLocationDialog" title="Tilføj ny lokation">
+                    <i class="bi bi-plus-circle"></i> +
+                </button>
+            </div>
             <ValidationMessage For="@(() => user.Location)" />
         </div>
         <div class="col-md-6 mb-3">
@@ -65,7 +70,7 @@ else
             </InputSelect>
             <ValidationMessage For="@(() => user.Role)" />
         </div>
-        
+
         @if (user.Role == "Elev")
         {
             <div class="col-md-12 mb-3">
@@ -79,13 +84,46 @@ else
                 <ValidationMessage For="@(() => user.DateOfEnd)" />
             </div>
         }
-        
+
         <div class="col-12 mb-3">
             <button type="submit" class="btn btn-primary">Opret Bruger</button>
         </div>
 
         <button type="button" class="btn btn-secondary" @onclick="NavigateAllStudentPage">Fortryd ændringer</button>
     </EditForm>
+}
+
+@* Modal for tilføjelse af ny lokation *@
+@if (showAddLocationModal)
+{
+    <div class="custom-modal-backdrop">
+        <div class="custom-modal">
+            <div class="modal-header-custom">
+                <h5 class="modal-title-custom">Tilføj ny lokation</h5>
+                <button type="button" class="modal-close-btn" @onclick="CloseAddLocationDialog">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body-custom">
+                <div class="form-group">
+                    <label for="newLocation" class="modal-label">Lokationsnavn</label>
+                    <input type="text" class="form-control modal-input" id="newLocation" @bind="newLocationName"
+                           @onkeypress="@(async (e) => { if (e.Key == "Enter") await AddNewLocation(); })"
+                           placeholder="Indtast ny lokation..." />
+                    @if (!string.IsNullOrEmpty(locationErrorMessage))
+                    {
+                        <div class="error-message">
+                            <i class="bi bi-exclamation-circle"></i> @locationErrorMessage
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn btn-secondary modal-btn" @onclick="CloseAddLocationDialog">Annuller</button>
+                <button type="button" class="btn btn-primary modal-btn" @onclick="AddNewLocation" disabled="@string.IsNullOrWhiteSpace(newLocationName)">Tilføj</button>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
@@ -99,8 +137,13 @@ else
         "Rebild Bakker", "Roskilde"
     };
     private EditContext editContext = default!;
-    private User? currentUser; 
+    private User? currentUser;
     private bool isLoading = true;
+
+    // Variabler til modal for ny lokation
+    private bool showAddLocationModal = false;
+    private string newLocationName = string.Empty;
+    private string locationErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -120,13 +163,13 @@ else
             if (user.Role == "Elev")
             {
                 nav.NavigateTo("/AllStudentsPage");
- 
+
             }
             else
             {
                 nav.NavigateTo("/EmployeePage");
             }
-            
+
         }
         else
         {
@@ -134,9 +177,51 @@ else
         }
     }
 
-
     private void NavigateAllStudentPage()
     {
         nav.NavigateTo("/AllStudentsPage");
+    }
+
+    // Metoder til håndtering af ny lokation
+    private void ShowAddLocationDialog()
+    {
+        showAddLocationModal = true;
+        newLocationName = string.Empty;
+        locationErrorMessage = string.Empty;
+    }
+
+    private void CloseAddLocationDialog()
+    {
+        showAddLocationModal = false;
+        newLocationName = string.Empty;
+        locationErrorMessage = string.Empty;
+    }
+
+    private async Task AddNewLocation()
+    {
+        if (string.IsNullOrWhiteSpace(newLocationName))
+        {
+            locationErrorMessage = "Indtast venligst et lokationsnavn";
+            return;
+        }
+
+        if (locations.Contains(newLocationName, StringComparer.OrdinalIgnoreCase))
+        {
+            locationErrorMessage = "Denne lokation eksisterer allerede";
+            return;
+        }
+
+        // Tilføj den nye lokation til listen
+        locations.Add(newLocationName);
+        locations.Sort(); // Sorter listen alfabetisk
+
+        // Vælg den nye lokation automatisk
+        user.Location = newLocationName;
+
+        // Luk modal
+        CloseAddLocationDialog();
+
+        // Her kunne du også gemme den nye lokation i databasen hvis nødvendigt
+        // await LocationService.AddLocation(newLocationName);
     }
 }
