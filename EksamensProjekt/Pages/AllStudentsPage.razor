@@ -6,28 +6,47 @@
 @inject IUser mService
 
 <h3>OVERSIGT OVER ELEVER</h3>
-@foreach (var user in users)
+
+@if (users is null || users.Length == 0)
 {
-    <div class="student-card" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{user.UserId}"))">
-        <div class="student-info">
-            <img src=@user.ProfilePicture alt="">
-            <h2>@user.Name</h2>
-            <span>Rolle: @user.Role </span>
-            <span>Lokation: @user.Location</span>
-            <span>Årgang: @user.DateOfStart.Year</span>
-        </div>
-        <div class="student-progress">
-            <div class="student-progress-bar">
+    <p>Ingen elever fundet.</p>
+}
+else
+{
+    @foreach (var user in users)
+    {
+        <div class="student-card" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{user.UserId}"))">
+            <div class="student-info">
+                <img src="@user.ProfilePicture" alt="Profilbillede">
+                <h2>@user.Name</h2>
+                <span>Rolle: @user.Role</span>
+                <span>Lokation: @user.Location?.Name</span>
+                <span>Årgang: @user.DateOfStart.Year</span>
+                <span>Uddannelse: @user.Education</span>
+            </div>
+            <div class="student-progress">
+                <div class="student-progress-bar">
+                    <!-- Progressbar kan tilføjes her senere -->
+                </div>
             </div>
         </div>
-    </div>
+    }
 }
-
 
 @code {
     private User? currentUser;
+    private User[]? users = Array.Empty<User>();
 
-    private User[]? users = new User[0];
+    // Disse bruges ikke i koden pt., men kan evt. bruges til filtrering senere
+    private List<string> locations = new()
+    {
+        "Aarhus", "Borupgaard", "Bygholm Park", "Centralværkstedet", "Copenhagen Portside",
+        "H.C. Andersen Odense", "Holte", "Hvide Hus Aalborg", "Kellers Park", "Klarskovgaard",
+        "Kolding", "Kongebrogaarden", "Kongens Lyngby", "Køge Strand", "Middelfart",
+        "Rebild Bakker", "Roskilde"
+    };
+    private string? chosenLocation;
+    private int? chosenYear;
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,16 +61,12 @@
 
         await LoadAll();
     }
-    
+
     private async Task LoadAll()
     {
-        // Henter alle brugere
         var allUsers = await mService.GetAll();
-
-        // Her filtrer vi og tager kun alle elever
         users = allUsers
             .Where(e => e.Role == "Elev")
             .ToArray();
     }
-
 }
