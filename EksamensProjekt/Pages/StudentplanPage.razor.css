@@ -332,3 +332,41 @@ h3 {
         padding: 0.8rem 1.2rem;
     }
 }
+
+.select-status {
+    font-weight: 600;
+    padding: 0.4rem;
+    border-radius: 6px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+/* Styling for the select dropdown */
+.select-status {
+    font-weight: 600;
+    padding: 0.4rem;
+    border-radius: 6px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    width: 100%;
+}
+
+/* Styling for the selected options */
+.select-status option {
+    padding: 0.4rem;
+    font-weight: 600;
+}
+
+/* Styling for specific status colors */
+.status-Mangler {
+    color: #c0392b; /* red */
+    background-color: #fceae9; /* light red */
+}
+
+.status-Igang {
+    color: #f39c12; /* yellow */
+    background-color: #fff9e6; /* light yellow */
+}
+
+.status-Gennemført {
+    color: #27ae60; /* green */
+    background-color: #e9f9ee; /* light green */
+}

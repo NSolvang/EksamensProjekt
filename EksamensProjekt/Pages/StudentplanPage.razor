@@ -62,7 +62,13 @@ else
                             <td>@contractDate.ToShortDateString()</td>
                             <td>Elevansvarlig</td>
                             <td>Inden første arbejdsdag</td>
-                            <td><input type="checkbox" checked="@isContractSigned" @onchange="() => isContractSigned = !isContractSigned" /></td>
+                            <td>
+                                <select @bind="task1Status" class="form-control select-status @GetStatusClass(task1Status)">
+                                    <option value="Mangler">Mangler</option>
+                                    <option value="Igang">Igang</option>
+                                    <option value="Gennemført">Gennemført</option>
+                                </select>
+                            </td>
                             <td><input type="text" @bind="contractNotes" class="form-control" /></td>
                         </tr>
                         <tr>
@@ -70,7 +76,13 @@ else
                             <td>@contractDate.ToShortDateString()</td>
                             <td>Elevansvarlig / Nærmeste leder</td>
                             <td>Inden første arbejdsdag</td>
-                            <td><input type="checkbox" checked="@isContractSigned" @onchange="() => isContractSigned = !isContractSigned" /></td>
+                            <td>
+                                <select @bind="task2Status" class="form-control select-status @GetStatusClass(task2Status)">
+                                    <option value="Mangler">Mangler</option>
+                                    <option value="Igang">Igang</option>
+                                    <option value="Gennemført">Gennemført</option>
+                                </select>
+                            </td>
                             <td><input type="text" @bind="contractNotes" class="form-control" /></td>
                         </tr>
                         <!-- Flere rækker efter behov -->
@@ -144,4 +156,20 @@ else
         }
         // Tilføj flere conditions for andre tabeller hvis nødvendigt
     }
+    //Koden til dropdown menu
+    private string task1Status = "Mangler"; // Default status for task 1
+    private string task2Status = "Mangler"; // Default status for task 2
+    
+    private string GetStatusClass(string status)
+    {
+        return status switch
+        {
+            "Mangler" => "status-Mangler",
+            "Igang" => "status-Igang",
+            "Gennemført" => "status-Gennemført",
+            _ => ""
+        };
+    }
+
+
 }
