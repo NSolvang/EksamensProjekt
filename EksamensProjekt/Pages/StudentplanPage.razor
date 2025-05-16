@@ -5,7 +5,8 @@
 @inject ILogin LoginService
 @inject NavigationManager nav
 @inject IUser mService
-@inject IJSRuntime JSRuntime
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
 <h3>Elevplan</h3>
 
 @if (users == null)
@@ -53,7 +54,7 @@ else
                         @foreach (var subgoal in goal.Subgoals)
                         {
                             <tr>
-                                <td>@subgoal.Name</td> <!-- Her fjernes knappen -->
+                                <td>@subgoal.Name</td>
                                 <td>@subgoal.Date.ToShortDateString()</td>
                                 <td>@subgoal.Responsible</td>
                                 <td>Inden d. @subgoal.Deadline</td>
@@ -76,9 +77,7 @@ else
                             {
                                 <tr class="dropdown-table">
                                     <td colspan="6">
-                                        <!-- Ekstra detaljer for subgoal -->
                                         <p><strong>Detaljer for opgave:</strong> @subgoal.Name</p>
-                                        <!-- Du kan tilføje mere info her -->
                                     </td>
                                 </tr>
                             }
@@ -91,7 +90,6 @@ else
     </div>
 }
 
-<!-- Kommentar Modal Component -->
 <CommentModal
     IsVisible="showCommentModal"
     Subgoal="selectedSubgoal"
@@ -101,13 +99,12 @@ else
     OnSaveComment="SaveComment" />
 
 @code {
-    [Parameter]
-    public int userId { get; set; }
+    [Parameter] public int userId { get; set; }
 
     private User? users;
     private User? currentUser;
     private Goal[]? goals;
-    private Dictionary<string, List<Comment>> allComments = new Dictionary<string, List<Comment>>();
+    private Dictionary<string, List<Comment>> allComments = new();
 
     private int? expandedGoalId;
     private int? expandedSubgoalId;
@@ -119,13 +116,7 @@ else
     {
         currentUser = await LoginService.GetUserLoggedIn();
 
-        if (currentUser == null)
-        {
-            nav.NavigateTo("/");
-            return;
-        }
-
-        if (currentUser.Role == "Elev" && currentUser.UserId != userId)
+        if (currentUser == null || (currentUser.Role == "Elev" && currentUser.UserId != userId))
         {
             nav.NavigateTo("/");
             return;
@@ -139,16 +130,8 @@ else
 
     private void ToggleTable(int goalId)
     {
-        if (expandedGoalId == goalId)
-        {
-            expandedGoalId = null;
-            expandedSubgoalId = null;
-        }
-        else
-        {
-            expandedGoalId = goalId;
-            expandedSubgoalId = null;
-        }
+        expandedGoalId = (expandedGoalId == goalId) ? null : goalId;
+        expandedSubgoalId = null;
     }
 
     private void OpenCommentModal(Subgoal subgoal)
@@ -165,8 +148,7 @@ else
 
     private async Task SaveComment(Comment comment)
     {
-        if (selectedSubgoal == null)
-            return;
+        if (selectedSubgoal == null) return;
 
         var key = GetSubgoalKey(selectedSubgoal);
 
@@ -184,10 +166,9 @@ else
 
     private List<Comment> GetComments(Subgoal? subgoal)
     {
-        if (subgoal == null) return new List<Comment>();
-
+        if (subgoal == null) return new();
         var key = GetSubgoalKey(subgoal);
-        return allComments.ContainsKey(key) ? allComments[key] : new List<Comment>();
+        return allComments.TryGetValue(key, out var list) ? list : new();
     }
 
     private int GetCommentCount(Subgoal subgoal) => GetComments(subgoal).Count;
@@ -196,10 +177,10 @@ else
     {
         try
         {
-            var json = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "studentplanComments");
-            if (!string.IsNullOrEmpty(json))
+            var comments = await LocalStorage.GetItemAsync<Dictionary<string, List<Comment>>>("studentplanComments");
+            if (comments != null)
             {
-                allComments = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, List<Comment>>>(json) ?? new Dictionary<string, List<Comment>>();
+                allComments = comments;
             }
         }
         catch (Exception ex)
@@ -212,8 +193,7 @@ else
     {
         try
         {
-            var json = System.Text.Json.JsonSerializer.Serialize(allComments);
-            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "studentplanComments", json);
+            await LocalStorage.SetItemAsync("studentplanComments", allComments);
         }
         catch (Exception ex)
         {

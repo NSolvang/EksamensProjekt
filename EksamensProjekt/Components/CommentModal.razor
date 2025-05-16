@@ -1,5 +1,4 @@
 @using Core
-@inject IJSRuntime JSRuntime
 
 @if (IsVisible)
 {
@@ -11,7 +10,6 @@
                 <button type="button" class="modal-close-btn" @onclick="CloseModal">×</button>
             </div>
             <div class="modal-body">
-                <!-- Eksisterende kommentarer -->
                 <div class="comments-section">
                     @if (Comments != null && Comments.Any())
                     {
@@ -41,25 +39,19 @@
                 {
                     <div class="new-comment-section">
                         <h6>Tilføj kommentar</h6>
-                        <textarea @bind="newComment" class="form-control comment-textarea"
-                                  rows="3" placeholder="Skriv din kommentar her..."></textarea>
+                        <textarea @bind="newComment" class="form-control comment-textarea" rows="3" placeholder="Skriv din kommentar her..."></textarea>
                     </div>
                 }
             </div>
 
-            @if (CurrentUser != null && (CurrentUser.Role == "Elev" || CurrentUser.Role == "Kok" || CurrentUser.Role == "Køkkenchef"))
-            {
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary" @onclick="CloseModal">Luk</button>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" @onclick="CloseModal">Luk</button>
+
+                @if (CurrentUser != null && (CurrentUser.Role == "Elev" || CurrentUser.Role == "Kok" || CurrentUser.Role == "Køkkenchef"))
+                {
                     <button type="button" class="btn-primary" @onclick="HandleSaveComment">Gem kommentar</button>
-                </div>
-            }
-            else
-            {
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary" @onclick="CloseModal">Luk</button>
-                </div>
-            }
+                }
+            </div>
         </div>
     </div>
 }
