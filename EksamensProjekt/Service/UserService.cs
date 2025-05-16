@@ -5,7 +5,7 @@ namespace EksamensProjekt.Service;
 
 public class UserService : IUser
 {
-    private string serverUrl = "http://localhost:5186";
+    private readonly string serverUrl = "http://localhost:5094";
 
     private HttpClient client;
     
@@ -21,7 +21,7 @@ public class UserService : IUser
 
     public Task<User> GetUserById(int id)
     {
-        throw new NotImplementedException();
+        return  client.GetFromJsonAsync<User>($"{serverUrl}/api/User/{id}");
     }
     
     public async Task DeleteById(int id)
@@ -29,12 +29,13 @@ public class UserService : IUser
         await client.DeleteAsync($"{serverUrl}/api/User/{id}");
     }
 
-    public List<User> GetUsers()
+    
+    public async Task AddUser(User user)
     {
-        throw new NotImplementedException();
+        await client.PostAsJsonAsync($"{serverUrl}/api/User", user);
     }
 
-    public async Task AddUser(User user)
+    public async Task UpdateUser(User user)
     {
         await client.PutAsJsonAsync($"{serverUrl}/api/User", user);
     }
