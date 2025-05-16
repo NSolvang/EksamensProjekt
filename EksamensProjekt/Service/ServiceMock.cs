@@ -74,7 +74,7 @@ public class ServiceMock : IUser, IGoal
         {
             var plan = StudentplanFactory.CreateDefaultStudentplan();
             plan.StudentplanID = user.UserId;
-
+            
             user.Studentplan = plan;
         }
 

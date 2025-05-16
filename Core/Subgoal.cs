@@ -12,8 +12,8 @@ public class Subgoal
     public string Responsible { get; set; }
     
     public string Deadline { get; set; }
-    
-    public string Status { get; set; }
+
+    public string Status { get; set; } = "Mangler";
     
     public string Comments { get; set; }
     
