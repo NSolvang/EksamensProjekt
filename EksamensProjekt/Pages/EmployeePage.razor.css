@@ -144,44 +144,6 @@ h3 {
     box-shadow: 0 6px 18px rgba(212, 175, 55, 0.3);
 }
 
-/* Progress bar styling - Gold theme */
-.employee-progress {
-    margin-top: 1.2rem;
-    position: relative;
-    z-index: 2;
-}
-
-.employee-progress-bar {
-    height: 6px;
-    background: #f0e6d2; /* Lys beige */
-    border-radius: 3px;
-    overflow: hidden;
-    position: relative;
-}
-
-.employee-progress-bar::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: var(--progress, 65%);
-    background: linear-gradient(90deg, #d4af37, #f0d05e); /* Guld gradient */
-    border-radius: 3px;
-    animation: progress-animate 1.5s ease-out;
-}
-
-@keyframes progress-animate {
-    from { width: 0; }
-    to { width: var(--progress, 65%); }
-}
-
-/* Different progress levels */
-.employee-card:nth-child(1) .employee-progress-bar::after { --progress: 75%; }
-.employee-card:nth-child(2) .employee-progress-bar::after { --progress: 45%; }
-.employee-card:nth-child(3) .employee-progress-bar::after { --progress: 90%; }
-.employee-card:nth-child(4) .employee-progress-bar::after { --progress: 60%; }
-
 /* Responsive design */
 @media (max-width: 768px) {
     .employee-container {

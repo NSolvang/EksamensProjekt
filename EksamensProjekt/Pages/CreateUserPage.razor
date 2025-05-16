@@ -87,8 +87,8 @@ else
                 <ValidationMessage For="@(() => user.DateOfEnd)" />
             </div>
             <div class="col-md-6 mb-3">
-                <label for="Role">Tidligere uddannelse</label>
-                <InputSelect id="Role" @bind-Value="user.Education" class="form-control">
+                <label for="Education">Tidligere uddannelse</label>
+                <InputSelect id="Education" @bind-Value="user.Education" class="form-control">
                     <option value="">-- Vælg en uddannelse --</option>
                     @foreach (var education in educations)
                     {
@@ -96,6 +96,10 @@ else
                     }
                 </InputSelect>
                 <ValidationMessage For="@(() => user.Education)" />
+                @if (educationError)
+                {
+                    <div class="text-danger"> Uddannelse er påkrævet for elever</div>
+                }
             </div>
         }
 
@@ -166,6 +170,7 @@ else
     private EditContext editContext = default!;
     private User? currentUser;
     private bool isLoading = true;
+    private bool educationError = false;
 
     private bool showAddLocationModal = false;
     private string newLocationName = string.Empty;
@@ -189,6 +194,14 @@ else
 
     private async Task HandleSubmit()
     {
+        educationError = false;
+        
+        if (user.Role == "Elev" && string.IsNullOrEmpty(user.Education))
+        {
+            educationError = true;
+            return;
+        }
+
         if (editContext.Validate())
         {
             await mService.AddUser(user);
