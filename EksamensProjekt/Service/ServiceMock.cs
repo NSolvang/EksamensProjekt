@@ -56,11 +56,22 @@ public class ServiceMock : IUser, IGoal
         return goals.ToArray();
     }
     
-    
-    public Task<User> GetUserById(int id)
+    private async Task LoadUsersAsync()
     {
-        return Task.FromResult(users.FirstOrDefault(u => u.UserId == id));
+        var storedUsers = await _localStorage.GetItemAsync<User[]>("users");
+        if (storedUsers != null)
+        {
+            users = storedUsers.ToList();
+        }
     }
+    
+    
+    public async Task<User> GetUserById(int id)
+    {
+        await LoadUsersAsync(); // sørg for at opdatere users listen fra localStorage
+        return users.FirstOrDefault(u => u.UserId == id);
+    }
+
     
     public async Task AddUser(User user)
     {
