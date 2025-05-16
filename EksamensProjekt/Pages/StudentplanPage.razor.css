@@ -105,7 +105,8 @@ h3 {
     border-bottom: 2px solid rgba(212, 175, 55, 0.3);
 }
 
-.Student-plan-container button {
+/* Goal toggle buttons with plus */
+.Student-plan-container button.goal-toggle-btn {
     background: white;
     border: 2px solid #d4af37;
     padding: 0.8rem 1.2rem;
@@ -117,24 +118,29 @@ h3 {
     position: relative;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     font-size: 0.95rem;
+    padding-right: 2rem; /* plads til plus */
+    color: #2c3e50;
 }
 
-.Student-plan-container button:hover {
+.Student-plan-container button.goal-toggle-btn:hover {
     background: #f8f9fa;
     border-color: #d4af37;
     color: #d4af37;
 }
 
-.Student-plan-container button:after {
+.Student-plan-container button.goal-toggle-btn::after {
     content: "+";
     position: absolute;
     right: 1.2rem;
     font-size: 1.2rem;
+    color: #d4af37;
     transition: transform 0.3s ease;
+    user-select: none;
 }
 
-.Student-plan-container button.active:after {
+.Student-plan-container button.goal-toggle-btn.active::after {
     transform: rotate(45deg);
+    color: #b08c2e;
 }
 
 /* Dropdown table */
@@ -254,14 +260,40 @@ h3 {
     }
 }
 
-.select-status {
-    font-weight: 600;
-    padding: 0.4rem;
-    border-radius: 6px;
-    border: 1px solid rgba(212, 175, 55, 0.3);
+/* Notes button in table */
+.notes-btn {
+    background: linear-gradient(135deg, #f8f8f8, #ffffff);
+    border: 2px solid #d4af37;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
 }
 
-/* Styling for the select dropdown */
+.notes-btn:hover {
+    background: linear-gradient(135deg, #ffffff, #fefaf0);
+    box-shadow: 0 3px 8px rgba(212, 175, 55, 0.2);
+}
+
+.notes-icon {
+    font-size: 1.1rem;
+}
+
+.notes-count {
+    background: #d4af37;
+    color: white;
+    border-radius: 50%;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+}
+
 .select-status {
     font-weight: 600;
     padding: 0.4rem;
@@ -270,7 +302,7 @@ h3 {
     width: 100%;
 }
 
-/* Styling for the selected options */
+/* Styling for the select dropdown */
 .select-status option {
     padding: 0.4rem;
     font-weight: 600;
