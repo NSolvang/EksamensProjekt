@@ -6,6 +6,7 @@
 @inject NavigationManager nav
 @inject IUser mService
 
+
 <h3>Elevplan</h3>
 
 @if (users == null)
@@ -18,64 +19,87 @@ else if (users.Studentplan == null)
 }
 else
 {
-        <StudentplanHeaderComponent user="users" CurrentUser="currentUser" />
-        
+    <StudentplanHeaderComponent user="users" CurrentUser="currentUser" />
+    
+    <div class="internship-section">
         <div class="internship-period-buttons">
             <button>Praktikperiode 1</button>
             <button>Praktikperiode 2</button>
             <button>Praktikperiode 3</button>
             <button>Afslutning</button>
         </div>
-        
-        <div class="Student-plan-container">
-            @foreach (var goal in goals)
+    </div>
+    
+    <div class="Student-plan-container">
+        @foreach (var goal in goals)
+        {
+            <button @onclick="() => ToggleTable(goal.GoalId)" class="goal-toggle-btn @(expandedGoalId == goal.GoalId ? "active" : "")">
+                @goal.Name
+            </button>
+            @if (expandedGoalId == goal.GoalId)
             {
-                <button @onclick="() => ToggleTable(goal.GoalId)">
-                    @goal.Name
-                </button>
-
-                @if (expandedGoalId == goal.GoalId)
-                {
-                    <div class="dropdown-table">
-                        <table class="table">
-                            <thead>
+                <div class="dropdown-table">
+                    <table class="table">
+                        <thead>
                             <tr>
                                 <th>Opgave</th>
                                 <th>Dato</th>
                                 <th>Ansvarlig</th>
                                 <th>Bør Gennemføres i Perioden</th>
                                 <th>Gennemført Status</th>
-                                <th>Noter</th>
-                                <th>Status</th>
+                                <th>Kommentar</th>
                             </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var subgoal in goal.Subgoals)
+                        </thead>
+                        <tbody>
+                        @foreach (var subgoal in goal.Subgoals)
+                        {
+                            <tr>
+                                <td>@subgoal.Name</td> <!-- Her fjernes knappen -->
+                                <td>@subgoal.Date.ToShortDateString()</td>
+                                <td>@subgoal.Responsible</td>
+                                <td>Inden d. @subgoal.Deadline</td>
+                                <td>
+                                    <select @bind="subgoal.Status" class="form-control select-status @GetStatusClass(subgoal.Status)">
+                                        <option value="Mangler">Mangler</option>
+                                        <option value="Igang">Igang</option>
+                                        <option value="Gennemført">Gennemført</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button class="notes-btn" @onclick="() => OpenCommentModal(subgoal)">
+                                        <span class="notes-icon">📝</span>
+                                        <span class="notes-count">@GetCommentCount(subgoal)</span>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            @if (expandedSubgoalId == subgoal.SubgoalID)
                             {
-                                <tr>
-                                    <td>@subgoal.Name</td>
-                                    <td>@subgoal.Date.ToShortDateString()</td>
-                                    <td>@subgoal.Responsible</td>
-                                    <td>Inden d. @subgoal.Deadline</td>
-                                    <td>
-                                        <select @bind="subgoal.Status" class="form-control select-status @GetStatusClass(subgoal.Status)">
-                                            <option value="Mangler">Mangler</option>
-                                            <option value="Igang">Igang</option>
-                                            <option value="Gennemført">Gennemført</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <InputText @bind-Value="subgoal.Comments" />
+                                <tr class="dropdown-table">
+                                    <td colspan="6">
+                                        <!-- Ekstra detaljer for subgoal -->
+                                        <p><strong>Detaljer for opgave:</strong> @subgoal.Name</p>
+                                        <!-- Du kan tilføje mere info her -->
                                     </td>
                                 </tr>
                             }
-                            </tbody>
-                        </table>
-                    </div>
-                }
+                        }
+                        </tbody>
+                    </table>
+                </div>
             }
-        </div>
+        }
+    </div>
 }
+
+<!-- Kommentar Modal Component -->
+<CommentModal 
+    IsVisible="showCommentModal"
+    Subgoal="selectedSubgoal"
+    Comments="GetComments(selectedSubgoal)"
+    CurrentUser="currentUser"
+    OnClose="CloseCommentModal"
+    OnSaveComment="SaveComment" />
 
 @code {
     [Parameter]
@@ -83,12 +107,14 @@ else
 
     private User? users;
     private User? currentUser;
-
     private Goal[]? goals;
+    private Dictionary<string, List<Comment>> allComments = new Dictionary<string, List<Comment>>();
     
-    // Tilstand for dropdown-tabellen
     private int? expandedGoalId;
+    private int? expandedSubgoalId;
     
+    private bool showCommentModal = false;
+    private Subgoal? selectedSubgoal;
     
     protected override async Task OnInitializedAsync()
     {
@@ -108,35 +134,99 @@ else
 
         users = await mService.GetUserById(userId);
         goals = users?.Studentplan?.Goal?.ToArray();
-    }
-    
-    private async Task DeleteById(User user)
-    {
-        await mService.DeleteById(user.UserId);
-        nav.NavigateTo("/AllStudentsPage");
+        
+        await LoadCommentsFromLocalStorage();
     }
     
     private void ToggleTable(int goalId)
     {
         if (expandedGoalId == goalId)
-            expandedGoalId = null; 
-        else
-            expandedGoalId = goalId; 
-    }
-    
-    //Koden til dropdown menu
-    private string task1Status = "Mangler"; // Default status for task 1
-    private string task2Status = "Mangler"; // Default status for task 2
-    
-    private string GetStatusClass(string status)
-    {
-        return status switch
         {
-            "Mangler" => "status-Mangler",
-            "Igang" => "status-Igang",
-            "Gennemført" => "status-Gennemført",
-            _ => ""
-        };
+            expandedGoalId = null;
+            expandedSubgoalId = null;
+        }
+        else
+        {
+            expandedGoalId = goalId;
+            expandedSubgoalId = null;
+        }
     }
     
+    private void OpenCommentModal(Subgoal subgoal)
+    {
+        selectedSubgoal = subgoal;
+        showCommentModal = true;
+    }
+    
+    private void CloseCommentModal()
+    {
+        showCommentModal = false;
+        selectedSubgoal = null;
+    }
+    
+    private async Task SaveComment(Comment comment)
+    {
+        if (selectedSubgoal == null)
+            return;
+
+        var key = GetSubgoalKey(selectedSubgoal);
+        
+        if (!allComments.ContainsKey(key))
+            allComments[key] = new List<Comment>();
+            
+        allComments[key].Add(comment);
+
+        await SaveCommentsToLocalStorage();
+        
+        StateHasChanged();
+    }
+    
+    private string GetSubgoalKey(Subgoal subgoal) => $"user_{userId}_subgoal_{subgoal.SubgoalID}";
+    
+    private List<Comment> GetComments(Subgoal? subgoal)
+    {
+        if (subgoal == null) return new List<Comment>();
+        
+        var key = GetSubgoalKey(subgoal);
+        return allComments.ContainsKey(key) ? allComments[key] : new List<Comment>();
+    }
+    
+    private int GetCommentCount(Subgoal subgoal) => GetComments(subgoal).Count;
+    
+    private async Task LoadCommentsFromLocalStorage()
+    {
+        try
+        {
+            var json = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "studentplanComments");
+            if (!string.IsNullOrEmpty(json))
+            {
+                allComments = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, List<Comment>>>(json) ?? new Dictionary<string, List<Comment>>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading comments: {ex.Message}");
+        }
+    }
+    
+    private async Task SaveCommentsToLocalStorage()
+    {
+        try
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(allComments);
+            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "studentplanComments", json);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving comments: {ex.Message}");
+        }
+    }
+    
+    private string GetStatusClass(string status) => status switch
+    {
+        "Mangler" => "status-Mangler",
+        "Igang" => "status-Igang",
+        "Gennemført" => "status-Gennemført",
+        _ => ""
+    };
 }

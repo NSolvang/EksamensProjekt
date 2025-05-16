@@ -1,0 +1,231 @@
+/* Modal styles */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+}
+
+.modal-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    max-width: 90%;
+    max-height: 90vh;
+    z-index: 1050;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #fefaf0, #ffffff);
+    border-radius: 18px 18px 0 0;
+}
+
+.modal-title {
+    color: #d4af37;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: #6c757d;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 0;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close-btn:hover {
+    color: #d4af37;
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-footer {
+    padding: 1.5rem;
+    border-top: 2px solid rgba(212, 175, 55, 0.2);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    background: linear-gradient(135deg, #ffffff, #fefaf0);
+    border-radius: 0 0 18px 18px;
+}
+
+/* Comment section styles */
+.comments-section {
+    max-height: 350px;
+    overflow-y: auto;
+    margin-bottom: 1.5rem;
+    padding-right: 0.5rem;
+}
+
+.comment-item {
+    padding: 1rem;
+    margin-bottom: 0.8rem;
+    background: #fefaf0;
+    border-radius: 10px;
+    border-left: 4px solid #d4af37;
+    transition: all 0.3s ease;
+}
+
+.comment-item:hover {
+    background: rgba(212, 175, 55, 0.05);
+    transform: translateX(3px);
+}
+
+/* Role-specific styling */
+.comment-role-student {
+    border-left-color: #27ae60;
+}
+
+.comment-role-chef {
+    border-left-color: #3498db;
+}
+
+.comment-role-head-chef {
+    border-left-color: #d4af37;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.7rem;
+    font-size: 0.9rem;
+}
+
+.comment-user-info {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.comment-role {
+    color: #6c757d;
+    font-style: italic;
+    font-size: 0.85rem;
+    padding: 0.2rem 0.6rem;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 15px;
+}
+
+.comment-date {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.comment-text {
+    color: #2c3e50;
+    line-height: 1.6;
+}
+
+.no-comments {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 2rem;
+}
+
+.new-comment-section {
+    border-top: 2px solid rgba(212, 175, 55, 0.2);
+    padding-top: 1.5rem;
+}
+
+.new-comment-section h6 {
+    color: #d4af37;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+}
+
+.comment-textarea {
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-radius: 10px;
+    padding: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.comment-textarea:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+/* Button styles */
+.btn-primary, .btn-secondary {
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #d4af37, #c19b2e);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #c19b2e, #b08a27);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modal-dialog {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .modal-content {
+        border-radius: 15px;
+    }
+
+    .comments-section {
+        max-height: 250px;
+    }
+}

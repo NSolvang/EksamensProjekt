@@ -1,0 +1,111 @@
+@using Core
+@inject IJSRuntime JSRuntime
+
+@if (IsVisible)
+{
+    <div class="modal-backdrop" @onclick="CloseModal"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kommentar til @Subgoal?.Name</h5>
+                <button type="button" class="modal-close-btn" @onclick="CloseModal">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- Eksisterende kommentarer -->
+                <div class="comments-section">
+                    @if (Comments != null && Comments.Any())
+                    {
+                        @foreach (var comment in Comments)
+                        {
+                            <div class="comment-item @GetCommentRoleClass(comment.UserRole)">
+                                <div class="comment-header">
+                                    <div class="comment-user-info">
+                                        <strong>@comment.UserName</strong>
+                                        <span class="comment-role">@comment.UserRole</span>
+                                    </div>
+                                    <span class="comment-date">@comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                                <div class="comment-text">
+                                    @comment.Text
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="no-comments">Ingen kommentarer endnu</p>
+                    }
+                </div>
+
+                @if (CurrentUser != null && (CurrentUser.Role == "Elev" || CurrentUser.Role == "Kok" || CurrentUser.Role == "Køkkenchef"))
+                {
+                    <div class="new-comment-section">
+                        <h6>Tilføj kommentar</h6>
+                        <textarea @bind="newComment" class="form-control comment-textarea"
+                                  rows="3" placeholder="Skriv din kommentar her..."></textarea>
+                    </div>
+                }
+            </div>
+
+            @if (CurrentUser != null && (CurrentUser.Role == "Elev" || CurrentUser.Role == "Kok" || CurrentUser.Role == "Køkkenchef"))
+            {
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" @onclick="CloseModal">Luk</button>
+                    <button type="button" class="btn-primary" @onclick="HandleSaveComment">Gem kommentar</button>
+                </div>
+            }
+            else
+            {
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" @onclick="CloseModal">Luk</button>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public Subgoal? Subgoal { get; set; }
+    [Parameter] public List<Comment>? Comments { get; set; }
+    [Parameter] public User? CurrentUser { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<Comment> OnSaveComment { get; set; }
+
+    private string newComment = "";
+
+    private async Task CloseModal()
+    {
+        newComment = "";
+        await OnClose.InvokeAsync();
+    }
+
+    private async Task HandleSaveComment()
+    {
+        if (string.IsNullOrWhiteSpace(newComment) || CurrentUser == null)
+            return;
+
+        var comment = new Comment
+        {
+            Text = newComment,
+            UserName = CurrentUser.Name,
+            UserRole = CurrentUser.Role,
+            UserId = CurrentUser.UserId,
+            CreatedAt = DateTime.Now
+        };
+
+        await OnSaveComment.InvokeAsync(comment);
+        newComment = "";
+    }
+
+    private string GetCommentRoleClass(string role)
+    {
+        return role switch
+        {
+            "Elev" => "comment-role-student",
+            "Kok" => "comment-role-chef",
+            "Køkkenchef" => "comment-role-head-chef",
+            _ => ""
+        };
+    }
+}
