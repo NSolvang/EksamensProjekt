@@ -11,7 +11,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<IUser, ServiceMock>();
-builder.Services.AddScoped<IGoal, ServiceMock>();
 builder.Services.AddScoped<ILogin, LoginServiceClientSide>();
 builder.Services.AddScoped<AuthStateService>();
 

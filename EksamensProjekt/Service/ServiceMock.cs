@@ -4,7 +4,7 @@ using Core.Factory;
 
 namespace EksamensProjekt.Service;
 
-public class ServiceMock : IUser, IGoal
+public class ServiceMock : IUser
 {
     private readonly ILocalStorageService _localStorage;
     
@@ -44,17 +44,7 @@ public class ServiceMock : IUser, IGoal
         return users.ToArray();
     }
 
-    public async Task<Goal[]> GetAllGoals()
-    {
-        var storedGoals = await _localStorage.GetItemAsync<Goal[]>("goals");
-
-        if (storedGoals != null)
-        {
-            goals = storedGoals.ToList();
-        }
-        
-        return goals.ToArray();
-    }
+  
     
     private async Task LoadUsersAsync()
     {
@@ -98,5 +88,9 @@ public class ServiceMock : IUser, IGoal
         users.RemoveAll(user => user.UserId == id);
         await _localStorage.SetItemAsync("users", users);
     }
-    
+
+    public Task UpdateUser(User user)
+    {
+        throw new NotImplementedException();
+    }
 }
