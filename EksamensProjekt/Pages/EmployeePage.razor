@@ -13,21 +13,16 @@
             <img src=@user.ProfilePicture alt="">
             <h2>@user.Name</h2>
             <span>Rolle: @user.Role </span>
-            <span>Lokation: @user.Location</span>
-        </div>
-        <div class="employee-progress">
-            <div class="employee-progress-bar">
-            </div>
+            <span>Lokation: @user.Location?.Name</span>
         </div>
     </div>
 }
-
 
 @code {
     private User? currentUser;
 
     private User[]? users = new User[0];
-    
+
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
@@ -41,8 +36,8 @@
 
         await LoadAll();
     }
-    
-    
+
+
     private async Task LoadAll()
     {
         users = await mService.GetAll();

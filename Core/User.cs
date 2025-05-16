@@ -21,8 +21,6 @@ public class User
     
     [Required(ErrorMessage = "Lokation er påkrævet")]
     public Location? Location { get; set; }
-    
-    [Required(ErrorMessage = "Uddannelse er påkrævet")]
     public string Education { get; set; }
     
     [Required(ErrorMessage = "Navn er påkrævet")]
