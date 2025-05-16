@@ -5,8 +5,7 @@
 @inject ILogin LoginService
 @inject NavigationManager nav
 @inject IUser mService
-
-
+@inject IJSRuntime JSRuntime
 <h3>Elevplan</h3>
 
 @if (users == null)
@@ -20,7 +19,7 @@ else if (users.Studentplan == null)
 else
 {
     <StudentplanHeaderComponent user="users" CurrentUser="currentUser" />
-    
+
     <div class="internship-section">
         <div class="internship-period-buttons">
             <button>Praktikperiode 1</button>
@@ -29,7 +28,7 @@ else
             <button>Afslutning</button>
         </div>
     </div>
-    
+
     <div class="Student-plan-container">
         @foreach (var goal in goals)
         {
@@ -41,14 +40,14 @@ else
                 <div class="dropdown-table">
                     <table class="table">
                         <thead>
-                            <tr>
-                                <th>Opgave</th>
-                                <th>Dato</th>
-                                <th>Ansvarlig</th>
-                                <th>Bør Gennemføres i Perioden</th>
-                                <th>Gennemført Status</th>
-                                <th>Kommentar</th>
-                            </tr>
+                        <tr>
+                            <th>Opgave</th>
+                            <th>Dato</th>
+                            <th>Ansvarlig</th>
+                            <th>Bør Gennemføres i Perioden</th>
+                            <th>Gennemført Status</th>
+                            <th>Kommentar</th>
+                        </tr>
                         </thead>
                         <tbody>
                         @foreach (var subgoal in goal.Subgoals)
@@ -93,7 +92,7 @@ else
 }
 
 <!-- Kommentar Modal Component -->
-<CommentModal 
+<CommentModal
     IsVisible="showCommentModal"
     Subgoal="selectedSubgoal"
     Comments="GetComments(selectedSubgoal)"
@@ -109,13 +108,13 @@ else
     private User? currentUser;
     private Goal[]? goals;
     private Dictionary<string, List<Comment>> allComments = new Dictionary<string, List<Comment>>();
-    
+
     private int? expandedGoalId;
     private int? expandedSubgoalId;
-    
+
     private bool showCommentModal = false;
     private Subgoal? selectedSubgoal;
-    
+
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
@@ -134,10 +133,10 @@ else
 
         users = await mService.GetUserById(userId);
         goals = users?.Studentplan?.Goal?.ToArray();
-        
+
         await LoadCommentsFromLocalStorage();
     }
-    
+
     private void ToggleTable(int goalId)
     {
         if (expandedGoalId == goalId)
@@ -151,48 +150,48 @@ else
             expandedSubgoalId = null;
         }
     }
-    
+
     private void OpenCommentModal(Subgoal subgoal)
     {
         selectedSubgoal = subgoal;
         showCommentModal = true;
     }
-    
+
     private void CloseCommentModal()
     {
         showCommentModal = false;
         selectedSubgoal = null;
     }
-    
+
     private async Task SaveComment(Comment comment)
     {
         if (selectedSubgoal == null)
             return;
 
         var key = GetSubgoalKey(selectedSubgoal);
-        
+
         if (!allComments.ContainsKey(key))
             allComments[key] = new List<Comment>();
-            
+
         allComments[key].Add(comment);
 
         await SaveCommentsToLocalStorage();
-        
+
         StateHasChanged();
     }
-    
+
     private string GetSubgoalKey(Subgoal subgoal) => $"user_{userId}_subgoal_{subgoal.SubgoalID}";
-    
+
     private List<Comment> GetComments(Subgoal? subgoal)
     {
         if (subgoal == null) return new List<Comment>();
-        
+
         var key = GetSubgoalKey(subgoal);
         return allComments.ContainsKey(key) ? allComments[key] : new List<Comment>();
     }
-    
+
     private int GetCommentCount(Subgoal subgoal) => GetComments(subgoal).Count;
-    
+
     private async Task LoadCommentsFromLocalStorage()
     {
         try
@@ -208,7 +207,7 @@ else
             Console.WriteLine($"Error loading comments: {ex.Message}");
         }
     }
-    
+
     private async Task SaveCommentsToLocalStorage()
     {
         try
@@ -221,7 +220,7 @@ else
             Console.WriteLine($"Error saving comments: {ex.Message}");
         }
     }
-    
+
     private string GetStatusClass(string status) => status switch
     {
         "Mangler" => "status-Mangler",
