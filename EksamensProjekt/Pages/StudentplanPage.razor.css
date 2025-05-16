@@ -7,6 +7,7 @@ h3 {
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    animation: fadeInDown 0.8s ease-out both;
 }
 
 /* Main container */
@@ -19,6 +20,24 @@ h3 {
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     border: 2px solid rgba(212, 175, 55, 0.3);
+    animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+/* Profile header section */
+.profile-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(to right, #ffffff, #fefaf0);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border: 2px solid rgba(212, 175, 55, 0.2);
+    position: relative;
+    overflow: hidden;
+    animation: slideInFromLeft 0.7s ease-out 0.2s both;
 }
 
 .profile-header::before {
@@ -29,12 +48,86 @@ h3 {
     width: 5px;
     height: 100%;
     background: linear-gradient(to bottom, #d4af37, #f5d78e);
+    animation: expandHeight 0.8s ease-out 0.4s both;
+}
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #d4af37;
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: pulse 2s infinite 1s, fadeIn 0.8s ease-out 0.4s both;
+}
+
+.profile-image:hover {
+    transform: scale(1.05) rotate(5deg);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+    animation: none;
+}
+
+.profile-info {
+    flex: 1;
+    min-width: 250px;
+    animation: fadeIn 0.8s ease-out 0.6s both;
+}
+
+.profile-info h3 {
+    text-align: left;
+    color: #2c3e50;
+    font-size: 1.7rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+    letter-spacing: normal;
+    text-transform: none;
+    animation: none;
+}
+
+.role {
+    display: inline-block;
+    background: linear-gradient(135deg, #d4af37, #f5d78e);
+    color: white;
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(212, 175, 55, 0.3);
+    animation: bounceIn 0.8s ease-out 0.8s both;
 }
 
 .profile-actions {
     display: flex;
     gap: 0.8rem;
     margin-top: 1.5rem;
+    animation: fadeInUp 0.8s ease-out 1s both;
+}
+
+/* Button styling */
+.btn-primary {
+    background: linear-gradient(135deg, #d4af37, #c19b2e);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.4rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(212, 175, 55, 0.3);
+    min-width: 120px;
+    text-align: center;
+    font-size: 0.95rem;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 12px rgba(212, 175, 55, 0.4);
+    background: linear-gradient(135deg, #c19b2e, #d4af37);
+    animation: pulse-gold 1.5s infinite;
 }
 
 /* Internship period buttons */
@@ -42,6 +135,7 @@ h3 {
     margin: 2rem 0;
     text-align: center;
     align-items: center;
+    animation: fadeIn 0.8s ease-out 1.2s both;
 }
 
 .internship-period-buttons {
@@ -66,7 +160,13 @@ h3 {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
     position: relative;
     overflow: hidden;
+    animation: fadeInUp 0.6s ease-out both;
 }
+
+.internship-period-buttons button:nth-child(1) { animation-delay: 1.3s; }
+.internship-period-buttons button:nth-child(2) { animation-delay: 1.4s; }
+.internship-period-buttons button:nth-child(3) { animation-delay: 1.5s; }
+.internship-period-buttons button:nth-child(4) { animation-delay: 1.6s; }
 
 .internship-period-buttons button::before {
     content: '';
@@ -83,6 +183,7 @@ h3 {
     background: linear-gradient(135deg, #ffffff, #fefaf0);
     box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
     color: #d4af37;
+    transform: translateY(-2px);
 }
 
 .internship-period-buttons button:hover::before {
@@ -90,12 +191,21 @@ h3 {
 }
 
 /* Student plan container */
-.Student-plan-container {
+.Student-plan-container,
+.Student-plan-container-2,
+.Student-plan-container-3,
+.Student-plan-container-4 {
     margin: 2rem 0;
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
+    animation: fadeIn 0.8s ease-out both;
 }
+
+.Student-plan-container { animation-delay: 1.7s; }
+.Student-plan-container-2 { animation-delay: 1.8s; }
+.Student-plan-container-3 { animation-delay: 1.9s; }
+.Student-plan-container-4 { animation-delay: 2.0s; }
 
 .plan-section-title {
     color: #2c3e50;
@@ -103,10 +213,14 @@ h3 {
     margin-bottom: 1rem;
     padding-bottom: 0.4rem;
     border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+    animation: slideInFromLeft 0.6s ease-out both;
 }
 
 /* Goal toggle buttons with plus */
-.Student-plan-container button.goal-toggle-btn {
+.Student-plan-container button.goal-toggle-btn,
+.Student-plan-container-2 button.goal-toggle-btn,
+.Student-plan-container-3 button.goal-toggle-btn,
+.Student-plan-container-4 button.goal-toggle-btn {
     background: white;
     border: 2px solid #d4af37;
     padding: 0.8rem 1.2rem;
@@ -118,14 +232,20 @@ h3 {
     position: relative;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     font-size: 0.95rem;
-    padding-right: 2rem; /* plads til plus */
+    padding-right: 2rem;
     color: #2c3e50;
+    animation: fadeIn 0.6s ease-out both;
 }
+
+.Student-plan-container button.goal-toggle-btn:nth-child(2) { animation-delay: 1.8s; }
+.Student-plan-container button.goal-toggle-btn:nth-child(3) { animation-delay: 1.9s; }
+.Student-plan-container button.goal-toggle-btn:nth-child(4) { animation-delay: 2.0s; }
 
 .Student-plan-container button.goal-toggle-btn:hover {
     background: #f8f9fa;
     border-color: #d4af37;
     color: #d4af37;
+    transform: translateX(5px);
 }
 
 .Student-plan-container button.goal-toggle-btn::after {
@@ -150,7 +270,9 @@ h3 {
     background: #fefaf0;
     border-radius: 10px;
     border: 2px solid rgba(212, 175, 55, 0.2);
-    animation: fadeIn 0.4s ease-out;
+    animation: flipIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    transform-origin: top center;
+    backface-visibility: visible;
 }
 
 .table {
@@ -161,6 +283,7 @@ h3 {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.4s ease-out;
 }
 
 .table th {
@@ -175,14 +298,16 @@ h3 {
     padding: 0.9rem;
     border-bottom: 1px solid rgba(212, 175, 55, 0.1);
     vertical-align: middle;
+    transition: all 0.3s ease;
 }
 
 .table tr:last-child td {
     border-bottom: none;
 }
 
-.table tr:hover {
+.table tr:hover td {
     background: rgba(212, 175, 55, 0.03);
+    transform: translateX(5px);
 }
 
 .form-control {
@@ -198,66 +323,7 @@ h3 {
     border-color: #d4af37;
     outline: none;
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-}
-
-@keyframes flipIn {
-    0% {
-        opacity: 0;
-        transform: perspective(1000px) rotateX(90deg);
-    }
-    50% {
-        opacity: 0.5;
-        transform: perspective(1000px) rotateX(-20deg);
-    }
-    100% {
-        opacity: 1;
-        transform: perspective(1000px) rotateX(0);
-    }
-}
-
-.dropdown-table {
-    animation: flipIn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-    transform-origin: top center;
-    backface-visibility: visible;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .profile-container {
-        padding: 1.2rem;
-    }
-
-    .profile-header {
-        flex-direction: column;
-        text-align: center;
-        padding: 1.5rem 1.2rem;
-        gap: 1.2rem;
-    }
-
-    .profile-info {
-        text-align: center;
-    }
-
-    .profile-actions {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .btn-primary {
-        width: 100%;
-    }
-
-    .internship-period-buttons {
-        gap: 0.8rem;
-    }
-
-    .internship-period-buttons button {
-        min-width: 100%;
-    }
-
-    .plan-button {
-        padding: 0.8rem 1.2rem;
-    }
+    animation: inputPulse 1.5s infinite;
 }
 
 /* Notes button in table */
@@ -277,6 +343,7 @@ h3 {
 .notes-btn:hover {
     background: linear-gradient(135deg, #ffffff, #fefaf0);
     box-shadow: 0 3px 8px rgba(212, 175, 55, 0.2);
+    transform: translateY(-2px);
 }
 
 .notes-icon {
@@ -300,6 +367,13 @@ h3 {
     border-radius: 6px;
     border: 1px solid rgba(212, 175, 55, 0.3);
     width: 100%;
+    transition: all 0.3s ease;
+}
+
+.select-status:focus {
+    border-color: #d4af37;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
 /* Styling for the select dropdown */
@@ -310,16 +384,174 @@ h3 {
 
 /* Styling for specific status colors */
 .status-Mangler {
-    color: #c0392b; /* red */
-    background-color: #fceae9; /* light red */
+    color: #c0392b;
+    background-color: #fceae9;
 }
 
 .status-Igang {
-    color: #f39c12; /* yellow */
-    background-color: #fff9e6; /* light yellow */
+    color: #f39c12;
+    background-color: #fff9e6;
 }
 
 .status-Gennemført {
-    color: #27ae60; /* green */
-    background-color: #e9f9ee; /* light green */
+    color: #27ae60;
+    background-color: #e9f9ee;
+}
+
+/* Animation Keyframes */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes expandHeight {
+    from { height: 0; }
+    to { height: 100%; }
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
+@keyframes pulse-gold {
+    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes flipIn {
+    0% {
+        opacity: 0;
+        transform: perspective(1000px) rotateX(90deg);
+    }
+    50% {
+        opacity: 0.5;
+        transform: perspective(1000px) rotateX(-20deg);
+    }
+    100% {
+        opacity: 1;
+        transform: perspective(1000px) rotateX(0);
+    }
+}
+
+@keyframes inputPulse {
+    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.1); }
+    70% { box-shadow: 0 0 0 8px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 1.2rem;
+        animation: none;
+    }
+
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem 1.2rem;
+        gap: 1.2rem;
+        animation: none;
+    }
+
+    .profile-info {
+        text-align: center;
+        animation: none;
+    }
+
+    .profile-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+        animation: none;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+
+    .internship-period-buttons {
+        gap: 0.8rem;
+    }
+
+    .internship-period-buttons button {
+        min-width: 100%;
+        animation: none !important;
+    }
+
+    .plan-button {
+        padding: 0.8rem 1.2rem;
+    }
+
+    /* Disable animations on mobile for performance */
+    .profile-image,
+    .role,
+    .Student-plan-container,
+    .dropdown-table,
+    .table {
+        animation: none !important;
+    }
 }
