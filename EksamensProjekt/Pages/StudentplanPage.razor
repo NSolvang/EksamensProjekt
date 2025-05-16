@@ -1,9 +1,11 @@
 @page "/StudentplanPage/{userId:int}"
 @using Core
 @using EksamensProjekt.Service
+@using EksamensProjekt.Components
 @inject ILogin LoginService
 @inject NavigationManager nav
 @inject IUser mService
+@inject IGoal mServiceGoal
 
 <h3>Elevplan</h3>
 
@@ -17,20 +19,7 @@ else if (users.Studentplan == null)
 }
 else
 {
-    <div class="profile-container">
-        <div class="profile-header">
-            <img src="@users.ProfilePicture" class="profile-image" />
-            <div class="profile-info">
-                <h3>@users.Name's Profil</h3>
-                <h4 class="role">@users.Role</h4>
-                <h4>@users.DateOfStart.Year</h4>
-            </div>
-            
-            @if (currentUser?.Role == "Admin")
-            {
-                <td><button class="btn-primary" @onclick="() => DeleteById(users)">Fjern bruger</button></td>
-            }
-        </div>
+        <StudentplanHeaderComponent user="users" CurrentUser="currentUser" />
         
         <div class="internship-period-buttons">
             <button>Praktikperiode 1</button>
@@ -40,67 +29,53 @@ else
         </div>
         
         <div class="Student-plan-container">
-            <button @onclick='() => ToggleTable("beforeFirstDay")'>Inden Første Dag</button>
-
-            @if (showBeforeFirstDayTable)
+            @foreach (var goal in goals)
             {
-                <div class="dropdown-table">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Opgave</th>
-                            <th>Dato</th>
-                            <th>Ansvarlig</th>
-                            <th>Bør Gennemføres i Perioden</th>
-                            <th>Gennemført Status</th>
-                            <th>Noter</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>Bestil uniform</td>
-                            <td>@contractDate.ToShortDateString()</td>
-                            <td>Elevansvarlig</td>
-                            <td>Inden første arbejdsdag</td>
-                            <td>
-                                <select @bind="task1Status" class="form-control select-status @GetStatusClass(task1Status)">
-                                    <option value="Mangler">Mangler</option>
-                                    <option value="Igang">Igang</option>
-                                    <option value="Gennemført">Gennemført</option>
-                                </select>
-                            </td>
-                            <td><input type="text" @bind="contractNotes" class="form-control" /></td>
-                        </tr>
-                        <tr>
-                            <td>Informer om forplejning</td>
-                            <td>@contractDate.ToShortDateString()</td>
-                            <td>Elevansvarlig / Nærmeste leder</td>
-                            <td>Inden første arbejdsdag</td>
-                            <td>
-                                <select @bind="task2Status" class="form-control select-status @GetStatusClass(task2Status)">
-                                    <option value="Mangler">Mangler</option>
-                                    <option value="Igang">Igang</option>
-                                    <option value="Gennemført">Gennemført</option>
-                                </select>
-                            </td>
-                            <td><input type="text" @bind="contractNotes" class="form-control" /></td>
-                        </tr>
-                        <!-- Flere rækker efter behov -->
-                        </tbody>
-                    </table>
-                </div>
+                <button @onclick="() => ToggleTable(goal.GoalId)">
+                    @goal.Name
+                </button>
+
+                @if (expandedGoalId == goal.GoalId)
+                {
+                    <div class="dropdown-table">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Opgave</th>
+                                <th>Dato</th>
+                                <th>Ansvarlig</th>
+                                <th>Bør Gennemføres i Perioden</th>
+                                <th>Gennemført Status</th>
+                                <th>Noter</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var subgoal in goal.Subgoals)
+                            {
+                                <tr>
+                                    <td>@subgoal.Name</td>
+                                    <td>@subgoal.Date.ToShortDateString()</td>
+                                    <td>@subgoal.Responsible</td>
+                                    <td>Inden d. @subgoal.Deadline</td>
+                                    <td>
+                                        <select @bind="subgoal.Status" class="form-control select-status @GetStatusClass(subgoal.Status)">
+                                            <option value="Mangler">Mangler</option>
+                                            <option value="Igang">Igang</option>
+                                            <option value="Gennemført">Gennemført</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <InputText @bind-Value="subgoal.Comments" />
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                }
             }
-            
-            <button>Velkommen til & Introduktion Til Kollegaer</button>
-            <button>Information - Generel Fra Din Nærmeste Leder</button>
-            <button>Sikkerhed & Arbejdsmiljø</button>
-            <button>Samtaler Undervejs i Min Første Praktikperiode</button>
-            <button>Kurser - Interne mv</button>
-            <button>Madspild & Affaldssortering</button>
-            <button>Faglige mål</button>
-            <button>Evaluering</button>
         </div>
-    </div>
 }
 
 @code {
@@ -109,20 +84,13 @@ else
 
     private User? users;
     private User? currentUser;
+
+    private Goal[]? goals;
     
     // Tilstand for dropdown-tabellen
-    private bool showBeforeFirstDayTable = false;
+    private int? expandedGoalId;
     
-    // Eksempel på datafelter
-    private bool isContractSigned = false;
-    private DateTime contractDate = DateTime.Now;
-    private string contractNotes = "";
     
-    private bool isWelcomePackReceived = false;
-    private DateTime welcomePackDate = DateTime.Now;
-    private string welcomePackNotes = "";
-
-
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
@@ -140,6 +108,7 @@ else
         }
 
         users = await mService.GetUserById(userId);
+        goals = users?.Studentplan?.Goal?.ToArray();
     }
     
     private async Task DeleteById(User user)
@@ -148,14 +117,14 @@ else
         nav.NavigateTo("/AllStudentsPage");
     }
     
-    private void ToggleTable(string tableName)
+    private void ToggleTable(int goalId)
     {
-        if (tableName == "beforeFirstDay")
-        {
-            showBeforeFirstDayTable = !showBeforeFirstDayTable;
-        }
-        // Tilføj flere conditions for andre tabeller hvis nødvendigt
+        if (expandedGoalId == goalId)
+            expandedGoalId = null; 
+        else
+            expandedGoalId = goalId; 
     }
+    
     //Koden til dropdown menu
     private string task1Status = "Mangler"; // Default status for task 1
     private string task2Status = "Mangler"; // Default status for task 2
@@ -170,6 +139,5 @@ else
             _ => ""
         };
     }
-
-
+    
 }

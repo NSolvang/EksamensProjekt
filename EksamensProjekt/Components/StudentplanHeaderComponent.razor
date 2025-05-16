@@ -1,0 +1,29 @@
+@using Core
+@using EksamensProjekt.Service
+@inject NavigationManager nav
+@inject IUser mService
+
+<div class="profile-header">
+    <img src="@user.ProfilePicture" class="profile-image" />
+    <div class="profile-info">
+        <h3>@user.Name's Profil</h3>
+        <h4 class="role">@user.Role</h4>
+        <h4>@user.DateOfStart.Year</h4>
+    </div>
+
+    @if (CurrentUser.Role == "Admin")
+    {
+        <button class="btn-primary" @onclick="() => DeleteById(user)">Fjern bruger</button>
+    }
+</div>
+
+@code {
+    [Parameter] public User user { get; set; } = default!;
+    [Parameter] public User CurrentUser { get; set; } = default!;
+
+    private async Task DeleteById(User user)
+    {
+        await mService.DeleteById(user.UserId);
+        nav.NavigateTo("/AllStudentsPage");
+    }
+}

@@ -1,13 +1,37 @@
 using Core;
 using Blazored.LocalStorage;
+using Core.Factory;
 
 namespace EksamensProjekt.Service;
 
-public class ServiceMock : IUser
+public class ServiceMock : IUser, IGoal
 {
     private readonly ILocalStorageService _localStorage;
     
     private List<User> users = new();
+    private List<Goal> goals = new();
+    
+    public ServiceMock(ILocalStorageService localStorage)
+    {
+        _localStorage = localStorage;
+
+        if (!users.Any(u => u.Role == "Admin"))
+        {
+            users.Add(new User
+            {
+                UserId = 1,
+                UserName = "admin",
+                Password = "admin123",
+                Role = "Admin",
+                Name = "Admin Test",
+                Location = new Location { Name = "Aarhus" },
+                ProfilePicture =
+                    "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
+            });
+        }
+        
+    }
+    
     public async Task<User[]> GetAll()
     {
         var storedUsers = await _localStorage.GetItemAsync<User[]>("users");
@@ -19,26 +43,19 @@ public class ServiceMock : IUser
 
         return users.ToArray();
     }
-    
-    public ServiceMock(ILocalStorageService localStorage)
-    {
-        _localStorage = localStorage;
 
-        if (!users.Any(u => u.Role == "Admin"))
+    public async Task<Goal[]> GetAllGoals()
+    {
+        var storedGoals = await _localStorage.GetItemAsync<Goal[]>("goals");
+
+        if (storedGoals != null)
         {
-            users.Add(new User 
-            {
-                UserId = 1,
-                UserName = "admin",
-                Password = "admin123",
-                Role = "Admin",
-                Name = "Admin Test",
-                Location = new Location{Name = "Aarhus"},
-                ProfilePicture =
-                    "https://static.independent.co.uk/2024/05/24/13/Gordon.jpg?width=1200&height=1200&fit=crop"
-            });
+            goals = storedGoals.ToList();
         }
+        
+        return goals.ToArray();
     }
+    
     
     public Task<User> GetUserById(int id)
     {
@@ -55,15 +72,15 @@ public class ServiceMock : IUser
 
         if (user.Role == "Elev")
         {
-            user.Studentplan = new Studentplan()
-            {
-                StudentplanID = user.UserId,
-                Name = $"{user.Name}s plan",
-                Description = "Standard elevplan",
-            };
+            var plan = StudentplanFactory.CreateDefaultStudentplan();
+            plan.StudentplanID = user.UserId;
+
+            user.Studentplan = plan;
         }
+
         await _localStorage.SetItemAsync("users", users);
     }
+
 
     public async Task DeleteById(int id)
     {

@@ -15,7 +15,7 @@ public class Subgoal
     
     public string Status { get; set; }
     
-    public List<Comment> Comments { get; set; }
+    public string Comments { get; set; }
     
     public bool Approval { get; set; }
     

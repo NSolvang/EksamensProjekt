@@ -21,22 +21,6 @@ h3 {
     border: 2px solid rgba(212, 175, 55, 0.3);
 }
 
-/* Profile header section */
-.profile-header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 2rem;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    background: linear-gradient(to right, #ffffff, #fefaf0);
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    border: 2px solid rgba(212, 175, 55, 0.2);
-    position: relative;
-    overflow: hidden;
-}
-
 .profile-header::before {
     content: '';
     position: absolute;
@@ -47,73 +31,10 @@ h3 {
     background: linear-gradient(to bottom, #d4af37, #f5d78e);
 }
 
-.profile-image {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #d4af37;
-    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
-    transition: transform 0.3s ease;
-}
-
-.profile-image:hover {
-    transform: scale(1.05);
-}
-
-.profile-info {
-    flex: 1;
-    min-width: 250px;
-}
-
-.profile-info h3 {
-    text-align: left;
-    color: #2c3e50;
-    font-size: 1.7rem;
-    margin: 0 0 0.5rem 0;
-    font-weight: 700;
-    letter-spacing: normal;
-    text-transform: none;
-}
-
-.role {
-    display: inline-block;
-    background: linear-gradient(135deg, #d4af37, #f5d78e);
-    color: white;
-    padding: 0.4rem 1.2rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    margin: 0 0 1rem 0;
-    font-weight: 600;
-    box-shadow: 0 2px 5px rgba(212, 175, 55, 0.3);
-}
-
 .profile-actions {
     display: flex;
     gap: 0.8rem;
     margin-top: 1.5rem;
-}
-
-/* Button styling */
-.btn-primary {
-    background: linear-gradient(135deg, #d4af37, #c19b2e);
-    color: white;
-    border: none;
-    padding: 0.6rem 1.4rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(212, 175, 55, 0.3);
-    min-width: 120px;
-    text-align: center;
-    font-size: 0.95rem;
-}
-
-.btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(212, 175, 55, 0.4);
-    background: linear-gradient(135deg, #c19b2e, #d4af37);
 }
 
 /* Internship period buttons */
