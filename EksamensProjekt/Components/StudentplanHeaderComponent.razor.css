@@ -1,3 +1,4 @@
+
 /* Profile header section */
 .profile-header {
     display: flex;
@@ -12,11 +13,24 @@
     border: 2px solid rgba(212, 175, 55, 0.2);
     position: relative;
     overflow: hidden;
+    animation: slideInFromLeft 0.7s ease-out 0.2s both;
+}
+
+.profile-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(to bottom, #d4af37, #f5d78e);
+    animation: expandHeight 0.8s ease-out 0.4s both;
 }
 
 .profile-info {
     flex: 1;
     min-width: 250px;
+    animation: fadeIn 0.8s ease-out 0.6s both;
 }
 
 .profile-info h3 {
@@ -39,6 +53,7 @@
     margin: 0 0 1rem 0;
     font-weight: 600;
     box-shadow: 0 2px 5px rgba(212, 175, 55, 0.3);
+    animation: bounceIn 0.8s ease-out 0.8s both;
 }
 
 .profile-image {
@@ -48,11 +63,21 @@
     object-fit: cover;
     border: 4px solid #d4af37;
     box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: pulse 2s infinite 1s, fadeIn 0.8s ease-out 0.4s both;
 }
 
 .profile-image:hover {
-    transform: scale(1.05);
+    transform: scale(1.05) rotate(5deg);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+    animation: none;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    animation: fadeInUp 0.8s ease-out 1s both;
 }
 
 .btn-primary {
@@ -68,10 +93,129 @@
     min-width: 120px;
     text-align: center;
     font-size: 0.95rem;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .btn-primary:hover {
-    transform: translateY(-3px);
+    transform: translateY(-3px) scale(1.05);
     box-shadow: 0 6px 12px rgba(212, 175, 55, 0.4);
     background: linear-gradient(135deg, #c19b2e, #d4af37);
+    animation: pulse-gold 1.5s infinite;
+}
+
+/* Animation Keyframes */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes expandHeight {
+    from { height: 0; }
+    to { height: 100%; }
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
+@keyframes pulse-gold {
+    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Responsive design for the profile header */
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem 1.2rem;
+        gap: 1.2rem;
+        animation: none;
+    }
+
+    .profile-info {
+        text-align: center;
+        animation: none;
+    }
+
+    .profile-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+        animation: none;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+
+    /* Disable animations on mobile for performance */
+    .profile-image,
+    .role {
+        animation: none !important;
+    }
 }
