@@ -64,11 +64,20 @@ else
                                 <td>@subgoal.Responsible</td>
                                 <td>Inden d. @subgoal.Deadline</td>
                                 <td>
-                                    <select @bind="subgoal.Status" class="form-control select-status @GetStatusClass(subgoal.Status)">
-                                        <option value="Mangler">Mangler</option>
-                                        <option value="Igang">Igang</option>
-                                        <option value="Gennemført">Gennemført</option>
-                                    </select>
+                                    @if (subgoal.Approval)
+                                    {
+                                        <span class="status-Gennemført">Gennemført</span>
+                                    }
+                                    else
+                                    {
+                                        <select value="@subgoal.Status"
+                                                @onchange="(e) => OnStatusChanged(e, goal.GoalId, subgoal)"
+                                                class="form-control select-status @GetStatusClass(subgoal.Status)">
+                                            <option value="Mangler">Mangler</option>
+                                            <option value="Igang">Igang</option>
+                                            <option value="Gennemført">Gennemført</option>
+                                        </select>
+                                    }
                                 </td>
                                 <td>
                                     <button class="notes-btn" @onclick="() => OpenCommentModal(subgoal)">
@@ -387,6 +396,44 @@ else
         else
         {
             Console.WriteLine("Kunne ikke godkende delmålet");
+        }
+    }
+    private async Task OnStatusChanged(int goalId, Subgoal subgoal, string? newStatus)
+    {
+        if (string.IsNullOrEmpty(newStatus) || subgoal.Status == newStatus)
+            return;
+
+        subgoal.Status = newStatus;
+
+        var success = await mServiceSubgoal.UpdateSubgoal(goalId, subgoal.SubgoalID, subgoal);
+
+        if (!success)
+        {
+            Console.WriteLine("Kunne ikke opdatere status");
+        }
+        else
+        {
+            // Refresher data fra mock eller API
+            users = await mService.GetUserById(userId);
+            goals = users?.Studentplan?.Goal?.ToArray();
+            StateHasChanged();
+        }
+    }
+    private async Task OnStatusChanged(ChangeEventArgs e, int goalId, Subgoal subgoal)
+    {
+        subgoal.Status = e.Value?.ToString();
+
+        bool success = await mServiceSubgoal.UpdateSubgoal(goalId, subgoal.SubgoalID, subgoal);
+
+        if (!success)
+        {
+            Console.WriteLine("Kunne ikke opdatere status på delmålet.");
+        }
+        else
+        {
+            users = await mService.GetUserById(userId);
+            goals = users?.Studentplan?.Goal?.ToArray();
+            StateHasChanged();
         }
     }
 }

@@ -151,18 +151,17 @@ public class ServiceMock : IUser, ISubgoal
         {
             await LoadUsersAsync();
 
-            var goal = users.SelectMany(u => u.Studentplan?.Goal ?? Enumerable.Empty<Goal>())
+            var goal = users
+                .SelectMany(u => u.Studentplan?.Goal ?? Enumerable.Empty<Goal>())
                 .FirstOrDefault(g => g.GoalId == goalId);
-
-            if (goal?.Subgoals == null)
-                return false;
+            if (goal?.Subgoals == null) return false;
 
             var subgoal = goal.Subgoals.FirstOrDefault(s => s.SubgoalID == subgoalId);
-            if (subgoal == null)
-                return false;
-            
-            subgoal.Name = updatedSubgoal.Name;
-            subgoal.Approval = updatedSubgoal.Approval;
+            if (subgoal == null) return false;
+
+            subgoal.Name      = updatedSubgoal.Name;
+            subgoal.Approval  = updatedSubgoal.Approval;
+            subgoal.Status    = updatedSubgoal.Status;   
 
             await _localStorage.SetItemAsync("users", users);
             return true;
