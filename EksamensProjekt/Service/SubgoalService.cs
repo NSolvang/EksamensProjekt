@@ -40,4 +40,18 @@ public class SubgoalService : ISubgoal
             return false;
         }
     }
+    
+    public async Task<bool> UpdateSubgoal(int goalId, int subgoalId, Subgoal updatedSubgoal)
+    {
+        try
+        {
+            var response = await client.PutAsJsonAsync($"{serverUrl}/api/Goal/{goalId}/subgoals/{subgoalId}", updatedSubgoal);
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating subgoal: {ex.Message}");
+            return false;
+        }
+    }
 }
