@@ -49,8 +49,8 @@ else
                             <th>Bør Gennemføres i Perioden</th>
                             <th>Gennemført Status</th>
                             <th>Kommentar</th>
-                            @if (currentUser.Role == "Køkkenchef" || currentUser.Role == "Admin")
-                            {
+                            @if (currentUser.Role == "Køkkenchef" || currentUser.Role == "Admin" || currentUser.Role == "Kok")
+                        {
                                 <th>Handling</th>
                             }
                         </tr>
@@ -76,15 +76,26 @@ else
                                         <span class="notes-count">@GetCommentCount(subgoal)</span>
                                     </button>
                                 </td>
-                                @if (currentUser.Role == "Køkkenchef" || currentUser.Role == "Admin")
+                                @if (currentUser.Role == "Køkkenchef" || currentUser.Role == "Admin" || currentUser.Role == "Kok")
                                 {
                                     <td>
-                                        <button @onclick="() => DeleteSubgoal(goal.GoalId, subgoal.SubgoalID)"
-                                                class="btn btn-danger btn-sm">
+                                        @if (subgoal.Status == "Gennemført" && !subgoal.Approval)
+                                        {
+                                            <button class="btn btn-success btn-sm" @onclick="() => ApproveSubgoal(goal.GoalId, subgoal)">
+                                                Godkend
+                                            </button>
+                                        }
+                                        else if (subgoal.Approval)
+                                        {
+                                            <span class="badge bg-success">Godkendt</span>
+                                        }
+
+                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteSubgoal(goal.GoalId, subgoal.SubgoalID)">
                                             Slet
                                         </button>
                                     </td>
                                 }
+
                             </tr>
 
                             @if (expandedSubgoalId == subgoal.SubgoalID)
@@ -99,8 +110,8 @@ else
                         }
                         </tbody>
                     </table>
-                    @if (currentUser.Role == "Køkkenchef" || currentUser.Role == "Admin")
-                    {
+                    @if (currentUser.Role == "Køkkenchef" || currentUser.Role == "Admin" || currentUser.Role == "Kok")
+                {
                         <button class="btn btn-primary" @onclick="() => FindGoalForNewSubgoal(goal.GoalId)">Tilføj</button>
                     }
                 </div>
@@ -360,4 +371,22 @@ else
         "Gennemført" => "status-Gennemført",
         _ => ""
     };
+    
+    private async Task ApproveSubgoal(int goalId, Subgoal subgoal)
+    {
+        subgoal.Approval = true;
+
+        bool success = await mServiceSubgoal.UpdateSubgoal(goalId, subgoal.SubgoalID, subgoal);
+
+        if (success)
+        {
+            users = await mService.GetUserById(userId);
+            goals = users?.Studentplan?.Goal?.ToArray();
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Kunne ikke godkende delmålet");
+        }
+    }
 }
