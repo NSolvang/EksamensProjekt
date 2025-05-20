@@ -144,4 +144,32 @@ public class ServiceMock : IUser, ISubgoal
             return false;
         }
     }
+    
+    public async Task<bool> UpdateSubgoal(int goalId, int subgoalId, Subgoal updatedSubgoal)
+    {
+        try
+        {
+            await LoadUsersAsync();
+
+            var goal = users
+                .SelectMany(u => u.Studentplan?.Goal ?? Enumerable.Empty<Goal>())
+                .FirstOrDefault(g => g.GoalId == goalId);
+            if (goal?.Subgoals == null) return false;
+
+            var subgoal = goal.Subgoals.FirstOrDefault(s => s.SubgoalID == subgoalId);
+            if (subgoal == null) return false;
+
+            subgoal.Name      = updatedSubgoal.Name;
+            subgoal.Approval  = updatedSubgoal.Approval;
+            subgoal.Status    = updatedSubgoal.Status;   
+
+            await _localStorage.SetItemAsync("users", users);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fejl ved opdatering af delmål: {ex.Message}");
+            return false;
+        }
+    }
 }

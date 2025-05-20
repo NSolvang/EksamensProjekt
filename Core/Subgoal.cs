@@ -17,6 +17,5 @@ public class Subgoal
     
     public string Comments { get; set; }
     
-    public bool Approval { get; set; }
-    
+    public bool Approval { get; set; } = false; 
 }
