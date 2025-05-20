@@ -37,15 +37,14 @@
     </div>
 
     <div>
-        <label for="educationFilter">Uddannelse:</label><br />
+        <label for="educationFilter">Forløb:</label><br />
         <select id="educationFilter">
             <option value="">Alle</option>
-            <option value="HHX">HHX</option>
-            <option value="STX">STX</option>
-            <option value="HTX">HTX</option>
-            <option value="HF">HF</option>
             <option value="EUX">EUX</option>
-            <option value="Folkeskole">Folkeskole</option>
+            <option value="EUD">EUD</option>
+            <option value="EUV">EUV</option>
+            <option value="FGU">FGU</option>
+            <option value="Mesterlære">Mesterlære</option>
         </select>
     </div>
 </div>
@@ -67,7 +66,7 @@ else
                 <span>Rolle: @user.Role</span>
                 <span>Lokation: @user.Location?.Name</span>
                 <span>Årgang: @user.DateOfStart.Year</span>
-                <span>Uddannelse: @user.Education</span>
+                <span>Forløb: @user.Education</span>
             </div>
             <div class="student-progress">
                 <div class="student-progress-bar">

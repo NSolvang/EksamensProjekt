@@ -49,7 +49,7 @@ else
             <label for="Location">Lokation</label>
             <div class="location-input-group">
                 <InputSelect id="Location" @bind-Value="SelectedLocationId" class="form-control">
-                    <option value="">-- Vælg lokation --</option>
+                    <option value="">-- Vælg en lokation --</option>
                     @foreach (var location in locations)
                     {
                         <option value="@location.LocationId">@location.Name</option>
@@ -87,9 +87,9 @@ else
                 <ValidationMessage For="@(() => user.DateOfEnd)" />
             </div>
             <div class="col-md-6 mb-3">
-                <label for="Education">Tidligere uddannelse</label>
+                <label for="Education">Forløb</label>
                 <InputSelect id="Education" @bind-Value="user.Education" class="form-control">
-                    <option value="">-- Vælg en uddannelse --</option>
+                    <option value="">-- Vælg et forløb --</option>
                     @foreach (var education in educations)
                     {
                         <option value="@education">@education</option>
@@ -98,7 +98,7 @@ else
                 <ValidationMessage For="@(() => user.Education)" />
                 @if (educationError)
                 {
-                    <div class="text-danger"> Uddannelse er påkrævet for elever</div>
+                    <div class="text-danger"> Forløb er påkrævet for elev</div>
                 }
             </div>
         }
@@ -146,7 +146,7 @@ else
 @code {
     private User user = new() { Role = "", };
     private string[] roles = { "Elev", "Køkkenchef", "Admin", "Kok" };
-    private string[] educations = { "HHX", "STX", "HTX", "HF", "EUX", "Folkeskole" };
+    private string[] educations = { "EUX", "EUD", "EUV", "FGU", "Mesterlære" };
     private List<Location> locations = new()
     {
         new Location { LocationId = 1, Name = "Aarhus" },
