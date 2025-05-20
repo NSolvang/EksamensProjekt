@@ -187,3 +187,58 @@ h3 {
         height: 80px;
     }
 }
+
+/* Filter container styling */
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+/* Label styling */
+.filter-section label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 0.95rem;
+}
+
+/* Input/select styling */
+.filter-section input,
+.filter-section select {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    background-color: #fdfaf5;
+    color: #2c3e50;
+    font-size: 0.95rem;
+    min-width: 200px;
+    transition: all 0.3s ease;
+}
+
+.filter-section input:focus,
+.filter-section select:focus {
+    outline: none;
+    border-color: #d4af37;
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.4);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .filter-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-section input,
+    .filter-section select {
+        width: 100%;
+    }
+}
