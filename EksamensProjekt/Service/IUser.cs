@@ -14,5 +14,8 @@ public interface IUser
     Task DeleteById(int id);
     //Opdaterer brugeren
     Task UpdateUser(User user);
+    
+    //Status bar
+    Task<List<UserWithGoals>> GetUsersWithGoals();
 
 }

@@ -40,4 +40,9 @@ public class UserService : IUser
         await client.PutAsJsonAsync($"{serverUrl}/api/User", user);
     }
     
+    public async Task<List<UserWithGoals>> GetUsersWithGoals()
+    {
+        return await client.GetFromJsonAsync<List<UserWithGoals>>($"{serverUrl}/api/User/users-with-goals");
+    }
+
 }
