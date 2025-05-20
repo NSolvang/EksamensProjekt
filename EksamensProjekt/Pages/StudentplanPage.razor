@@ -5,7 +5,9 @@
 @inject ILogin LoginService
 @inject NavigationManager nav
 @inject IUser mService
-@inject IJSRuntime JSRuntime
+@inject ISubgoal mServiceSubgoal
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
 <h3>Elevplan</h3>
 
 @if (users == null)
@@ -18,7 +20,7 @@ else if (users.Studentplan == null)
 }
 else
 {
-    <StudentplanHeaderComponent user="users" CurrentUser="currentUser" />
+    <StudentplanHeaderComponent user="users" CurrentUser="currentUser"/>
 
     <div class="internship-section">
         <div class="internship-period-buttons">
@@ -47,19 +49,17 @@ else
                             <th>Bør Gennemføres i Perioden</th>
                             <th>Gennemført Status</th>
                             <th>Kommentar</th>
-
                             @if (currentUser.Role == "Køkkenchef" || currentUser.Role == "Admin" || currentUser.Role == "Kok")
                         {
                                 <th>Handling</th>
                             }
-                          
                         </tr>
                         </thead>
                         <tbody>
                         @foreach (var subgoal in goal.Subgoals)
                         {
                             <tr>
-                                <td>@subgoal.Name</td> <!-- Her fjernes knappen -->
+                                <td>@subgoal.Name</td>
                                 <td>@subgoal.Date.ToShortDateString()</td>
                                 <td>@subgoal.Responsible</td>
                                 <td>Inden d. @subgoal.Deadline</td>
@@ -85,7 +85,6 @@ else
                                         <span class="notes-count">@GetCommentCount(subgoal)</span>
                                     </button>
                                 </td>
-                              
                                 @if (currentUser.Role == "Køkkenchef" || currentUser.Role == "Admin" || currentUser.Role == "Kok")
                                 {
                                     <td>
@@ -111,17 +110,15 @@ else
                             @if (expandedSubgoalId == subgoal.SubgoalID)
                             {
                                 <tr class="dropdown-table">
-                                    <td colspan="6">
+                                    <td colspan="7">
                                         <!-- Ekstra detaljer for subgoal -->
                                         <p><strong>Detaljer for opgave:</strong> @subgoal.Name</p>
-                                        <!-- Du kan tilføje mere info her -->
                                     </td>
                                 </tr>
                             }
                         }
                         </tbody>
                     </table>
-
                     @if (currentUser.Role == "Køkkenchef" || currentUser.Role == "Admin" || currentUser.Role == "Kok")
                 {
                         <button class="btn btn-primary" @onclick="() => FindGoalForNewSubgoal(goal.GoalId)">Tilføj</button>
@@ -158,8 +155,8 @@ else
                             <ValidationMessage For="@(() => newSubgoal.Deadline)"/>
                         </div>
                         <div class="form-group mt-3">
-                            <button type="submit" class="btn btn-success">Gem</button>
-                            <button type="button" class="btn btn-secondary" @onclick="CancelNewSubgoal">Annuller</button>
+                            <button type="submit" class="btn btn-primary">Gem</button>
+                            <button type="button" class="btn btn-secondary ml-2" @onclick="CancelNewSubgoal">Annuller</button>
                         </div>
                     </EditForm>
                     @if (newSubgoalError)
@@ -172,7 +169,6 @@ else
     </div>
 }
 
-<!-- Kommentar Modal Component -->
 <CommentModal
     IsVisible="showCommentModal"
     Subgoal="selectedSubgoal"
@@ -181,15 +177,18 @@ else
     OnClose="CloseCommentModal"
     OnSaveComment="SaveComment" />
 
+
 @code {
-    [Parameter]
-    public int userId { get; set; }
+    [Parameter] public int userId { get; set; }
 
     private User? users;
     private User? currentUser;
     private Goal[]? goals;
     private Dictionary<string, List<Comment>> allComments = new Dictionary<string, List<Comment>>();
-
+    private bool newSubgoalError = false;
+    private bool showNewSubgoalForm = false;
+    private int? selectedGoalId;
+    private Subgoal newSubgoal = new Subgoal();
     private int? expandedGoalId;
     private int? expandedSubgoalId;
 
@@ -200,13 +199,7 @@ else
     {
         currentUser = await LoginService.GetUserLoggedIn();
 
-        if (currentUser == null)
-        {
-            nav.NavigateTo("/");
-            return;
-        }
-
-        if (currentUser.Role == "Elev" && currentUser.UserId != userId)
+        if (currentUser == null || (currentUser.Role == "Elev" && currentUser.UserId != userId))
         {
             nav.NavigateTo("/");
             return;
@@ -223,7 +216,12 @@ else
         if (expandedGoalId == goalId)
         {
             expandedGoalId = null;
-            expandedSubgoalId = null;
+            
+            if (selectedGoalId == goalId && showNewSubgoalForm)
+            {
+                showNewSubgoalForm = false;
+                selectedGoalId = null;
+            }
         }
         else
         {
@@ -246,8 +244,7 @@ else
 
     private async Task SaveComment(Comment comment)
     {
-        if (selectedSubgoal == null)
-            return;
+        if (selectedSubgoal == null) return;
 
         var key = GetSubgoalKey(selectedSubgoal);
 
@@ -265,10 +262,9 @@ else
 
     private List<Comment> GetComments(Subgoal? subgoal)
     {
-        if (subgoal == null) return new List<Comment>();
-
+        if (subgoal == null) return new();
         var key = GetSubgoalKey(subgoal);
-        return allComments.ContainsKey(key) ? allComments[key] : new List<Comment>();
+        return allComments.TryGetValue(key, out var list) ? list : new();
     }
 
     private int GetCommentCount(Subgoal subgoal) => GetComments(subgoal).Count;
@@ -277,10 +273,10 @@ else
     {
         try
         {
-            var json = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "studentplanComments");
-            if (!string.IsNullOrEmpty(json))
+            var comments = await LocalStorage.GetItemAsync<Dictionary<string, List<Comment>>>("studentplanComments");
+            if (comments != null)
             {
-                allComments = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, List<Comment>>>(json) ?? new Dictionary<string, List<Comment>>();
+                allComments = comments;
             }
         }
         catch (Exception ex)
@@ -293,12 +289,87 @@ else
     {
         try
         {
-            var json = System.Text.Json.JsonSerializer.Serialize(allComments);
-            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "studentplanComments", json);
+            await LocalStorage.SetItemAsync("studentplanComments", allComments);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error saving comments: {ex.Message}");
+        }
+    }
+    
+    private void FindGoalForNewSubgoal(int goalId)
+    {
+        selectedGoalId = goalId;
+        showNewSubgoalForm = true;
+        newSubgoal = new Subgoal
+        {
+            Date = DateTime.Today,
+            Status = "Mangler"
+        };
+    }
+
+    private void CancelNewSubgoal()
+    {
+        showNewSubgoalForm = false;
+        selectedGoalId = null;
+    }
+
+    private async Task CreateNewSubgoal()
+    {
+        newSubgoalError = false;
+
+        if (string.IsNullOrEmpty(newSubgoal.Name))
+        {
+            newSubgoalError = true;
+            return;
+        }
+
+        try
+        {
+            if (selectedGoalId.HasValue)
+            {
+                bool success = await mServiceSubgoal.AddSubgoalToGoal(selectedGoalId.Value, newSubgoal);
+
+                if (success)
+                {
+                    // Opdater brugerdata
+                    users = await mService.GetUserById(userId);
+                    goals = users?.Studentplan?.Goal?.ToArray();
+                
+                    // Nulstil formularen
+                    showNewSubgoalForm = false;
+                    selectedGoalId = null;
+                    newSubgoal = new Subgoal();
+                
+                    // Tving opdatering af UI
+                    StateHasChanged();
+                }
+                else
+                {
+                    newSubgoalError = true;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fejl ved tilføjelse af delmål: {ex.Message}");
+            newSubgoalError = true;
+        }
+    }
+    
+    private async Task DeleteSubgoal(int goalId, int subgoalId)
+    {
+        bool success = await mServiceSubgoal.DeleteSubgoal(goalId, subgoalId);
+    
+        if (success)
+        {
+            users = await mService.GetUserById(userId);
+            goals = users?.Studentplan?.Goal?.ToArray();
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Kunne ikke slette delmålet");
         }
     }
 
@@ -309,7 +380,6 @@ else
         "Gennemført" => "status-Gennemført",
         _ => ""
     };
-
     
     private async Task ApproveSubgoal(int goalId, Subgoal subgoal)
     {
@@ -328,7 +398,6 @@ else
             Console.WriteLine("Kunne ikke godkende delmålet");
         }
     }
-              
     private async Task OnStatusChanged(int goalId, Subgoal subgoal, string? newStatus)
     {
         if (string.IsNullOrEmpty(newStatus) || subgoal.Status == newStatus)
@@ -350,7 +419,6 @@ else
             StateHasChanged();
         }
     }
-              
     private async Task OnStatusChanged(ChangeEventArgs e, int goalId, Subgoal subgoal)
     {
         subgoal.Status = e.Value?.ToString();
