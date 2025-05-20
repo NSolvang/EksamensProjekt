@@ -62,7 +62,7 @@ else
                                 <td>@subgoal.Name</td>
                                 <td>@subgoal.Date.ToShortDateString()</td>
                                 <td>@subgoal.Responsible</td>
-                                <td>Inden d. @subgoal.Deadline</td>
+                                <td>@subgoal.Deadline</td>
                                 <td>
                                     @if (subgoal.Approval)
                                     {
@@ -146,8 +146,14 @@ else
                         </div>
                         <div class="form-group">
                             <label for="subgoalResponsible">Ansvarlig:</label>
-                            <InputText id="subgoalResponsible" @bind-Value="newSubgoal.Responsible" class="form-control"/>
-                            <ValidationMessage For="@(() => newSubgoal.Responsible)"/>
+                            <InputSelect id="subgoalResponsible" @bind-Value="newSubgoal.Responsible" class="form-control">
+                                <option value="">-- Vælg ansvarlig --</option>
+                                @foreach (var person in responsiblePeople)
+                                {
+                                    <option value="@person">@person</option> <!-- Navnet vises og sættes som værdi -->
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => newSubgoal.Responsible)" />
                         </div>
                         <div class="form-group">
                             <label for="subgoalDeadline">Deadline:</label>
@@ -191,6 +197,16 @@ else
     private Subgoal newSubgoal = new Subgoal();
     private int? expandedGoalId;
     private int? expandedSubgoalId;
+    private List<string> responsiblePeople = new()
+    {
+        "Elevansvarlig ",
+        "Elevansvarlig / Nærmeste leder",
+        "Elevkollega/ Elevmentor",
+        "Nærmeste leder/anden",
+        "HR",
+        "Uddannelsesansvarlig/HR",
+        "AV/Ejendom"
+    };
 
     private bool showCommentModal = false;
     private Subgoal? selectedSubgoal;
