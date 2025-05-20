@@ -8,62 +8,56 @@
 <h3>OVERSIGT OVER ELEVER</h3>
 
 <div class="filter-section">
-<div>
-    <label for="nameSearch">Søg navn:</label><br />
-    <input type="text" id="nameSearch" placeholder="Indtast navn..." />
-</div>
-
-<div style="display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: flex-end;">
     <div>
-        <label for="locationFilter">Lokation:</label><br />
-        <select id="locationFilter">
-            <option value="">Alle</option>
-            @foreach (var location in locations)
-            {
-                <option value="@location">@location</option>
-            }
-        </select>
+        <label for="nameSearch">Søg navn:</label><br />
+        <input type="text" id="nameSearch" placeholder="Indtast navn..." />
     </div>
 
-    <div>
-        <label for="yearFilter">Årgang:</label><br />
-        <select id="yearFilter">
-            <option value="">Alle</option>
-            @foreach (var year in users.Select(u => u.DateOfStart.Year).Distinct().OrderBy(y => y))
-            {
-                <option value="@year">@year</option>
-            }
-        </select>
+    <div style="display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: flex-end;">
+        <div>
+            <label for="locationFilter">Lokation:</label><br />
+            <select id="locationFilter">
+                <option value="">Alle</option>
+                @foreach (var location in locations)
+                {
+                    <option value="@location">@location</option>
+                }
+            </select>
+        </div>
+
+        <div>
+            <label for="yearFilter">Årgang:</label><br />
+            <select id="yearFilter">
+                <option value="">Alle</option>
+                @foreach (var year in users.Select(u => u.DateOfStart.Year).Distinct().OrderBy(y => y))
+                {
+                    <option value="@year">@year</option>
+                }
+            </select>
+        </div>
+
+        <div>
+            <label for="educationFilter">Forløb:</label><br />
+            <select id="educationFilter">
+                <option value="">Alle</option>
+                <option value="EUX">EUX</option>
+                <option value="EUD">EUD</option>
+                <option value="EUV">EUV</option>
+                <option value="FGU">FGU</option>
+                <option value="Mesterlære">Mesterlære</option>
+            </select>
+        </div>
     </div>
 
-    <div>
-        <label for="educationFilter">Forløb:</label><br />
-        <select id="educationFilter">
-            <option value="">Alle</option>
-            <option value="EUX">EUX</option>
-            <option value="EUD">EUD</option>
-            <option value="EUV">EUV</option>
-            <option value="FGU">FGU</option>
-            <option value="Mesterlære">Mesterlære</option>
-        </select>
-    </div>
 </div>
-
-</div>
-
-@if (usersWithGoals == null || usersWithGoals.Count == 0)
+@if (users is null || users.Length == 0)
 {
     <p>Ingen elever fundet.</p>
 }
 else
 {
-    @foreach (var uwg in usersWithGoals)
+    @foreach (var user in users)
     {
-        var user = uwg.User;
-        var subgoals = uwg.Goals.SelectMany(g => g.Subgoals).ToList();
-        var approvedCount = subgoals.Count(sg => sg.Approval);
-        var percent = subgoals.Count > 0 ? (approvedCount * 100 / subgoals.Count) : 0;
-
         <div class="student-card" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{user.UserId}"))">
             <div class="student-info">
                 <img src="@user.ProfilePicture" alt="Profilbillede" />
@@ -73,21 +67,20 @@ else
                 <span>Årgang: @user.DateOfStart.Year</span>
                 <span>Forløb: @user.Education</span>
             </div>
-            <div class="student-progress" style="display: flex; align-items: center; gap: 0.5rem;">
-                <div class="student-progress-bar" style="--progress:@percent%; flex-grow: 1; height: 8px;"></div>
-                <span class="progress-percent">@percent%</span>
+            <div class="student-progress">
+                <div class="student-progress-bar">
+                    <!-- Progressbar kan tilføjes her senere -->
+                </div>
             </div>
-
         </div>
     }
 }
 
 @code {
+    
     private User? currentUser;
-    private List<UserWithGoals> usersWithGoals = new();
-    private User[] users = Array.Empty<User>();
+    private User[]? users = Array.Empty<User>();
 
-    // Bruges til evt. filtrering senere
     private List<string> locations = new()
     {
         "Aarhus", "Borupgaard", "Bygholm Park", "Centralværkstedet", "Copenhagen Portside",
@@ -98,7 +91,7 @@ else
     
     private string? chosenLocation;
     private int? chosenYear;
-
+    
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
@@ -115,17 +108,9 @@ else
 
     private async Task LoadAll()
     {
-        usersWithGoals = await mService.GetUsersWithGoals();
-        users = usersWithGoals.Select(u => u.User).ToArray();
-    }
-
-
-    private int GetApprovedPercentage(List<Subgoal> subgoals)
-    {
-        if (subgoals == null || subgoals.Count == 0)
-            return 0;
-
-        int approvedCount = subgoals.Count(sg => sg.Approval);
-        return (int)((double)approvedCount / subgoals.Count * 100);
+        var allUsers = await mService.GetAll();
+        users = allUsers
+            .Where(e => e.Role == "Elev")
+            .ToArray();
     }
 }

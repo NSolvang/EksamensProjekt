@@ -15,7 +15,4 @@ public interface IUser
     //Opdaterer brugeren
     Task UpdateUser(User user);
     
-    //Status bar
-    Task<List<UserWithGoals>> GetUsersWithGoals();
-
 }
