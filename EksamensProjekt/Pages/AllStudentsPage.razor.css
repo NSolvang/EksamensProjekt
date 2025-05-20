@@ -135,10 +135,18 @@ h3 {
     left: 0;
     top: 0;
     height: 100%;
-    width: var(--progress, 65%);
-    background: linear-gradient(90deg, #d4af37, #f0d05e); /* Guld gradient */
+    width: var(--progress, 0%);
+    background-color: #d4af37; /* Guld farve */
     border-radius: 4px;
     animation: progress-animate 1.5s ease-out;
+}
+
+.progress-percent {
+    min-width: 35px;
+    text-align: right;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.9rem;
 }
 
 @keyframes progress-animate {
@@ -170,11 +178,6 @@ h3 {
     100% { transform: rotate(30deg) translate(70%, 70%); }
 }
 
-/* Different progress levels */
-.student-card:nth-child(1) .student-progress-bar::after { --progress: 75%; }
-.student-card:nth-child(2) .student-progress-bar::after { --progress: 45%; }
-.student-card:nth-child(3) .student-progress-bar::after { --progress: 90%; }
-.student-card:nth-child(4) .student-progress-bar::after { --progress: 60%; }
 
 /* Responsive design */
 @media (max-width: 768px) {

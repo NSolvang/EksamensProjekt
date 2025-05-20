@@ -172,4 +172,20 @@ public class ServiceMock : IUser, ISubgoal
             return false;
         }
     }
+    //til status bar
+    public async Task<List<UserWithGoals>> GetUsersWithGoals()
+    {
+        await LoadUsersAsync();
+
+        var result = users
+            .Where(u => u.Role == "Elev")
+            .Select(u => new UserWithGoals
+            {
+                User = u,
+                Goals = u.Studentplan?.Goal ?? new List<Goal>()
+            })
+            .ToList();
+
+        return result;
+    }
 }

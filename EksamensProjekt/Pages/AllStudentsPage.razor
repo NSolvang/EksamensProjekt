@@ -51,37 +51,43 @@
 
 </div>
 
-@if (users is null || users.Length == 0)
+@if (usersWithGoals == null || usersWithGoals.Count == 0)
 {
     <p>Ingen elever fundet.</p>
 }
 else
 {
-    @foreach (var user in users)
+    @foreach (var uwg in usersWithGoals)
     {
+        var user = uwg.User;
+        var subgoals = uwg.Goals.SelectMany(g => g.Subgoals).ToList();
+        var approvedCount = subgoals.Count(sg => sg.Approval);
+        var percent = subgoals.Count > 0 ? (approvedCount * 100 / subgoals.Count) : 0;
+
         <div class="student-card" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{user.UserId}"))">
             <div class="student-info">
-                <img src="@user.ProfilePicture" alt="Profilbillede">
+                <img src="@user.ProfilePicture" alt="Profilbillede" />
                 <h2>@user.Name</h2>
                 <span>Rolle: @user.Role</span>
                 <span>Lokation: @user.Location?.Name</span>
                 <span>Årgang: @user.DateOfStart.Year</span>
                 <span>Forløb: @user.Education</span>
             </div>
-            <div class="student-progress">
-                <div class="student-progress-bar">
-                    <!-- Progressbar kan tilføjes her senere -->
-                </div>
+            <div class="student-progress" style="display: flex; align-items: center; gap: 0.5rem;">
+                <div class="student-progress-bar" style="--progress:@percent%; flex-grow: 1; height: 8px;"></div>
+                <span class="progress-percent">@percent%</span>
             </div>
+
         </div>
     }
 }
 
 @code {
     private User? currentUser;
-    private User[]? users = Array.Empty<User>();
+    private List<UserWithGoals> usersWithGoals = new();
+    private User[] users = Array.Empty<User>();
 
-    // Disse bruges ikke i koden pt., men kan evt. bruges til filtrering senere
+    // Bruges til evt. filtrering senere
     private List<string> locations = new()
     {
         "Aarhus", "Borupgaard", "Bygholm Park", "Centralværkstedet", "Copenhagen Portside",
@@ -89,6 +95,7 @@ else
         "Kolding", "Kongebrogaarden", "Kongens Lyngby", "Køge Strand", "Middelfart",
         "Rebild Bakker", "Roskilde"
     };
+    
     private string? chosenLocation;
     private int? chosenYear;
 
@@ -108,9 +115,17 @@ else
 
     private async Task LoadAll()
     {
-        var allUsers = await mService.GetAll();
-        users = allUsers
-            .Where(e => e.Role == "Elev")
-            .ToArray();
+        usersWithGoals = await mService.GetUsersWithGoals();
+        users = usersWithGoals.Select(u => u.User).ToArray();
+    }
+
+
+    private int GetApprovedPercentage(List<Subgoal> subgoals)
+    {
+        if (subgoals == null || subgoals.Count == 0)
+            return 0;
+
+        int approvedCount = subgoals.Count(sg => sg.Approval);
+        return (int)((double)approvedCount / subgoals.Count * 100);
     }
 }
