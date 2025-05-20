@@ -7,7 +7,7 @@ namespace EksamensProjekt.Service;
 
 public class LoginService : ILogin
 {
-    private readonly string serverUrl = "http://localhost:5186/";
+    private readonly string serverUrl = "http://localhost:5094/";
     private readonly HttpClient client;
     private readonly ILocalStorageService localStorage;
     private readonly AuthStateService authStateService;  
@@ -88,10 +88,4 @@ public class LoginService : ILogin
             Console.WriteLine($"Logout error: {ex.Message}");
         }
     }
-}
-
-public class LoginRequest
-{
-    public string Username { get; set; }
-    public string Password { get; set; }
 }

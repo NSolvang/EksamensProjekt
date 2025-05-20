@@ -7,4 +7,7 @@ public interface IUserRepository
     Task AddUser(User user);
     Task DeleteById(int id);
     Task UpdateUser(User user);
+    
+    Task<User?> Login(string username, string password);
+
 }
