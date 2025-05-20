@@ -8,11 +8,14 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri("http://localhost:5094")
+});
 builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddScoped<IUser, ServiceMock>();
+builder.Services.AddScoped<IUser, UserService>();
 builder.Services.AddScoped<ISubgoal, ServiceMock>();
-builder.Services.AddScoped<ILogin, LoginServiceClientSide>();
+builder.Services.AddScoped<ILogin, LoginService>();
 builder.Services.AddScoped<AuthStateService>();
 
 await builder.Build().RunAsync();

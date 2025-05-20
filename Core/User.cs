@@ -9,6 +9,7 @@ public class User
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
+    [System.Text.Json.Serialization.JsonIgnore]
     public string? Id { get; set; }
     
     public int UserId { get; set; }
@@ -27,7 +28,7 @@ public class User
     
     [Required(ErrorMessage = "Lokation er påkrævet")]
     public Location? Location { get; set; }
-    public string Education { get; set; }
+    public string? Education { get; set; }
     
     [Required(ErrorMessage = "Navn er påkrævet")]
     public string Name { get; set; }

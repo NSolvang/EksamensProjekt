@@ -46,12 +46,12 @@ public class UserController : ControllerBase
         }
 
         await _userRepository.AddUser(user);
-        return Ok("Bruger tilføjet");
+        return CreatedAtAction(nameof(GetUserById), new { id = user.UserId }, user);
     }
 
 
     
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id}")]
     public void DeleteById(int id)
     {
         Console.WriteLine($"Sletter annonce med id {id}");

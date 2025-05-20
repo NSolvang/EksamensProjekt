@@ -32,8 +32,14 @@ public class UserService : IUser
     
     public async Task AddUser(User user)
     {
-        await client.PostAsJsonAsync($"{serverUrl}/api/User", user);
+        var response = await client.PostAsJsonAsync($"{serverUrl}/api/User", user);
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Fejl ved oprettelse: {response.StatusCode}, {error}");
+        }
     }
+
 
     public async Task UpdateUser(User user)
     {
