@@ -7,6 +7,51 @@
 
 <h3>OVERSIGT OVER ELEVER</h3>
 
+<div class="filter-section">
+<div>
+    <label for="nameSearch">Søg navn:</label><br />
+    <input type="text" id="nameSearch" placeholder="Indtast navn..." />
+</div>
+
+<div style="display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: flex-end;">
+    <div>
+        <label for="locationFilter">Lokation:</label><br />
+        <select id="locationFilter">
+            <option value="">Alle</option>
+            @foreach (var location in locations)
+            {
+                <option value="@location">@location</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label for="yearFilter">Årgang:</label><br />
+        <select id="yearFilter">
+            <option value="">Alle</option>
+            @foreach (var year in users.Select(u => u.DateOfStart.Year).Distinct().OrderBy(y => y))
+            {
+                <option value="@year">@year</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label for="educationFilter">Uddannelse:</label><br />
+        <select id="educationFilter">
+            <option value="">Alle</option>
+            <option value="HHX">HHX</option>
+            <option value="STX">STX</option>
+            <option value="HTX">HTX</option>
+            <option value="HF">HF</option>
+            <option value="EUX">EUX</option>
+            <option value="Folkeskole">Folkeskole</option>
+        </select>
+    </div>
+</div>
+
+</div>
+
 @if (users is null || users.Length == 0)
 {
     <p>Ingen elever fundet.</p>
