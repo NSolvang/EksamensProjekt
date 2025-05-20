@@ -1,12 +1,14 @@
 using Core;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using ServerAPI.Repositories;
+using LoginRequest = Core.LoginRequest;
 
 
 namespace ServerAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/User")]
 public class UserController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
@@ -22,14 +24,32 @@ public class UserController : ControllerBase
         var users = await _userRepository.GetAll();
         return users;
     }
+    
+    [HttpGet("{id}")]
+    public async Task<ActionResult<User>> GetUserById(int id)  // eller int id hvis du bruger det som int
+    {
+        var user = await _userRepository.GetUserById(id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+        return Ok(user);
+    }
+
 
     [HttpPost]
-    public void Add(User user)
+    public async Task<IActionResult> Add([FromBody] User user)
     {
-        
-        _userRepository.AddUser(user);
-        
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        await _userRepository.AddUser(user);
+        return Ok("Bruger tilføjet");
     }
+
+
     
     [HttpDelete("{id:int}")]
     public void DeleteById(int id)
@@ -38,10 +58,25 @@ public class UserController : ControllerBase
         _userRepository.DeleteById(id);
     }
 
+    [HttpPut]
     public async Task UpdateUser(User user)
     {
         await _userRepository.UpdateUser(user);
     }
+    
+    [HttpPost("login")]
+    public async Task<ActionResult<User>> Login([FromBody] LoginRequest loginRequest)
+    {
+        var user = await _userRepository.Login(loginRequest.Username, loginRequest.Password);
+
+        if (user == null)
+        {
+            return Unauthorized("Forkert brugernavn eller adgangskode.");
+        }
+
+        return Ok(user);
+    }
+
     
     
 }
