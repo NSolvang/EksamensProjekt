@@ -21,7 +21,8 @@ public class Program
                     policy.AllowAnyHeader();
                 });
         });
-        builder.Services.AddSingleton<IUserRepository, UserRepositoryMongodb>(); 
+        builder.Services.AddSingleton<IUserRepository, UserRepositoryMongodb>();
+        builder.Services.AddSingleton<IStudentplanRepository, StudentplanRepositoryMongodb>();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
