@@ -71,6 +71,7 @@
 .modal-body {
     padding: 1.5rem;
     overflow-y: auto;
+    overflow-x: hidden;  /* Forhindrer horisontal scroll */
     flex: 1;
 }
 
@@ -99,6 +100,8 @@
     border-radius: 10px;
     border-left: 4px solid #d4af37;
     transition: all 0.3s ease;
+    word-break: break-word;     /* Bryder lange ord */
+    max-width: 100%;            /* Begrænser til container bredde */
 }
 
 .comment-item:hover {
@@ -149,6 +152,10 @@
 .comment-text {
     color: #2c3e50;
     line-height: 1.6;
+    word-wrap: break-word;      /* Bryder ord når de når kanten */
+    overflow-wrap: break-word;  /* Moderne version af word-wrap */
+    white-space: normal;        /* Sikrer at teksten bryder normalt */
+    max-width: 100%;            /* Begrænser til container bredde */
 }
 
 .no-comments {
@@ -174,6 +181,8 @@
     border-radius: 10px;
     padding: 0.8rem;
     transition: all 0.3s ease;
+    width: 100%;                /* Sikrer at textarea fylder sin container */
+    box-sizing: border-box;     /* Inkluderer padding i width calculation */
 }
 
 .comment-textarea:focus {
