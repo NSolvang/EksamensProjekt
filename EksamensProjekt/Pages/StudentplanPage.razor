@@ -99,7 +99,7 @@ else
                                             <span class="badge bg-success">Godkendt</span>
                                         }
 
-                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteSubgoal(goal.GoalId, subgoal.SubgoalID)">
+                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteSubgoal(userId,goal.GoalId, subgoal.SubgoalID)">
                                             Slet
                                         </button>
                                     </td>
@@ -373,9 +373,9 @@ else
         }
     }
     
-    private async Task DeleteSubgoal(int goalId, int subgoalId)
+    private async Task DeleteSubgoal(int userId,int goalId, int subgoalId)
     {
-        bool success = await mServiceSubgoal.DeleteSubgoal(goalId, subgoalId);
+        bool success = await mServiceSubgoal.DeleteSubgoal(userId,goalId, subgoalId);
     
         if (success)
         {
@@ -413,28 +413,9 @@ else
         {
             Console.WriteLine("Kunne ikke godkende delmålet");
         }
+        
     }
-    private async Task OnStatusChanged(int goalId, Subgoal subgoal, string? newStatus)
-    {
-        if (string.IsNullOrEmpty(newStatus) || subgoal.Status == newStatus)
-            return;
-
-        subgoal.Status = newStatus;
-
-        var success = await mServiceSubgoal.UpdateSubgoal(goalId, subgoal.SubgoalID, subgoal);
-
-        if (!success)
-        {
-            Console.WriteLine("Kunne ikke opdatere status");
-        }
-        else
-        {
-            // Refresher data fra mock eller API
-            users = await mService.GetUserById(userId);
-            goals = users?.Studentplan?.Goal?.ToArray();
-            StateHasChanged();
-        }
-    }
+    
     private async Task OnStatusChanged(ChangeEventArgs e, int goalId, Subgoal subgoal)
     {
         subgoal.Status = e.Value?.ToString();
@@ -451,5 +432,6 @@ else
             goals = users?.Studentplan?.Goal?.ToArray();
             StateHasChanged();
         }
+        
     }
 }

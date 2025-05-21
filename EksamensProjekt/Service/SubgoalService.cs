@@ -27,13 +27,15 @@ public class SubgoalService : ISubgoal
             return false;
         }
     }
-
-
-    public async Task<bool> DeleteSubgoal(int goalId, int subgoalId)
+    
+    public async Task<bool> DeleteSubgoal(int userId, int goalId, int subgoalId)
     {
         try
         {
-            var response = await client.DeleteAsync($"{serverUrl}/api/Goal/{goalId}/subgoals/{subgoalId}");
+            var response = await client.DeleteAsync(
+                $"{serverUrl}/api/users/{userId}/studentplan/goals/{goalId}/subgoals/{subgoalId}"
+            );
+
             return response.IsSuccessStatusCode;
         }
         catch (Exception ex)

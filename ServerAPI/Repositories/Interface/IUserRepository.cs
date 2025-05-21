@@ -10,6 +10,8 @@ public interface IUserRepository
     
     Task<bool> AddSubgoalToGoal(int userId, int goalId, Subgoal newSubgoal);
     
+    Task DeleteSubgoalFromGoal(int userId, int goalId, int subgoal);
+    
     Task<User?> Login(string username, string password);
 
 }

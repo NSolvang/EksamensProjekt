@@ -112,6 +112,17 @@ public class UserRepositoryMongodb : IUserRepository
         return true;
     }
 
+    public async Task DeleteSubgoalFromGoal(int userId, int goalId, int subgoalId)
+    {
+        var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+
+        var goal = user.Studentplan.Goal.FirstOrDefault(g => g.GoalId == goalId);
+        goal?.Subgoals.RemoveAll(sg => sg.SubgoalID == subgoalId);
+
+        await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
+
+    }
+
 
 
 

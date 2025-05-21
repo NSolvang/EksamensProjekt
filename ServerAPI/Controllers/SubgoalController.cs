@@ -14,8 +14,7 @@ public class SubgoalController : ControllerBase
         {
                 _userRepository = userRepository;
         }
-
-
+        
         [HttpPost]
         public async Task<IActionResult> AddSubgoal(int userId, int goalId, [FromBody] Subgoal newSubgoal)
         {
@@ -39,6 +38,16 @@ public class SubgoalController : ControllerBase
                         return StatusCode(500, "Intern serverfejl");
                 }
         }
+        
+
+        [HttpDelete("{subgoalId}")]
+        public async Task<IActionResult> DeleteSubgoal(int userId, int goalId, int subgoalId)
+        {
+            await _userRepository.DeleteSubgoalFromGoal(userId, goalId, subgoalId);
+            return Ok("Subgoal deleted");
+        }
+
+
 
 
      
