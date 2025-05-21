@@ -33,6 +33,8 @@ public class User
     [Required(ErrorMessage = "Navn er påkrævet")]
     public string Name { get; set; }
     
+    public string? Internshipyear { get; set; } 
+    
     public Studentplan? Studentplan { get; set; }
 
     //Dato for hvornår eleven starter

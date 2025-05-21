@@ -14,7 +14,7 @@ builder.Services.AddScoped(sp => new HttpClient
 });
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<IUser, UserService>();
-builder.Services.AddScoped<ISubgoal, ServiceMock>();
+builder.Services.AddScoped<ISubgoal, SubgoalService>();
 builder.Services.AddScoped<ILogin, LoginService>();
 builder.Services.AddScoped<AuthStateService>();
 

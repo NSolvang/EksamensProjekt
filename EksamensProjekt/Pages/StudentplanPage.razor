@@ -344,7 +344,7 @@ else
         {
             if (selectedGoalId.HasValue)
             {
-                bool success = await mServiceSubgoal.AddSubgoalToGoal(selectedGoalId.Value, newSubgoal);
+                bool success = await mServiceSubgoal.AddSubgoalToGoal(userId,selectedGoalId.Value, newSubgoal);
 
                 if (success)
                 {
@@ -400,7 +400,7 @@ else
     private async Task ApproveSubgoal(int goalId, Subgoal subgoal)
     {
         subgoal.Approval = true;
-
+    
         bool success = await mServiceSubgoal.UpdateSubgoal(goalId, subgoal.SubgoalID, subgoal);
 
         if (success)
