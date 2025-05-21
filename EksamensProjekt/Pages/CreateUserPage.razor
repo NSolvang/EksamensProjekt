@@ -101,6 +101,22 @@ else
                     <div class="text-danger"> Forløb er påkrævet for elev</div>
                 }
             </div>
+            
+            <div class="col-md-6 mb-3">
+                <label for="Praktikperiode">Praktikperiode</label>
+                <InputSelect id="Praktikperiode" @bind-Value="user.Internshipyear" class="form-control">
+                    <option value="">-- Vælg en praktikperiode --</option>
+                    @foreach (var internshipyear in internshipyears)
+                    {
+                        <option value="@internshipyear">@internshipyear</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => user.Internshipyear)" />
+                @if (educationError)
+                {
+                    <div class="text-danger"> Praktikperiode er påkrævet for elev</div>
+                }
+            </div>
         }
 
         <div class="col-12 mb-3">
@@ -175,7 +191,12 @@ else
     private bool showAddLocationModal = false;
     private string newLocationName = string.Empty;
     private string locationErrorMessage = string.Empty;
-
+    
+    private List<string> internshipyears = new()
+    {
+        "1","2","3","4"
+    };
+    
     private int SelectedLocationId
     {
         get => user.Location?.LocationId ?? 0;

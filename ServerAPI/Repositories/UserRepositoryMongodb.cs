@@ -77,6 +77,43 @@ public class UserRepositoryMongodb : IUserRepository
 
         return await _userCollection.Find(filter).FirstOrDefaultAsync();
     }
+    
+    public async Task<bool> AddSubgoalToGoal(int userId, int goalId, Subgoal subgoal)
+    {
+        Console.WriteLine($"Forsøger at finde user med id {userId}");
+        var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+        if (user == null)
+        {
+            Console.WriteLine("User ikke fundet");
+            return false;
+        }
+
+        Console.WriteLine("User fundet, leder efter goal med id " + goalId);
+        var goal = user.Studentplan?.Goal?.FirstOrDefault(g => g.GoalId == goalId);
+        if (goal == null)
+        {
+            Console.WriteLine("Goal ikke fundet");
+            return false;
+        }
+
+        if (goal.Subgoals == null)
+        {
+            goal.Subgoals = new List<Subgoal>();
+            Console.WriteLine("Oprettede ny subgoal liste");
+        }
+
+        Console.WriteLine("Tilføjer subgoal til goal");
+        goal.Subgoals.Add(subgoal);
+
+        // Gem opdateret user
+        await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
+
+        Console.WriteLine("Subgoal tilføjet og gemt");
+        return true;
+    }
+
+
+
 
     
 }

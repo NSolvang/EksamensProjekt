@@ -35,8 +35,7 @@ public class UserController : ControllerBase
         }
         return Ok(user);
     }
-
-
+    
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] User user)
     {

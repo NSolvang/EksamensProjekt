@@ -26,12 +26,12 @@
         </div>
 
         <div>
-            <label for="yearFilter">Årgang:</label><br />
-            <select id="yearFilter">
+            <label for="internshipFilter">Praktikperiode:</label><br />
+            <select id="internshipFilter">
                 <option value="">Alle</option>
-                @foreach (var year in users.Select(u => u.DateOfStart.Year).Distinct().OrderBy(y => y))
+                @foreach (var internshipyear in internshipyears)
                 {
-                    <option value="@year">@year</option>
+                    <option value="@internshipyear">@internshipyear</option>
                 }
             </select>
         </div>
@@ -64,7 +64,7 @@ else
                 <h2>@user.Name</h2>
                 <span>Rolle: @user.Role</span>
                 <span>Lokation: @user.Location?.Name</span>
-                <span>Årgang: @user.DateOfStart.Year</span>
+                <span>Praktikperiode: @user.Internshipyear</span>
                 <span>Forløb: @user.Education</span>
             </div>
             <div class="student-progress">
@@ -88,9 +88,14 @@ else
         "Kolding", "Kongebrogaarden", "Kongens Lyngby", "Køge Strand", "Middelfart",
         "Rebild Bakker", "Roskilde"
     };
+
+    private List<string> internshipyears = new()
+    {
+        "1","2","3","4"
+    };
     
     private string? chosenLocation;
-    private int? chosenYear;
+
     
     protected override async Task OnInitializedAsync()
     {

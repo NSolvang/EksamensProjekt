@@ -6,18 +6,19 @@ namespace EksamensProjekt.Service;
 public class SubgoalService : ISubgoal
 {
     private readonly HttpClient client;
-    private readonly string serverUrl = "http://localhost:5186";
+    private readonly string serverUrl = "http://localhost:5094";
 
     public SubgoalService(HttpClient client)
     {
         this.client = client;
     }
 
-    public async Task<bool> AddSubgoalToGoal(int goalId, Subgoal newSubgoal)
+    public async Task<bool> AddSubgoalToGoal(int userId, int goalId, Subgoal newSubgoal)
     {
         try
         {
-            var response = await client.PostAsJsonAsync($"{serverUrl}/api/Goal/{goalId}/subgoals", newSubgoal);
+            var response = await client.PostAsJsonAsync(
+                $"{serverUrl}/api/users/{userId}/studentplan/goals/{goalId}/subgoals", newSubgoal);
             return response.IsSuccessStatusCode;
         }
         catch (Exception ex)
@@ -26,6 +27,7 @@ public class SubgoalService : ISubgoal
             return false;
         }
     }
+
 
     public async Task<bool> DeleteSubgoal(int goalId, int subgoalId)
     {

@@ -8,6 +8,8 @@ public interface IUserRepository
     Task DeleteById(int id);
     Task UpdateUser(User user);
     
+    Task<bool> AddSubgoalToGoal(int userId, int goalId, Subgoal newSubgoal);
+    
     Task<User?> Login(string username, string password);
 
 }
