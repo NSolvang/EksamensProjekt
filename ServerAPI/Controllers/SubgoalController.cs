@@ -39,7 +39,6 @@ public class SubgoalController : ControllerBase
                 }
         }
         
-
         [HttpDelete("{subgoalId}")]
         public async Task<IActionResult> DeleteSubgoal(int userId, int goalId, int subgoalId)
         {
@@ -47,9 +46,19 @@ public class SubgoalController : ControllerBase
             return Ok("Subgoal deleted");
         }
 
+        [HttpPut("{subgoalId}")]
+        public async Task<IActionResult> UpdateSubgoal(
+                int userId,
+                int goalId,
+                int subgoalId,
+                [FromBody] Subgoal newSubgoal)
+        {
+                await _userRepository.UpdateSubgoalFromGoal(userId, goalId, subgoalId, newSubgoal);
+                return Ok("Subgoal opdateret");
+        }
 
 
 
-     
+        
 
 }

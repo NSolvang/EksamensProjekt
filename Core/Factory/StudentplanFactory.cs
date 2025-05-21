@@ -27,9 +27,9 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Elevansvarlig",
                                 Deadline = "Inden første dag",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
-                            },
+                            },  
                             new Subgoal
                             {
                                 SubgoalID = 2,
@@ -37,7 +37,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Elevansvarlig / Nærmeste leder",
                                 Deadline = "Inden første dag",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             }
                         }
@@ -56,7 +56,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Elevansvarlig / Nærmeste leder",
                                 Deadline = DateTime.Today.AddDays(7).ToShortDateString(),
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             },
                             new Subgoal
@@ -66,7 +66,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Elevansvarlig / Nærmeste leder",
                                 Deadline = DateTime.Today.AddDays(7).ToShortDateString(),
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             }
                         }
@@ -84,7 +84,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Elevansvarlig / Nærmeste leder",
                                 Deadline = "De første 14 dage",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             },
                             new Subgoal
@@ -94,7 +94,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Elevansvarlig / Nærmeste leder",
                                 Deadline = "De første 14 dage",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             }
                         }
@@ -112,7 +112,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Elevansvarlig",
                                 Deadline = "I løbet af den første måned",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             },
                             new Subgoal
@@ -122,7 +122,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Elevansvarlig",
                                 Deadline = "I løbet af den første måned",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             }
                         }
@@ -140,7 +140,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Elevansvarlig / Nærmeste leder",
                                 Deadline = "Efter 6. uge",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             },
                             new Subgoal
@@ -150,7 +150,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Elevansvarlig / Nærmeste leder",
                                 Deadline = "Efter 6. uge",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             }
                         }
@@ -168,7 +168,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "HR",
                                 Deadline = "Tilmeldes efter prøvetid",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             },
                             new Subgoal
@@ -178,7 +178,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "HR",
                                 Deadline = "Tilmeldes efter prøvetid",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             }
                         }
@@ -196,7 +196,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Nærmeste leder/anden",
                                 Deadline = "0-3 mdr.",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             },
                             new Subgoal
@@ -206,7 +206,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Nærmeste leder/anden",
                                 Deadline = "0-3 mdr.",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             }
                         }
@@ -224,7 +224,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Nærmeste leder/anden",
                                 Deadline = "I praktikperioden",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             },
                             new Subgoal
@@ -234,7 +234,7 @@ namespace Core.Factory
                                 Date = DateTime.Today,
                                 Responsible = "Nærmeste leder/anden",
                                 Deadline = "Efter prøvetid",
-                                Comments = "",
+                                Comments = new List<Comment>(), 
                                 Approval = false
                             }
                         }

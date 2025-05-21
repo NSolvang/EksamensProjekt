@@ -12,6 +12,8 @@ public interface IUserRepository
     
     Task DeleteSubgoalFromGoal(int userId, int goalId, int subgoal);
     
+    Task UpdateSubgoalFromGoal(int userId, int goalId,int subgoldId, Subgoal subgoal);
+    
     Task<User?> Login(string username, string password);
 
 }

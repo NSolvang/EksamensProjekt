@@ -14,8 +14,8 @@ public class Subgoal
     public string Deadline { get; set; }
 
     public string Status { get; set; } = "Mangler";
-    
-    public string? Comments { get; set; }
+
+    public List<Comment> Comments { get; set; } = new List<Comment>();
     
     public bool Approval { get; set; } = false; 
 }

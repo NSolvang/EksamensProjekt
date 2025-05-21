@@ -145,7 +145,7 @@ public class ServiceMock : IUser, ISubgoal
         }
     }
     
-    public async Task<bool> UpdateSubgoal(int goalId, int subgoalId, Subgoal updatedSubgoal)
+    public async Task<bool> UpdateSubgoal(int userId,int goalId, int subgoalId, Subgoal updatedSubgoal)
     {
         throw new NotImplementedException();
 

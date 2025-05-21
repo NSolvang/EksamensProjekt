@@ -8,7 +8,7 @@ public class SubgoalService : ISubgoal
     private readonly HttpClient client;
     private readonly string serverUrl = "http://localhost:5094";
 
-    public SubgoalService(HttpClient client)
+    public SubgoalService(HttpClient client)    
     {
         this.client = client;
     }
@@ -45,11 +45,12 @@ public class SubgoalService : ISubgoal
         }
     }
     
-    public async Task<bool> UpdateSubgoal(int goalId, int subgoalId, Subgoal updatedSubgoal)
+    public async Task<bool> UpdateSubgoal(int userId, int goalId, int subgoalId, Subgoal updatedSubgoal)
     {
         try
         {
-            var response = await client.PutAsJsonAsync($"{serverUrl}/api/Goal/{goalId}/subgoals/{subgoalId}", updatedSubgoal);
+            var url = $"{serverUrl}/api/users/{userId}/studentplan/goals/{goalId}/subgoals/{subgoalId}";
+            var response = await client.PutAsJsonAsync(url, updatedSubgoal);
             return response.IsSuccessStatusCode;
         }
         catch (Exception ex)
@@ -58,4 +59,5 @@ public class SubgoalService : ISubgoal
             return false;
         }
     }
+
 }

@@ -71,7 +71,7 @@ else
                                     else
                                     {
                                         <select value="@subgoal.Status"
-                                                @onchange="(e) => OnStatusChanged(e, goal.GoalId, subgoal)"
+                                                @onchange="(e) => OnStatusChanged(e,userId,goal.GoalId, subgoal)"
                                                 class="form-control select-status @GetStatusClass(subgoal.Status)">
                                             <option value="Mangler">Mangler</option>
                                             <option value="Igang">Igang</option>
@@ -90,7 +90,7 @@ else
                                     <td>
                                         @if (subgoal.Status == "Gennemført" && !subgoal.Approval)
                                         {
-                                            <button class="btn btn-success btn-sm" @onclick="() => ApproveSubgoal(goal.GoalId, subgoal)">
+                                            <button class="btn btn-success btn-sm" @onclick="() => ApproveSubgoal(userId,goal.GoalId, subgoal)">
                                                 Godkend
                                             </button>
                                         }
@@ -397,11 +397,11 @@ else
         _ => ""
     };
     
-    private async Task ApproveSubgoal(int goalId, Subgoal subgoal)
+    private async Task ApproveSubgoal(int userId,int goalId, Subgoal subgoal)
     {
         subgoal.Approval = true;
     
-        bool success = await mServiceSubgoal.UpdateSubgoal(goalId, subgoal.SubgoalID, subgoal);
+        bool success = await mServiceSubgoal.UpdateSubgoal(userId,goalId, subgoal.SubgoalID, subgoal);
 
         if (success)
         {
@@ -416,11 +416,11 @@ else
         
     }
     
-    private async Task OnStatusChanged(ChangeEventArgs e, int goalId, Subgoal subgoal)
+    private async Task OnStatusChanged(ChangeEventArgs e,int userId, int goalId, Subgoal subgoal)
     {
         subgoal.Status = e.Value?.ToString();
 
-        bool success = await mServiceSubgoal.UpdateSubgoal(goalId, subgoal.SubgoalID, subgoal);
+        bool success = await mServiceSubgoal.UpdateSubgoal(userId,goalId, subgoal.SubgoalID, subgoal);
 
         if (!success)
         {

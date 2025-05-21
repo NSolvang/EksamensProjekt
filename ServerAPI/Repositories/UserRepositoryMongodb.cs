@@ -120,11 +120,33 @@ public class UserRepositoryMongodb : IUserRepository
         goal?.Subgoals.RemoveAll(sg => sg.SubgoalID == subgoalId);
 
         await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
-
     }
 
+    public async Task UpdateSubgoalFromGoal(int userId, int goalId, int subgoalId, Subgoal updatedSubgoal)
+    {
+        var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+        if (user == null)
+            throw new Exception("User not found");
 
+        var goal = user.Studentplan.Goal.FirstOrDefault(g => g.GoalId == goalId);
+        if (goal == null)
+            throw new Exception("Goal not found");
 
+        var subgoalIndex = goal.Subgoals.FindIndex(s => s.SubgoalID == subgoalId);
+        if (subgoalIndex == -1)
+            throw new Exception("Subgoal not found");
 
+        // Sørg for at ID'et ikke ændres ved et uheld
+        updatedSubgoal.SubgoalID = subgoalId;
+
+        // Opdater subgoalen i listen
+        goal.Subgoals[subgoalIndex] = updatedSubgoal;
+
+        // Gem hele user-dokumentet tilbage i databasen
+        var result = await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
+
+        if (!result.IsAcknowledged || result.ModifiedCount == 0)
+            throw new Exception("Failed to update user");
+    }
     
 }
