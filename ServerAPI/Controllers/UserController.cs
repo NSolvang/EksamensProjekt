@@ -1,4 +1,5 @@
 using Core;
+using Core.Filter;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using ServerAPI.Repositories;
@@ -76,6 +77,12 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
+    [HttpGet("filtered")]
+    public async Task<IActionResult> GetFilteredUsers([FromQuery] UserFilter filter)
+    {
+        var users = await _userRepository.GetFilteredUsers(filter);
+        return Ok(users);
+    }
     
     
 }
