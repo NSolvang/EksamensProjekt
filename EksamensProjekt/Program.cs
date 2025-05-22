@@ -16,6 +16,7 @@ builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<IUser, UserService>();
 builder.Services.AddScoped<ISubgoal, SubgoalService>();
 builder.Services.AddScoped<ILogin, LoginService>();
+builder.Services.AddScoped<IComment, CommentService>();
 builder.Services.AddScoped<AuthStateService>();
 
 await builder.Build().RunAsync();

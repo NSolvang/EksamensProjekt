@@ -21,7 +21,7 @@
                                         <strong>@comment.UserName</strong>
                                         <span class="comment-role">@comment.UserRole</span>
                                     </div>
-                                    <span class="comment-date">@comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                                    <span class="comment-date">@comment.CreatedAt</span>
                                 </div>
                                 <div class="comment-text">
                                     @comment.Text
@@ -83,7 +83,7 @@
             UserName = CurrentUser.Name,
             UserRole = CurrentUser.Role,
             UserId = CurrentUser.UserId,
-            CreatedAt = DateTime.Now
+            CreatedAt = DateTime.UtcNow
         };
 
         await OnSaveComment.InvokeAsync(comment);

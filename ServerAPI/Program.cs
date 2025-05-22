@@ -1,3 +1,5 @@
+using Core;
+using EksamensProjekt.Service;
 using ServerAPI.Repositories;
 namespace ServerAPI;
 
@@ -23,6 +25,7 @@ public class Program
         });
         builder.Services.AddSingleton<IUserRepository, UserRepositoryMongodb>();
         builder.Services.AddSingleton<IStudentplanRepository, StudentplanRepositoryMongodb>();
+        builder.Services.AddSingleton<ICommentRepository, CommentRepositoryMongoDb>();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
