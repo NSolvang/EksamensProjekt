@@ -54,10 +54,18 @@ public class SubgoalController : ControllerBase
                 int userId,
                 int goalId,
                 int subgoalId,
-                [FromBody] Subgoal newSubgoal)
+                [FromBody] Subgoal updatedSubgoal)
         {
-                await _userRepository.UpdateSubgoalFromGoal(userId, goalId, subgoalId, newSubgoal);
-                return Ok("Subgoal opdateret");
+                try
+                {
+                        await _userRepository.UpdateSubgoalFromGoal(userId, goalId, subgoalId, updatedSubgoal);
+                        return Ok("Subgoal opdateret");
+                }
+                catch (Exception ex)
+                {
+                        Console.WriteLine($"Fejl ved opdatering af subgoal: {ex}");
+                        return StatusCode(500, $"Intern serverfejl: {ex.Message}");
+                }
         }
         
         [HttpPost("{subgoalId}/comments")]

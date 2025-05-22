@@ -1,0 +1,77 @@
+@using Core
+
+<div class="simple-status-bar">
+    
+    @if (Goals != null && Goals.Any())
+    {
+        <div class="progress-wrapper">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: @OverallCompletionPercentage%; background-color: @GetProgressColor()"></div>
+            </div>
+            <span class="progress-text">@OverallCompletionPercentage% færdig (@TotalApprovedTasks/@TotalTasks opgaver)</span>
+        </div>
+    }
+    else
+    {
+        <p>Ingen opgaver fundet.</p>
+    }
+</div>
+
+<style>
+    .simple-status-bar {
+        margin: 20px 0;
+    }
+
+    .progress-wrapper {
+        margin: 10px 0;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 10px;
+        background-color: #f0f0f0;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #c89805;
+    }
+
+    .progress-fill {
+        height: 100%;
+        transition: width 0.3s ease;
+        border-radius: 12px;
+    }
+
+    .progress-text {
+        display: block;
+        text-align: center;
+        margin-top: 8px;
+        font-weight: 500;
+        color: #b68c00;
+    }
+
+</style>
+
+@code {
+    [Parameter] public string UserName { get; set; } = "";
+    [Parameter] public Goal[] Goals { get; set; } = Array.Empty<Goal>();
+
+    private int TotalTasks => GetAllSubgoals().Count;
+    private int TotalApprovedTasks => GetAllSubgoals().Count(s => s.Approval);
+    private int OverallCompletionPercentage => TotalTasks > 0 ? (int)Math.Round((TotalApprovedTasks * 100.0) / TotalTasks) : 0;
+
+    private List<Subgoal> GetAllSubgoals()
+    {
+        return Goals?
+            .Where(g => g.Subgoals != null)
+            .SelectMany(g => g.Subgoals!)
+            .ToList() ?? new List<Subgoal>();
+    }
+
+    private string GetProgressColor()
+    {
+        return OverallCompletionPercentage switch
+        {
+            _ => "#d4af37"      
+        };
+    }
+}

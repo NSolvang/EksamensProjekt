@@ -2,6 +2,7 @@
 @using Core
 @using Core.Filter
 @using EksamensProjekt.Service
+@using EksamensProjekt.Components
 @inject ILogin LoginService
 @inject NavigationManager nav
 @inject IUser mService
@@ -51,8 +52,8 @@
         </div>
     </div>
 
-    <button class="button-gold" @onclick="SearchWithFilter">Søg</button>
-    <button class="button-gold" @onclick="ClearFilter">Nulstil filter</button>
+    <button class="btn btn-primary" @onclick="SearchWithFilter">Søg</button>
+    <button class="btn btn-primary" @onclick="ClearFilter">Nulstil filter</button>
 </div>
 
 @if (users is null || users.Length == 0)
@@ -72,10 +73,8 @@ else
                 <span>Praktikperiode: @user.Internshipyear</span>
                 <span>Forløb: @user.Education</span>
             </div>
-            <div class="student-progress">
-                <div class="student-progress-bar">
-                    <!-- Progressbar kan tilføjes her senere -->
-                </div>
+            <div class="status-bar-container">
+                <StatusBarComponent UserName="@user.Name" Goals="@GetUserGoals(user)" />
             </div>
         </div>
     }
@@ -137,5 +136,11 @@ else
     {
         filter = new UserFilter(); // nulstil filter
         await LoadAll(); // load alle brugere igen
+    }
+
+    // Tilføj denne metode for at hente goals for hver bruger
+    private Goal[] GetUserGoals(User user)
+    {
+        return user.Studentplan?.Goal?.ToArray() ?? Array.Empty<Goal>();
     }
 }

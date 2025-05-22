@@ -399,19 +399,48 @@ else
 
     private async Task OnStatusChanged(ChangeEventArgs e, int userId, int goalId, Subgoal subgoal)
     {
-        subgoal.Status = e.Value?.ToString();
+        var newStatus = e.Value?.ToString();
+    
+        if (newStatus == subgoal.Status) 
+            return;
 
-        bool success = await mServiceSubgoal.UpdateSubgoal(userId, goalId, subgoal.SubgoalID, subgoal);
+        // Gem den gamle status i tilfælde af fejl
+        var oldStatus = subgoal.Status;
+        subgoal.Status = newStatus;
+    
+        // Hvis status er ændret til "Gennemført", sæt Approval til false
+        if (newStatus == "Gennemført")
+        {
+            subgoal.Approval = false;
+        }
 
-        if (!success)
+        try
         {
-            Console.WriteLine("Kunne ikke opdatere status på delmålet.");
+            // Opdater subgoalen i databasen
+            bool success = await mServiceSubgoal.UpdateSubgoal(userId, goalId, subgoal.SubgoalID, subgoal);
+        
+            if (!success)
+            {
+                // Hvis opdatering fejlede, gendan den gamle status
+                subgoal.Status = oldStatus;
+                Console.WriteLine("Kunne ikke opdatere status i databasen");
+                // Vis evt. en fejlmeddelelse til brugeren
+            }
+            else
+            {
+                // Opdater den lokale kopi af brugerdata
+                users = await mService.GetUserById(userId);
+                goals = users?.Studentplan?.Goal?.ToArray();
+            }
         }
-        else
+        catch (Exception ex)
         {
-            users = await mService.GetUserById(userId);
-            goals = users?.Studentplan?.Goal?.ToArray();
-            StateHasChanged();
+            // Gendan den gamle status ved fejl
+            subgoal.Status = oldStatus;
+            Console.WriteLine($"Fejl ved opdatering af status: {ex.Message}");
+            // Vis evt. en fejlmeddelelse til brugeren
         }
+    
+        StateHasChanged();
     }
 }
