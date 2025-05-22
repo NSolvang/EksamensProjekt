@@ -127,28 +127,42 @@ public class UserRepositoryMongodb : IUserRepository
 
     public async Task UpdateSubgoalFromGoal(int userId, int goalId, int subgoalId, Subgoal updatedSubgoal)
     {
-        var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+        // Først find brugeren
+        var filter = Builders<User>.Filter.Eq(u => u.UserId, userId);
+        var user = await _userCollection.Find(filter).FirstOrDefaultAsync();
+    
         if (user == null)
             throw new Exception("User not found");
 
-        var goal = user.Studentplan.Goal.FirstOrDefault(g => g.GoalId == goalId);
+        // Find det relevante goal
+        var goal = user.Studentplan?.Goal?.FirstOrDefault(g => g.GoalId == goalId);
         if (goal == null)
             throw new Exception("Goal not found");
 
-        var subgoalIndex = goal.Subgoals.FindIndex(s => s.SubgoalID == subgoalId);
-        if (subgoalIndex == -1)
+        // Find og opdater subgoalen
+        var subgoal = goal.Subgoals?.FirstOrDefault(s => s.SubgoalID == subgoalId);
+        if (subgoal == null)
             throw new Exception("Subgoal not found");
 
-        updatedSubgoal.SubgoalID = subgoalId;
+        // Opdater kun de felter der skal kunne ændres
+        subgoal.Name = updatedSubgoal.Name;
+        subgoal.Date = updatedSubgoal.Date;
+        subgoal.Responsible = updatedSubgoal.Responsible;
+        subgoal.Deadline = updatedSubgoal.Deadline;
+        subgoal.Status = updatedSubgoal.Status;
+        subgoal.Approval = updatedSubgoal.Approval;
+    
+        // Kommentarer skal muligvis håndteres separat
+        if (updatedSubgoal.Comments != null)
+        {
+            subgoal.Comments = updatedSubgoal.Comments;
+        }
 
-        // Opdater subgoalen i listen
-        goal.Subgoals[subgoalIndex] = updatedSubgoal;
-
-        // Gem hele user-dokumentet tilbage i databasen
-        var result = await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
-
-        if (!result.IsAcknowledged || result.ModifiedCount == 0)
-            throw new Exception("Failed to update user");
+        // Gem ændringerne
+        var updateResult = await _userCollection.ReplaceOneAsync(filter, user);
+    
+        if (!updateResult.IsAcknowledged || updateResult.ModifiedCount == 0)
+            throw new Exception("Failed to update user in database");
     }
     
     public async Task<User[]> GetFilteredUsers(UserFilter filter)

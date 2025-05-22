@@ -51,13 +51,22 @@ public class SubgoalService : ISubgoal
         {
             var url = $"{serverUrl}/api/users/{userId}/studentplan/goals/{goalId}/subgoals/{subgoalId}";
             var response = await client.PutAsJsonAsync(url, updatedSubgoal);
-            return response.IsSuccessStatusCode;
+        
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"API fejl: {errorContent}");
+                return false;
+            }
+        
+            return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error updating subgoal: {ex.Message}");
+            Console.WriteLine($"Fejl ved opdatering af subgoal: {ex.Message}");
             return false;
         }
     }
+    
 
 }

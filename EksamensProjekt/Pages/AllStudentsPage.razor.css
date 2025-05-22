@@ -113,46 +113,6 @@ h3 {
     opacity: 0.8;
 }
 
-/* Progress bar styling - Gold theme */
-.student-progress {
-    margin-top: 1.5rem;
-    position: relative;
-    z-index: 2;
-}
-
-.student-progress-bar {
-    height: 8px;
-    background: #f0e6d2; /* Lys beige */
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-    overflow: hidden;
-    position: relative;
-}
-
-.student-progress-bar::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: var(--progress, 0%);
-    background-color: #d4af37; /* Guld farve */
-    border-radius: 4px;
-    animation: progress-animate 1.5s ease-out;
-}
-
-.progress-percent {
-    min-width: 35px;
-    text-align: right;
-    font-weight: 600;
-    color: #2c3e50;
-    font-size: 0.9rem;
-}
-
-@keyframes progress-animate {
-    from { width: 0; }
-    to { width: var(--progress, 65%); }
-}
 
 /* Gold shimmer effect */
 .student-card::before {
@@ -196,12 +156,21 @@ h3 {
     display: flex;
     flex-wrap: wrap;
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    margin: 0 auto 2rem auto; /* Center horizontally */
     padding: 1.5rem;
     border-radius: 12px;
     background-color: #fff;
     box-shadow: 0 4px 12px rgba(212, 175, 55, 0.1);
     border: 1px solid rgba(212, 175, 55, 0.3);
+    max-width: fit-content; /* Ensure container only takes needed width */
+}
+
+/* Button container styling */
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem; /* Consistent gap between buttons */
+    align-items: center;
 }
 
 /*Styling af knapper til filtering*/
@@ -210,30 +179,26 @@ h3 {
     color: #d4af37; /* Guld farve */
     border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 12px;
-    padding: 0.25rem 0.6rem; /* mindre padding */
+    padding: 0.4rem 0.8rem; /* Slightly larger padding */
     font-weight: 600;
-    font-size: 0.7rem; /* mindre font */
+    font-size: 0.8rem; /* Slightly larger font */
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
     transition: all 0.3s ease;
     letter-spacing: 0.3px;
     text-align: center;
     user-select: none;
-    display: inline-block;
-    margin-right: 0.5rem; /* lidt afstand */
-    min-width: 80px; /* mindre minimum bredde */
     white-space: nowrap;
+    margin: 0; /* Remove margin-right */
 }
 
 .button-gold:hover {
     background-color: #d4af37;
     color: white;
-    border: 2px solid #d4af37;
+    border: 1px solid #d4af37; /* Keep consistent border width */
     box-shadow: 0 6px 15px rgba(212, 175, 55, 0.3);
     transform: translateY(-1.5px);
 }
-
-
 
 /* Label styling */
 .filter-section label {
@@ -257,6 +222,18 @@ h3 {
     transition: all 0.3s ease;
 }
 
+.status-bar-container {
+    position: absolute;
+    top: 2rem;
+    right: 5rem;
+    display: flex;
+    align-items: center;
+}
+
+.student-info {
+    padding-right: 120px; /* Gør plads til statusbaren */
+}
+
 .filter-section input:focus,
 .filter-section select:focus {
     outline: none;
@@ -269,10 +246,16 @@ h3 {
     .filter-section {
         flex-direction: column;
         align-items: stretch;
+        width: 90%; /* Take most of screen width */
+        margin: 0 auto 2rem auto; /* Center on mobile */
     }
 
     .filter-section input,
     .filter-section select {
         width: 100%;
+    }
+
+    .filter-buttons {
+        justify-content: center; /* Center buttons on mobile */
     }
 }
