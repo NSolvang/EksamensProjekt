@@ -68,7 +68,7 @@ public class SubgoalController : ControllerBase
                         Console.WriteLine($"Attempting to add comment for userId: {userId}, goalId: {goalId}, subgoalId: {subgoalId}");
         
                         comment.SubgoalID = subgoalId;
-                        comment.CreatedAt = DateTime.UtcNow;
+                        comment.CreatedAt = DateTime.Now;
 
                         await _commentRepository.AddComment(userId, goalId, subgoalId, comment);
         
