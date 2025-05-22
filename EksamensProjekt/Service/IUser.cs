@@ -1,4 +1,5 @@
 using Core;
+using Core.Filter;
 namespace EksamensProjekt.Service;
 
 public interface IUser
@@ -12,6 +13,9 @@ public interface IUser
     
     //Fjerner bruger, hvor user.UserId == id
     Task DeleteById(int id);
+    
+    Task<User[]> GetFilteredUsers(UserFilter filter);
+
     //Opdaterer brugeren
     Task UpdateUser(User user);
     

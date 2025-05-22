@@ -1,6 +1,7 @@
 using Core;
 using Blazored.LocalStorage;
 using Core.Factory;
+using Core.Filter;
 
 namespace EksamensProjekt.Service;
 
@@ -87,6 +88,11 @@ public class ServiceMock : IUser, ISubgoal
     {
         users.RemoveAll(user => user.UserId == id);
         await _localStorage.SetItemAsync("users", users);
+    }
+
+    public Task<User[]> GetFilteredUsers(UserFilter filter)
+    {
+        throw new NotImplementedException();
     }
 
     public Task UpdateUser(User user)

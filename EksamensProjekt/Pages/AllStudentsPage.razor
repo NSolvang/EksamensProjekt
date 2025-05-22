@@ -1,5 +1,6 @@
 @page "/AllStudentsPage"
 @using Core
+@using Core.Filter
 @using EksamensProjekt.Service
 @inject ILogin LoginService
 @inject NavigationManager nav
@@ -10,13 +11,14 @@
 <div class="filter-section">
     <div>
         <label for="nameSearch">Søg navn:</label><br />
-        <input type="text" id="nameSearch" placeholder="Indtast navn..." />
+        <input type="text" id="nameSearch" placeholder="Indtast navn..."
+               @bind="filter.Name" />
     </div>
 
     <div style="display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: flex-end;">
         <div>
             <label for="locationFilter">Lokation:</label><br />
-            <select id="locationFilter">
+            <select id="locationFilter" @bind="filter.LocationName">
                 <option value="">Alle</option>
                 @foreach (var location in locations)
                 {
@@ -27,7 +29,7 @@
 
         <div>
             <label for="internshipFilter">Praktikperiode:</label><br />
-            <select id="internshipFilter">
+            <select id="internshipFilter" @bind="filter.Internshipyear">
                 <option value="">Alle</option>
                 @foreach (var internshipyear in internshipyears)
                 {
@@ -38,7 +40,7 @@
 
         <div>
             <label for="educationFilter">Forløb:</label><br />
-            <select id="educationFilter">
+            <select id="educationFilter" @bind="filter.Education">
                 <option value="">Alle</option>
                 <option value="EUX">EUX</option>
                 <option value="EUD">EUD</option>
@@ -49,7 +51,10 @@
         </div>
     </div>
 
+    <button class="button-gold" @onclick="SearchWithFilter">Søg</button>
+    <button class="button-gold" @onclick="ClearFilter">Nulstil filter</button>
 </div>
+
 @if (users is null || users.Length == 0)
 {
     <p>Ingen elever fundet.</p>
@@ -80,7 +85,9 @@ else
     
     private User? currentUser;
     private User[]? users = Array.Empty<User>();
+    private UserFilter filter = new();
 
+    
     private List<string> locations = new()
     {
         "Aarhus", "Borupgaard", "Bygholm Park", "Centralværkstedet", "Copenhagen Portside",
@@ -117,5 +124,18 @@ else
         users = allUsers
             .Where(e => e.Role == "Elev")
             .ToArray();
+    }
+    
+    private async Task SearchWithFilter()
+    {
+        users = (await mService.GetFilteredUsers(filter))
+            .Where(u => u.Role == "Elev")
+            .ToArray();
+    }
+
+    private async Task ClearFilter()
+    {
+        filter = new UserFilter(); // nulstil filter
+        await LoadAll(); // load alle brugere igen
     }
 }

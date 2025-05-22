@@ -1,5 +1,6 @@
 namespace ServerAPI.Repositories;
 using Core;
+using Core.Filter;
 public interface IUserRepository
 {
     Task<User[]> GetAll();
@@ -7,6 +8,8 @@ public interface IUserRepository
     Task AddUser(User user);
     Task DeleteById(int id);
     Task UpdateUser(User user);
+    
+    Task<User[]> GetFilteredUsers(UserFilter filter);
     
     Task<bool> AddSubgoalToGoal(int userId, int goalId, Subgoal newSubgoal);
     

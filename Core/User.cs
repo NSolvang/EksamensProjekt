@@ -25,7 +25,7 @@ public class User
     [Required(ErrorMessage = "Adgangskode er påkrævet")]
    /*[StringLength(10, MinimumLength = 8, ErrorMessage = "Adgangskoden skal være mellem 8 og 10 tegn")]*/
     public string Password { get; set; }
-    
+   
     [Required(ErrorMessage = "Lokation er påkrævet")]
     public Location? Location { get; set; }
     public string? Education { get; set; }

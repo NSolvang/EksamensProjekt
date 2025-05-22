@@ -1,5 +1,6 @@
 using MongoDB.Driver;
 using Core;
+using Core.Filter;
 using Core.Factory;
 
 namespace ServerAPI.Repositories;
@@ -29,6 +30,8 @@ public class UserRepositoryMongodb : IUserRepository
         var list = await _userCollection.Find(noFilter).ToListAsync();
         return list.ToArray();
     }
+    
+    
 
     public async Task AddUser(User user)
     {
@@ -136,7 +139,6 @@ public class UserRepositoryMongodb : IUserRepository
         if (subgoalIndex == -1)
             throw new Exception("Subgoal not found");
 
-        // Sørg for at ID'et ikke ændres ved et uheld
         updatedSubgoal.SubgoalID = subgoalId;
 
         // Opdater subgoalen i listen
@@ -148,5 +150,28 @@ public class UserRepositoryMongodb : IUserRepository
         if (!result.IsAcknowledged || result.ModifiedCount == 0)
             throw new Exception("Failed to update user");
     }
+    
+    public async Task<User[]> GetFilteredUsers(UserFilter filter)
+    {
+        var builder = Builders<User>.Filter;
+        var mongoFilter = builder.Empty;
+
+        if (!string.IsNullOrWhiteSpace(filter.LocationName))
+            mongoFilter &= builder.Eq(u => u.Location.Name, filter.LocationName);
+
+        if (!string.IsNullOrWhiteSpace(filter.Education))
+            mongoFilter &= builder.Eq(u => u.Education, filter.Education);
+
+        if (!string.IsNullOrWhiteSpace(filter.Internshipyear))
+            mongoFilter &= builder.Eq(u => u.Internshipyear, filter.Internshipyear);
+
+        if (!string.IsNullOrWhiteSpace(filter.Name))
+            mongoFilter &= builder.Regex(u => u.Name, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+
+        var results = await _userCollection.Find(mongoFilter).ToListAsync();
+        return results.ToArray();
+    }
+
+
     
 }
