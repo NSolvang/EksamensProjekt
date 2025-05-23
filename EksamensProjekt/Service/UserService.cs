@@ -6,7 +6,6 @@ namespace EksamensProjekt.Service;
 
 public class UserService : IUser
 {
-    private readonly string serverUrl = "http://localhost:5094";
 
     private HttpClient client;
     
@@ -17,23 +16,23 @@ public class UserService : IUser
 
     public async Task<User[]> GetAll()
     {
-        return await client.GetFromJsonAsync<User[]>($"{serverUrl}/api/User");
+        return await client.GetFromJsonAsync<User[]>($"/api/User");
     }
 
     public Task<User> GetUserById(int id)
     {
-        return  client.GetFromJsonAsync<User>($"{serverUrl}/api/User/{id}");
+        return  client.GetFromJsonAsync<User>($"/api/User/{id}");
     }
     
     public async Task DeleteById(int id)
     {
-        await client.DeleteAsync($"{serverUrl}/api/User/{id}");
+        await client.DeleteAsync($"/api/User/{id}");
     }
 
     
     public async Task AddUser(User user)
     {
-        var response = await client.PostAsJsonAsync($"{serverUrl}/api/User", user);
+        var response = await client.PostAsJsonAsync($"/api/User", user);
         if (!response.IsSuccessStatusCode)
         {
             var error = await response.Content.ReadAsStringAsync();
@@ -43,7 +42,7 @@ public class UserService : IUser
     
     public async Task UpdateUser(User user)
     {
-        await client.PutAsJsonAsync($"{serverUrl}/api/User", user);
+        await client.PutAsJsonAsync($"/api/User", user);
     }
     
     private string ToQueryString(UserFilter filter)
@@ -68,7 +67,7 @@ public class UserService : IUser
     public async Task<User[]> GetFilteredUsers(UserFilter filter)
     {
         var queryString = ToQueryString(filter);
-        var url = $"{serverUrl}/api/User/filtered";
+        var url = $"/api/User/filtered";
 
         if (!string.IsNullOrEmpty(queryString))
             url += "?" + queryString;

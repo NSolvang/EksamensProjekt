@@ -102,6 +102,7 @@ public class UserRepositoryMongodb : IUserRepository
         if (goal.Subgoals == null)
         {
             goal.Subgoals = new List<Subgoal>();
+            
             Console.WriteLine("Oprettede ny subgoal liste");
         }
 

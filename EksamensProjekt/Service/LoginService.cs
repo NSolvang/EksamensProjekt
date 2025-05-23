@@ -7,7 +7,6 @@ namespace EksamensProjekt.Service;
 
 public class LoginService : ILogin
 {
-    private readonly string serverUrl = "http://localhost:5094/";
     private readonly HttpClient client;
     private readonly ILocalStorageService localStorage;
     private readonly AuthStateService authStateService;  
@@ -37,7 +36,7 @@ public class LoginService : ILogin
             };
 
             // Send POST request with JSON body
-            var response = await client.PostAsJsonAsync($"{serverUrl}api/User/login", loginRequest);
+            var response = await client.PostAsJsonAsync($"api/User/login", loginRequest);
 
             if (response.IsSuccessStatusCode)
             {
@@ -64,7 +63,7 @@ public class LoginService : ILogin
 
     public async Task AddUser(User user)
     {
-        await client.PostAsJsonAsync($"{serverUrl}api/User", user);
+        await client.PostAsJsonAsync($"api/User", user);
     }
 
     public async Task LogOut()
@@ -73,7 +72,7 @@ public class LoginService : ILogin
         {
             await localStorage.RemoveItemAsync("user");
  
-            var response = await client.PostAsync($"{serverUrl}api/User/logout", null);
+            var response = await client.PostAsync($"api/User/logout", null);
  
             if (!response.IsSuccessStatusCode)
             {
