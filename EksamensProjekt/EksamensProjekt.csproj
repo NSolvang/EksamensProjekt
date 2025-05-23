@@ -16,4 +16,9 @@
       <ProjectReference Include="..\Core\Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Service\IStudentplan.cs" />
+      <Compile Remove="Service\StudentplanService.cs" />
+    </ItemGroup>
+
 </Project>
