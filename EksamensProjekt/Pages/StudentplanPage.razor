@@ -211,6 +211,10 @@ else
     private Subgoal? selectedSubgoal;
     private List<Comment> currentComments = new();
 
+    // Tilføj dictionary til at cache comment counts
+    private Dictionary<int, int> commentCounts = new Dictionary<int, int>();
+    private bool commentCountsLoaded = false;
+
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
@@ -223,6 +227,59 @@ else
 
         users = await mService.GetUserById(userId);
         goals = users?.Studentplan?.Goal?.ToArray();
+        
+        // Load alle comment counts når komponenten initialiseres
+        await LoadAllCommentCounts();
+    }
+
+    // Ny metode til at load alle comment counts
+    private async Task LoadAllCommentCounts()
+    {
+        if (goals == null) return;
+
+        var loadTasks = new List<Task>();
+        
+        foreach (var goal in goals)
+        {
+            if (goal.Subgoals != null)
+            {
+                foreach (var subgoal in goal.Subgoals)
+                {
+                    loadTasks.Add(LoadCommentCountForSubgoal(goal.GoalId, subgoal.SubgoalID));
+                }
+            }
+        }
+
+        await Task.WhenAll(loadTasks);
+        commentCountsLoaded = true;
+        StateHasChanged(); // Trigger re-render når alle counts er loaded
+    }
+
+    private async Task LoadCommentCountForSubgoal(int goalId, int subgoalId)
+    {
+        try
+        {
+            var comments = await mServiceComment.GetCommentsBySubgoalId(userId, goalId, subgoalId);
+            commentCounts[subgoalId] = comments?.Count ?? 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading comment count for subgoal {subgoalId}: {ex.Message}");
+            commentCounts[subgoalId] = 0;
+        }
+    }
+
+    // Opdateret GetCommentCount metode
+    private int GetCommentCount(Subgoal subgoal)
+    {
+        // Hvis modal er åben for samme subgoal, brug currentComments
+        if (selectedSubgoal != null && selectedSubgoal.SubgoalID == subgoal.SubgoalID)
+        {
+            return currentComments.Count;
+        }
+        
+        // Return cached count eller 0 hvis ikke loaded endnu
+        return commentCounts.ContainsKey(subgoal.SubgoalID) ? commentCounts[subgoal.SubgoalID] : 0;
     }
 
     private void ToggleTable(int goalId)
@@ -263,7 +320,6 @@ else
         }
     }
 
-
     private void CloseCommentModal()
     {
         showCommentModal = false;
@@ -271,31 +327,27 @@ else
         currentComments.Clear();
     }
 
+    // Opdateret SaveComment metode
     private async Task SaveComment(Comment comment)
     {
         if (selectedSubgoal == null || !selectedGoalId.HasValue)
-            return;  // Exit hvis vi ikke har det nødvendige data
+            return;
 
         await mServiceComment.AddComment(userId, selectedGoalId.Value, selectedSubgoal.SubgoalID, comment);
 
+        // Opdater currentComments
         currentComments = await mServiceComment.GetCommentsBySubgoalId(userId, selectedGoalId.Value, selectedSubgoal.SubgoalID);
         
+        // Opdater også cache så count bliver vist korrekt når modal lukkes
+        commentCounts[selectedSubgoal.SubgoalID] = currentComments.Count;
+        
         StateHasChanged();
-
     }
 
-    private int GetCommentCount(Subgoal subgoal)
+    // Valgfri: Metode til at refreshe comment counts (kan bruges hvis nødvendigt)
+    private async Task RefreshCommentCounts()
     {
-        // Hent kommentarer direkte fra service eller fra currentComments, hvis modal åben på samme subgoal
-        if (selectedSubgoal != null && selectedSubgoal.SubgoalID == subgoal.SubgoalID)
-        {
-            return currentComments.Count;
-        }
-        else
-        {
-            // Hent synkront er ikke muligt, så return 0 eller lav async variant hvis nødvendigt
-            return 0;
-        }
+        await LoadAllCommentCounts();
     }
 
     private void FindGoalForNewSubgoal(int goalId)
