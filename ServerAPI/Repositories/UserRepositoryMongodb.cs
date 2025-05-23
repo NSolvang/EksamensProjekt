@@ -74,7 +74,7 @@ public class UserRepositoryMongodb : IUserRepository
     }
     
     public async Task<User?> Login(string username, string password)
-    {
+    { 
         var filter = Builders<User>.Filter.Eq(u => u.UserName, username) &
                      Builders<User>.Filter.Eq(u => u.Password, password);
 
