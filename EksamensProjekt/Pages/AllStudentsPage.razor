@@ -10,16 +10,16 @@
 <h3>OVERSIGT OVER ELEVER</h3>
 
 <div class="filter-section">
-    <div>
-        <label for="nameSearch">Søg navn:</label><br />
+    <div class="filter-group">
+        <label for="nameSearch">Søg navn:</label>
         <input type="text" id="nameSearch" placeholder="Indtast navn..."
                @bind="filter.Name" />
     </div>
 
-    <div style="display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: flex-end;">
-        <div>
-            <label for="locationFilter">Lokation:</label><br />
-            <select id="locationFilter" @bind="filter.LocationName">
+    <div class="filter-group-row">
+        <div class="filter-group">
+            <label for="locationFilter">Lokation:</label>
+            <select class="locationFilter" @bind="filter.LocationName">
                 <option value="">Alle</option>
                 @foreach (var location in locations)
                 {
@@ -28,8 +28,8 @@
             </select>
         </div>
 
-        <div>
-            <label for="internshipFilter">Praktikperiode:</label><br />
+        <div class="filter-group">
+            <label for="internshipFilter">Praktikperiode:</label>
             <select id="internshipFilter" @bind="filter.Internshipyear">
                 <option value="">Alle</option>
                 @foreach (var internshipyear in internshipyears)
@@ -39,8 +39,8 @@
             </select>
         </div>
 
-        <div>
-            <label for="educationFilter">Forløb:</label><br />
+        <div class="filter-group">
+            <label for="educationFilter">Forløb:</label>
             <select id="educationFilter" @bind="filter.Education">
                 <option value="">Alle</option>
                 <option value="EUX">EUX</option>
@@ -52,8 +52,10 @@
         </div>
     </div>
 
-    <button class="btn btn-primary" @onclick="SearchWithFilter">Søg</button>
-    <button class="btn btn-primary" @onclick="ClearFilter">Nulstil filter</button>
+    <div class="filter-buttons">
+        <button class="button-gold" @onclick="SearchWithFilter">Søg</button>
+        <button class="button-gold" @onclick="ClearFilter">Nulstil filter</button>
+    </div>
 </div>
 
 @if (users is null || users.Length == 0)

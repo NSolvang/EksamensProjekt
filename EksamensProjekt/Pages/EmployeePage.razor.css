@@ -13,7 +13,7 @@ h3 {
 .employee-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2.5rem;
+    gap: 10rem;
     padding: 1.5rem;
     max-width: 1200px;
     margin: 0 auto;
@@ -148,7 +148,7 @@ h3 {
 @media (max-width: 768px) {
     .employee-container {
         grid-template-columns: 1fr;
-        gap: 1.8rem;
+        gap: 5rem;
         padding: 1rem;
     }
 

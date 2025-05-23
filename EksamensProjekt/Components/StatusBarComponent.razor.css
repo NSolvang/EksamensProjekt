@@ -1,0 +1,30 @@
+.simple-status-bar {
+    margin: 20px 0;
+}
+
+.progress-wrapper {
+    margin: 10px 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #f0f0f0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #c89805;
+}
+
+.progress-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+    border-radius: 12px;
+}
+
+.progress-text {
+    display: block;
+    text-align: center;
+    margin-top: 8px;
+    font-weight: 500;
+    color: #b68c00;
+}
