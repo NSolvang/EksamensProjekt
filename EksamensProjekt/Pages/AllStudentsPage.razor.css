@@ -1,7 +1,12 @@
+/* Generel styling for at sikre, at elementer beregnes korrekt */
+* {
+    box-sizing: border-box; /* Sikrer, at padding og border er inkluderet i elementets totalbredde/højde */
+}
+
 /* Main container styling */
 h3 {
     text-align: center;
-    color: #d4af37; /* Guld farve */
+    color: #d4af37; /* Guld farve for titler */
     margin-bottom: 1.5rem;
     font-size: 1.8rem;
     font-weight: 600;
@@ -15,7 +20,7 @@ h3 {
     background-color: #f8f5f0; /* Lys beige baggrund */
 }
 
-/* Page title styling */
+/* Page title styling (assuming this is for a main page title, not the h3) */
 .all-students-title {
     color: #d4af37; /* Guld farve */
     text-align: center;
@@ -29,8 +34,8 @@ h3 {
 /* Grid layout for student cards */
 .students-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Optimeret til responsivt grid */
+    gap: 1.5rem; /* Mellemrum mellem kort */
 }
 
 /* Student card styling - Luxury design */
@@ -78,14 +83,14 @@ h3 {
 }
 
 .student-info h2 {
-    color: #2c3e50;
+    color: #2c3e50; /* Standard tekstfarve */
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
 }
 
 .student-info h3 {
-    color: #7a7a7a;
+    color: #7a7a7a; /* Sekundær tekstfarve */
     font-size: 1rem;
     font-weight: 500;
     font-style: italic;
@@ -94,7 +99,7 @@ h3 {
 .student-info span {
     display: flex;
     align-items: center;
-    color: #7a7a7a;
+    color: #7a7a7a; /* Sekundær tekstfarve */
     font-size: 0.9rem;
     position: relative;
     padding-left: 1.2em;
@@ -112,7 +117,6 @@ h3 {
     border-radius: 50%;
     opacity: 0.8;
 }
-
 
 /* Gold shimmer effect */
 .student-card::before {
@@ -138,90 +142,173 @@ h3 {
     100% { transform: rotate(30deg) translate(70%, 70%); }
 }
 
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .students-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .student-info img {
-        width: 80px;
-        height: 80px;
-    }
-}
-
-/* Filter container styling */
+/* Filter container styling (Desktop) */
 .filter-section {
     display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin: 0 auto 2rem auto; /* Center horizontally */
+    flex-direction: row; /* Elementer ligger ved siden af hinanden */
+    flex-wrap: wrap; /* Tillad ombrydning på mindre skærme */
+    gap: 1rem; /* Mellemrum mellem elementer */
+    justify-content: center; /* Centrer elementer horisontalt */
+    align-items: flex-end; /* Juster felter og knapper i bunden */
+    margin: 0 auto 2rem auto; /* Centrer sektionen */
     padding: 1.5rem;
     border-radius: 12px;
     background-color: #fff;
     box-shadow: 0 4px 12px rgba(212, 175, 55, 0.1);
     border: 1px solid rgba(212, 175, 55, 0.3);
-    max-width: fit-content; /* Ensure container only takes needed width */
+    max-width: fit-content; /* Sikrer at containeren kun fylder det nødvendige på store skærme */
+}
+
+/* Styling for individuelle filtergrupper (f.eks. label + input/select) */
+.filter-group {
+    display: flex;
+    flex-direction: column; /* Label og input/select stables vertikalt */
+}
+
+/* Styling for rækken af grupperede filter dropdowns */
+.filter-group-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem; /* Mellemrum mellem individuelle dropdown-grupper */
+    justify-content: center;
 }
 
 /* Button container styling */
 .filter-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem; /* Consistent gap between buttons */
+    gap: 0.5rem; /* Konsistent mellemrum mellem knapper */
+    justify-content: center; /* Centrer knapperne i deres container */
     align-items: center;
 }
 
-/*Styling af knapper til filtering*/
+/* Fælles styling for knapper */
 .button-gold {
+    box-sizing: border-box;
+    height: 40px;
     background-color: white;
-    color: #d4af37; /* Guld farve */
+    color: #d4af37; /* Guld farve for tekst */
     border: 1px solid rgba(212, 175, 55, 0.3);
-    border-radius: 12px;
-    padding: 0.4rem 0.8rem; /* Slightly larger padding */
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
     font-weight: 600;
-    font-size: 0.8rem; /* Slightly larger font */
+    font-size: 0.95rem;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
     transition: all 0.3s ease;
     letter-spacing: 0.3px;
-    text-align: center;
+    text-align: center; /* Knaptekst forbliver centreret */
     user-select: none;
     white-space: nowrap;
-    margin: 0; /* Remove margin-right */
+    margin: 0;
+    min-width: 100px;
+    max-width: 160px;
 }
 
+/* Hover-tilstand for knapper */
 .button-gold:hover {
-    background-color: #d4af37;
-    color: white;
-    border: 1px solid #d4af37; /* Keep consistent border width */
+    background-color: #d4af37; /* Solid guld ved hover */
+    color: white; /* Hvid tekst ved hover */
+    border: 1px solid #d4af37;
     box-shadow: 0 6px 15px rgba(212, 175, 55, 0.3);
     transform: translateY(-1.5px);
+}
+
+/* Styling for input- og select-felter NÅR DE IKKE ER I FOKUS (STANDARD TILSTAND) */
+.filter-section input,
+.filter-section select {
+    box-sizing: border-box;
+    height: 40px;
+    background-color: white; /* Hvid baggrund som standard */
+    color: #2c3e50; /* Standard mørk tekstfarve som standard */
+    border: 1px solid rgba(212, 175, 55, 0.3); /* Blød guld kant som standard */
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    font-weight: 400; /* Lettere fontvægt som standard */
+    font-size: 0.95rem;
+    cursor: text; /* Cursor ændres til tekstmarkør for inputfelter */
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.05); /* Meget let skygge som standard */
+    transition: all 0.3s ease;
+    letter-spacing: normal;
+    text-align: left; /* Tekst i input/select er venstrejusteret */
+    user-select: auto;
+    white-space: nowrap;
+    margin: 0;
+    min-width: 100px;
+    max-width: 160px;
+}
+
+/* Fokus-tilstand for input og select-felter (NÅR MAN TRYKKER PÅ DEM) */
+.filter-section input:focus,
+.filter-section select:focus {
+    outline: none; /* Fjerner browserens standard outline */
+    background-color: #d4af37; /* Solid guld baggrund ved fokus */
+    color: white; /* Hvid tekst ved fokus */
+    border: 1px solid #d4af37; /* Solid guld kant ved fokus */
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.7); /* Mere prominent guld skygge ved fokus */
+    font-weight: 600; /* Kraftigere fontvægt ved fokus */
+    transform: translateY(-1px); /* Lidt løft ved fokus for visuel feedback */
 }
 
 /* Label styling */
 .filter-section label {
     font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 0.5rem;
+    color: #2c3e50; /* Standard tekstfarve */
+    margin-bottom: 0.2rem;
     display: block;
     font-size: 0.95rem;
 }
 
-/* Input/select styling */
-.filter-section input,
-.filter-section select {
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    border: 1px solid rgba(212, 175, 55, 0.4);
-    background-color: #fdfaf5;
-    color: #2c3e50;
-    font-size: 0.95rem;
-    min-width: 200px;
-    transition: all 0.3s ease;
+/* Status Bar Styling */
+.simple-status-bar {
+    margin: 20px auto; /* Centrer statusbaren horisontalt i det normale flow */
+    max-width: 300px; /* Begræns bredden på store skærme */
+    padding: 10px;
+    background-color: white; /* Hvid baggrund som resten af de hvide elementer */
+    border-radius: 12px; /* Afrundede hjørner */
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.1); /* Blød guld skygge */
+    border: 1px solid rgba(212, 175, 55, 0.3); /* Let guld kant */
+    display: flex; /* Brug flexbox til indhold */
+    flex-direction: column; /* Stabel indhold vertikalt */
+    align-items: center; /* Centrer indhold horisontalt */
+    transition: all 0.3s ease; /* Tilføj overgang for konsistens */
 }
 
+.progress-wrapper {
+    width: 100%; /* Sørg for at den fylder sin forælder */
+    margin: 10px 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px; /* Lidt højere for bedre synlighed */
+    background-color: #f0e6c8; /* Lys guld/creme baggrund for baren */
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #d4af37; /* En klar guld kant */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Indadgående skygge for dybde */
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, #e3c457, #d4af37); /* Guld gradient */
+    transition: width 0.4s ease-out; /* Glattere overgang */
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(212, 175, 55, 0.3); /* Let skygge på udfyldningen */
+}
+
+.progress-text {
+    display: block;
+    text-align: center;
+    margin-top: 8px;
+    font-weight: 600; /* Kraftigere fontvægt for tydelighed */
+    color: #d4af37; /* Match guld farve */
+    font-size: 1rem; /* Lidt større skriftstørrelse */
+    letter-spacing: 0.3px;
+}
+
+/* Container for statusbaren (hvis den er absolut positioneret) */
+/* Husk at forælderen til denne skal have position: relative; */
 .status-bar-container {
     position: absolute;
     top: 2rem;
@@ -231,31 +318,114 @@ h3 {
 }
 
 .student-info {
-    padding-right: 120px; /* Gør plads til statusbaren */
+    padding-right: 120px; /* Gør plads til statusbaren, når den er absolut positioneret */
 }
 
-.filter-section input:focus,
-.filter-section select:focus {
-    outline: none;
-    border-color: #d4af37;
-    box-shadow: 0 0 5px rgba(212, 175, 55, 0.4);
-}
 
-/* Mobile responsiveness */
+
+
 @media (max-width: 768px) {
-    .filter-section {
-        flex-direction: column;
-        align-items: stretch;
-        width: 90%; /* Take most of screen width */
-        margin: 0 auto 2rem auto; /* Center on mobile */
+    /* Generelle tekstjusteringer for mobil */
+    body {
+        font-size: 16px; /* Sørg for en god base font-størrelse */
     }
 
+    h3 {
+        font-size: 1.5rem; /* Mindre titelstørrelse på mobil */
+        margin-bottom: 1rem;
+    }
+
+    .all-students-title {
+        font-size: 1.7rem; /* Mindre sidetitelstørrelse på mobil */
+        margin-bottom: 1.5rem;
+    }
+
+    /* Justeringer for Filter Sektion på mobil */
+    .filter-section {
+        flex-direction: column; /* Stabel filtergrupper vertikalt */
+        align-items: stretch; /* Stræk elementer til at fylde bredden */
+        width: 95%; /* Gør filter-sektionen bredere på mobil */
+        margin: 0 auto 2rem auto; /* Centrer og bevar afstand */
+        padding: 1rem; /* Mindre padding for at spare plads */
+    }
+
+    .filter-group-row {
+        flex-direction: column; /* Stabel dropdowns vertikalt */
+        gap: 0.8rem; /* Mindre mellemrum når stablet */
+    }
+
+    /* Gør alle input/select/knapper fuld bredde på mobil */
     .filter-section input,
-    .filter-section select {
+    .filter-section select,
+    .button-gold {
         width: 100%;
+        max-width: none; /* Fjern breddebegrænsning */
+        font-size: 1rem; /* Juster skriftstørrelse for læsbarhed på mobil */
+        height: 45px; /* Lidt højere for nemmere berøring */
+    }
+
+    .filter-section label {
+        font-size: 0.9rem; /* Mindre labelstørrelse for at matche input */
+        margin-bottom: 0.1rem;
     }
 
     .filter-buttons {
-        justify-content: center; /* Center buttons on mobile */
+        justify-content: center; /* Centrer knapperne */
+    }
+
+    /* Justeringer for Status Bar på mobil */
+    .status-bar-container {
+        position: static; /* Fjern absolut positionering på mobil */
+        margin: 1rem auto; /* Centrer i det normale flow */
+        right: auto;
+        top: auto;
+        width: 95%; /* Fyld bredden som filter-sektionen */
+    }
+
+    .simple-status-bar {
+        width: 100%; /* Sørg for at den fylder sin container */
+        max-width: none; /* Fjern breddebegrænsning */
+        padding: 0.8rem; /* Lidt mindre padding */
+    }
+
+    .progress-text {
+        font-size: 0.9rem; /* Juster statusbar tekst for mobil */
+    }
+
+    /* Juster student-info padding, da statusbaren ikke længere er absolut positioneret her */
+    .student-info {
+        padding-right: 1rem; /* Reducer padding for bedre udnyttelse af plads */
+    }
+
+    /* Justeringer for studenterkort på mobil */
+    .students-grid {
+        grid-template-columns: 1fr; /* Ét kort pr. række på små skærme */
+    }
+
+    .student-card {
+        padding: 1rem; /* Lidt mindre padding på kortene på mobil */
+    }
+
+    .student-info img {
+        width: 80px; /* Mindre billede på mobil */
+        height: 80px;
+    }
+
+    .student-info h2 {
+        font-size: 1.1rem; /* Mindre navn på mobil */
+    }
+
+    .student-info h3 {
+        font-size: 0.9rem; /* Mindre secondary info på mobil */
+    }
+
+    .student-info span {
+        font-size: 0.8rem; /* Mindre prik-tekst på mobil */
+        padding-left: 1em; /* Juster padding for prik */
+    }
+
+    .student-info span::before {
+        width: 0.7em; /* Mindre prik */
+        height: 0.7em;
     }
 }
