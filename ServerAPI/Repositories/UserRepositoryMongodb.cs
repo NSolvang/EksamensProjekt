@@ -105,7 +105,12 @@ public class UserRepositoryMongodb : IUserRepository
             
             Console.WriteLine("Oprettede ny subgoal liste");
         }
+        
+        int nextId = goal.Subgoals.Any() 
+            ? goal.Subgoals.Max(s => s.SubgoalID) + 1 : 1;
 
+        subgoal.SubgoalID = nextId;
+        
         Console.WriteLine("Tilføjer subgoal til goal");
         goal.Subgoals.Add(subgoal);
 
