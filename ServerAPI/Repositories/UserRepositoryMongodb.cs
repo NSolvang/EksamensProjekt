@@ -61,10 +61,38 @@ public class UserRepositoryMongodb : IUserRepository
 
     public async Task UpdateUser(User user)
     {
-        
-        var filter = Builders<User>.Filter.Eq(a => a.UserId, user.UserId);
-        await _userCollection.ReplaceOneAsync(filter, user);
+        try
+        {
+            var filter = Builders<User>.Filter.Eq(u => u.UserId, user.UserId);
+
+            var update = Builders<User>.Update
+                .Set(u => u.IsActive, user.IsActive)
+                .Set(u => u.Name, user.Name)
+                .Set(u => u.Role, user.Role)
+                .Set(u => u.UserName, user.UserName)
+                .Set(u => u.Password, user.Password)
+                .Set(u => u.ProfilePicture, user.ProfilePicture)
+                .Set(u => u.Internshipyear, user.Internshipyear)
+                .Set(u => u.Location, user.Location)
+                .Set(u => u.Education, user.Education)
+                .Set(u => u.Studentplan, user.Studentplan)
+                .Set(u => u.DateOfStart, user.DateOfStart)
+                .Set(u => u.DateOfEnd, user.DateOfEnd);
+
+            await _userCollection.UpdateOneAsync(filter, update);
+            
+            var result = await _userCollection.UpdateOneAsync(filter, update);
+
+            Console.WriteLine($"Matched: {result.MatchedCount}, Modified: {result.ModifiedCount}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fejl i UpdateUser: {ex.Message}");
+            throw;
+        }
     }
+
+
 
     public async Task<User> GetUserById(int id)
     {
@@ -187,6 +215,9 @@ public class UserRepositoryMongodb : IUserRepository
 
         if (!string.IsNullOrWhiteSpace(filter.Name))
             mongoFilter &= builder.Regex(u => u.Name, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+
+        if (filter.IsActive.HasValue)
+            mongoFilter &= builder.Eq(u => u.IsActive, filter.IsActive.Value);
 
         var results = await _userCollection.Find(mongoFilter).ToListAsync();
         return results.ToArray();

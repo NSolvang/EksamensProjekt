@@ -11,9 +11,13 @@
         <h4>Praktikperiode: @user.Internshipyear</h4>
     </div>
     <StatusBarComponent UserName="@user.Name" Goals="@GetUserGoals(user)" />
-    @if (CurrentUser.Role == "Admin")
-    {
-        <button class="btn-primary" @onclick="() => DeleteById(user)">Fjern bruger</button>
+    @if (CurrentUser.Role == "Admin" && user.IsActive == true)
+    { 
+        <button class="btn-primary" @onclick="() => MakeInactive(user)">Gør inaktiv</button>
+    }
+    else if (CurrentUser.Role == "Admin" && user.IsActive == false)
+    { 
+        <button class="btn-primary" @onclick="() => DeleteById(user)">Fjern bruger</button>   
     }
   
 </div>
@@ -27,6 +31,23 @@
     {
         await mService.DeleteById(user.UserId);
         nav.NavigateTo("/AllStudentsPage");
+    }
+    
+    private async Task MakeInactive(User user)
+    {
+        Console.WriteLine("UserId: " + user.UserId); 
+
+        user.IsActive = false;
+
+        try
+        {
+            await mService.UpdateUser(user);
+            nav.NavigateTo("/AllStudentsPage");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Kunne ikke opdatere bruger: " + ex.Message);
+        }
     }
     
     private Goal[] GetUserGoals(User user)

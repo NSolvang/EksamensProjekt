@@ -1,4 +1,5 @@
 @page "/AllStudentsPage"
+@using System.Drawing
 @using Core
 @using Core.Filter
 @using EksamensProjekt.Service
@@ -50,6 +51,14 @@
                 <option value="Mesterlære">Mesterlære</option>
             </select>
         </div>
+        <div class="filter-group">
+            <label for="isActiveFilter">Status:</label>
+            <select id="isActiveFilter" @bind="isActiveString">
+                <option value="true">Aktive</option>
+                <option value="">Alle</option>
+                <option value="false">Inaktive</option>
+            </select>
+        </div>
     </div>
 
     <div class="filter-buttons">
@@ -74,6 +83,9 @@ else
                 <span>Lokation: @user.Location?.Name</span>
                 <span>Praktikperiode: @user.Internshipyear</span>
                 <span>Forløb: @user.Education</span>
+                <span class="status-label @(user.IsActive ? "active" : "inactive")">
+                    @(user.IsActive ? "Aktiv" : "Inaktiv")
+                    </span>
             </div>
             <div class="status-bar-container">
                 <StatusBarComponent UserName="@user.Name" Goals="@GetUserGoals(user)" />
@@ -87,7 +99,7 @@ else
     private User? currentUser;
     private User[]? users = Array.Empty<User>();
     private UserFilter filter = new();
-
+    private string isActiveString = "true";
     
     private List<string> locations = new()
     {
@@ -116,6 +128,8 @@ else
             return;
         }
 
+        isActiveString = "true";   
+        filter.IsActive = true;    
         await LoadAll();
     }
 
@@ -124,11 +138,19 @@ else
         var allUsers = await mService.GetAll();
         users = allUsers
             .Where(e => e.Role == "Elev")
+            .Where(e => e.IsActive == true)
             .ToArray();
     }
     
     private async Task SearchWithFilter()
     {
+        filter.IsActive = isActiveString switch
+        {
+            "true" => true,
+            "false" => false,
+            _ => null
+        };
+        
         users = (await mService.GetFilteredUsers(filter))
             .Where(u => u.Role == "Elev")
             .ToArray();
@@ -137,6 +159,7 @@ else
     private async Task ClearFilter()
     {
         filter = new UserFilter(); // nulstil filter
+        isActiveString = "true";
         await LoadAll(); // load alle brugere igen
     }
 

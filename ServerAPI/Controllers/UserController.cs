@@ -27,7 +27,7 @@ public class UserController : ControllerBase
     }
     
     [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUserById(int id)  // eller int id hvis du bruger det som int
+    public async Task<ActionResult<User>> GetUserById(int id) 
     {
         var user = await _userRepository.GetUserById(id);
         if (user == null)
@@ -48,8 +48,6 @@ public class UserController : ControllerBase
         await _userRepository.AddUser(user);
         return CreatedAtAction(nameof(GetUserById), new { id = user.UserId }, user);
     }
-
-
     
     [HttpDelete("{id}")]
     public void DeleteById(int id)
@@ -59,10 +57,21 @@ public class UserController : ControllerBase
     }
 
     [HttpPut]
-    public async Task UpdateUser(User user)
+    public async Task<IActionResult> UpdateUser(User user)
     {
-        await _userRepository.UpdateUser(user);
+        try
+        {
+            await _userRepository.UpdateUser(user);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("FEJL: " + ex.Message);
+            return StatusCode(500, ex.Message);
+        }
     }
+
+
     
     [HttpPost("login")]
     public async Task<ActionResult<User>> Login([FromBody] LoginRequest loginRequest)

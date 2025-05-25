@@ -42,7 +42,8 @@ public class UserService : IUser
     
     public async Task UpdateUser(User user)
     {
-        await client.PutAsJsonAsync($"/api/User", user);
+        var response = await client.PutAsJsonAsync("/api/User", user);
+        response.EnsureSuccessStatusCode(); // Smider exception hvis 4xx/5xx
     }
     
     private string ToQueryString(UserFilter filter)
@@ -60,7 +61,10 @@ public class UserService : IUser
 
         if (!string.IsNullOrWhiteSpace(filter.Name))
             queryParams.Add($"name={Uri.EscapeDataString(filter.Name)}");
-
+        
+        if (filter.IsActive.HasValue)
+            queryParams.Add($"isActive={filter.IsActive.Value.ToString().ToLower()}");
+        
         return string.Join("&", queryParams);
     }
 

@@ -6,4 +6,6 @@ public class UserFilter
     public string? Education { get; set; }
     public string? Name { get; set; }
     public string? Internshipyear { get; set; }
+    
+    public bool? IsActive { get; set; }
 }
