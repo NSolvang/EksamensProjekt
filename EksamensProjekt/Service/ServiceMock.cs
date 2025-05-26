@@ -102,53 +102,12 @@ public class ServiceMock : IUser, ISubgoal
     
     public async Task<bool> AddSubgoalToGoal(int userId,int goalId, Subgoal newSubgoal)
     {
-        try
-        {
-            await LoadUsersAsync();
-   
-            var goal = users.SelectMany(u => u.Studentplan?.Goal ?? Enumerable.Empty<Goal>())
-                .FirstOrDefault(g => g.GoalId == goalId);
-            if (goal == null) return false;
-            
-            newSubgoal.SubgoalID = (goal.Subgoals.LastOrDefault()?.SubgoalID ?? 0) + 1;
-            
-            goal.Subgoals.Add(newSubgoal);
-
-            await _localStorage.SetItemAsync("users", users);
-        
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Fejl ved tilføjelse af delmål: {ex.Message}");
-            return false;
-        }
+        throw new NotImplementedException();
     }
     public async Task<bool> DeleteSubgoal(int userId,int goalId, int subgoalId)
     {
-        try
-        {
-            await LoadUsersAsync();
-            
-            var goal = users.SelectMany(u => u.Studentplan?.Goal ?? Enumerable.Empty<Goal>())
-                .FirstOrDefault(g => g.GoalId == goalId);
-            
-            if (goal?.Subgoals == null) return false;
-            
-            var subgoalToRemove = goal.Subgoals.FirstOrDefault(s => s.SubgoalID == subgoalId);
-            if (subgoalToRemove == null) return false;
+        throw new NotImplementedException();
 
-            goal.Subgoals.Remove(subgoalToRemove);
-            
-            await _localStorage.SetItemAsync("users", users);
-            
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Fejl ved sletning af delmål: {ex.Message}");
-            return false;
-        }
     }
     
     public async Task<bool> UpdateSubgoal(int userId,int goalId, int subgoalId, Subgoal updatedSubgoal)
@@ -156,5 +115,19 @@ public class ServiceMock : IUser, ISubgoal
         throw new NotImplementedException();
 
     }
-  
+
+    public Task<bool> AddSubgoalToGoal(int userId, int internshipId, int goalId, Subgoal newSubgoal)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> DeleteSubgoal(int userId, int internshipId, int goalId, int subgoalId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> UpdateSubgoal(int userId, int internshipId, int goalId, int subgoalId, Subgoal updatedSubgoal)
+    {
+        throw new NotImplementedException();
+    }
 }

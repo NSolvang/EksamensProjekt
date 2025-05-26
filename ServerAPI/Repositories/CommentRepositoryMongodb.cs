@@ -20,65 +20,73 @@ public class CommentRepositoryMongodb : ICommentRepository
         _userCollection = database.GetCollection<User>("users");
     }
 
-    public async Task AddComment(int userId, int goalId, int subgoalId, Comment comment)
+    public async Task AddComment(int userId, int internshipId, int goalId, int subgoalId, Comment comment)
     {
         comment.Id = ObjectId.GenerateNewId().ToString();
         comment.SubgoalID = subgoalId;
         comment.CreatedAt = DateTime.UtcNow;
 
-        var filter = Builders<User>.Filter.Eq(u => u.UserId, userId);
+        var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
 
-        var update = Builders<User>.Update.Push("Studentplan.Goal.$[goal].Subgoals.$[subgoal].Comments", comment);
+        if (user == null)
+            throw new Exception($"Bruger med id {userId} blev ikke fundet");
 
-        var arrayFilters = new[]
-        {
-            new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("goal.GoalId", goalId)),
-            new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("subgoal.SubgoalID", subgoalId))
-        };
+        var internship = user.Studentplan?.Internship?.FirstOrDefault(i => i.InternshipId == internshipId);
+        if (internship == null)
+            throw new Exception($"Internship med id {internshipId} blev ikke fundet");
 
-        var result = await _userCollection.UpdateOneAsync(
-            filter, 
-            update, 
-            new UpdateOptions { ArrayFilters = arrayFilters }
-        );
+        var goal = internship.Goal?.FirstOrDefault(g => g.GoalId == goalId);
+        if (goal == null)
+            throw new Exception($"Goal med id {goalId} blev ikke fundet");
 
-        if (result.ModifiedCount == 0)
-        {
-            throw new InvalidOperationException($"Comment could not be added - user {userId}, goal {goalId}, or subgoal {subgoalId} not found");
-        }
+        var subgoal = goal.Subgoals?.FirstOrDefault(sg => sg.SubgoalID == subgoalId);
+        if (subgoal == null)
+            throw new Exception($"Subgoal med id {subgoalId} blev ikke fundet");
+
+        if (subgoal.Comments == null)
+            subgoal.Comments = new List<Comment>();
+
+        subgoal.Comments.Add(comment);
+
+        var updateResult = await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
+
+        if (!updateResult.IsAcknowledged || updateResult.ModifiedCount == 0)
+            throw new Exception("Kunne ikke gemme kommentar til databasen");
     }
 
-    public async Task<List<Comment>> GetCommentsBySubgoalId(int userId, int goalId, int subgoalId)
+
+    public async Task<List<Comment>> GetCommentsBySubgoalId(int userId, int internshipId, int goalId, int subgoalId)
     {
-        try
+        var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+        if (user == null)
         {
-            var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
-            if (user == null) 
-            {
-                Console.WriteLine($"User with ID {userId} not found");
-                return new List<Comment>();
-            }
-
-            var goal = user.Studentplan?.Goal?.FirstOrDefault(g => g.GoalId == goalId);
-            if (goal == null) 
-            {
-                Console.WriteLine($"Goal with ID {goalId} not found for user {userId}");
-                return new List<Comment>();
-            }
-
-            var subgoal = goal.Subgoals?.FirstOrDefault(sg => sg.SubgoalID == subgoalId);
-            if (subgoal == null) 
-            {
-                Console.WriteLine($"Subgoal with ID {subgoalId} not found in goal {goalId}");
-                return new List<Comment>();
-            }
-
-            return subgoal.Comments ?? new List<Comment>();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error in GetCommentsBySubgoalId: {ex.Message}");
+            Console.WriteLine($"Bruger med ID {userId} ikke fundet");
             return new List<Comment>();
         }
+
+        var internship = user.Studentplan?.Internship?.FirstOrDefault(i => i.InternshipId == internshipId);
+        if (internship == null)
+        {
+            Console.WriteLine($"Internship {internshipId} ikke fundet");
+            return new List<Comment>();
+        }
+
+        var goal = internship.Goal?.FirstOrDefault(g => g.GoalId == goalId);
+        if (goal == null)
+        {
+            Console.WriteLine($"Goal {goalId} ikke fundet");
+            return new List<Comment>();
+        }
+
+        var subgoal = goal.Subgoals?.FirstOrDefault(sg => sg.SubgoalID == subgoalId);
+        if (subgoal == null)
+        {
+            Console.WriteLine($"Subgoal {subgoalId} ikke fundet");
+            return new List<Comment>();
+        }
+
+        return subgoal.Comments ?? new List<Comment>();
     }
+
+
 }

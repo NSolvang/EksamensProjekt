@@ -12,19 +12,19 @@ public class CommentService : IComment
         _client = client;
     }
 
-    public async Task<List<Comment>> GetCommentsBySubgoalId(int userId, int goalId, int subgoalID)
+    public async Task<List<Comment>> GetCommentsBySubgoalId(int userId, int internshipId, int goalId, int subgoalID)
     {
-        var result = await _client.GetFromJsonAsync<List<Comment>>(
-            $"/api/users/{userId}/studentplan/goals/{goalId}/subgoals/{subgoalID}/comments");
+        var url = $"/api/users/{userId}/studentplan/internships/{internshipId}/goals/{goalId}/subgoals/{subgoalID}/comments";
+
+        var result = await _client.GetFromJsonAsync<List<Comment>>(url);
         return result ?? new List<Comment>();
     }
 
-    public async Task AddComment(int userId, int goalId, int subgoalId, Comment comment)
+    public async Task AddComment(int userId, int internshipId, int goalId, int subgoalId, Comment comment)
     {
-        var response = await _client.PostAsJsonAsync(
-            $"/api/users/{userId}/studentplan/goals/{goalId}/subgoals/{subgoalId}/comments", 
-            comment);
+        var url = $"/api/users/{userId}/studentplan/internships/{internshipId}/goals/{goalId}/subgoals/{subgoalId}/comments";
+
+        var response = await _client.PostAsJsonAsync(url, comment);
         response.EnsureSuccessStatusCode();
     }
-
 }

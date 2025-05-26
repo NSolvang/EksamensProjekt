@@ -11,11 +11,11 @@ public interface IUserRepository
     
     Task<User[]> GetFilteredUsers(UserFilter filter);
     
-    Task<bool> AddSubgoalToGoal(int userId, int goalId, Subgoal newSubgoal);
+    Task<bool> AddSubgoalToGoal(int userId,int internshipId, int goalId, Subgoal newSubgoal);
     
-    Task DeleteSubgoalFromGoal(int userId, int goalId, int subgoal);
+    Task DeleteSubgoalFromGoal(int userId,int internshipId, int goalId, int subgoalId);
     
-    Task UpdateSubgoalFromGoal(int userId, int goalId,int subgoldId, Subgoal subgoal);
+    Task UpdateSubgoalFromGoal(int userId,int internshipId, int goalId,int subgoldId, Subgoal subgoal);
     
     Task<User?> Login(string username, string password);
 

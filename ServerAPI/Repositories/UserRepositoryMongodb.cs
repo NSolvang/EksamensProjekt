@@ -109,9 +109,8 @@ public class UserRepositoryMongodb : IUserRepository
         return await _userCollection.Find(filter).FirstOrDefaultAsync();
     }
     
-    public async Task<bool> AddSubgoalToGoal(int userId, int goalId, Subgoal subgoal)
+    public async Task<bool> AddSubgoalToGoal(int userId, int internshipId, int goalId, Subgoal subgoal)
     {
-        Console.WriteLine($"Forsøger at finde user med id {userId}");
         var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
         if (user == null)
         {
@@ -119,85 +118,123 @@ public class UserRepositoryMongodb : IUserRepository
             return false;
         }
 
-        Console.WriteLine("User fundet, leder efter goal med id " + goalId);
-        var goal = user.Studentplan?.Goal?.FirstOrDefault(g => g.GoalId == goalId);
+        if (user.Studentplan?.Internship == null)
+        {
+            Console.WriteLine("Ingen internships fundet på user.Studentplan");
+            return false;
+        }
+
+        var internship = user.Studentplan.Internship.FirstOrDefault(i => i.InternshipId == internshipId);
+        if (internship == null)
+        {
+            Console.WriteLine("Internship ikke fundet");
+            return false;
+        }
+
+        var goal = internship.Goal?.FirstOrDefault(g => g.GoalId == goalId);
         if (goal == null)
         {
-            Console.WriteLine("Goal ikke fundet");
+            Console.WriteLine("Goal ikke fundet i det valgte internship");
             return false;
         }
 
         if (goal.Subgoals == null)
         {
             goal.Subgoals = new List<Subgoal>();
-            
-            Console.WriteLine("Oprettede ny subgoal liste");
+            Console.WriteLine("Oprettede ny subgoal-liste");
         }
-        
-        int nextId = goal.Subgoals.Any() 
-            ? goal.Subgoals.Max(s => s.SubgoalID) + 1 : 1;
+
+        int nextId = goal.Subgoals.Any()
+            ? goal.Subgoals.Max(s => s.SubgoalID) + 1
+            : 1;
 
         subgoal.SubgoalID = nextId;
-        
-        Console.WriteLine("Tilføjer subgoal til goal");
         goal.Subgoals.Add(subgoal);
 
-        // Gem opdateret user
         await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
-
         Console.WriteLine("Subgoal tilføjet og gemt");
+
         return true;
     }
 
-    public async Task DeleteSubgoalFromGoal(int userId, int goalId, int subgoalId)
+
+
+    public async Task DeleteSubgoalFromGoal(int userId, int internshipId, int goalId, int subgoalId)
     {
+        // Find brugeren
         var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+        if (user == null)
+            throw new Exception("Bruger ikke fundet");
 
-        var goal = user.Studentplan.Goal.FirstOrDefault(g => g.GoalId == goalId);
-        goal?.Subgoals.RemoveAll(sg => sg.SubgoalID == subgoalId);
+        if (user.Studentplan?.Internship == null)
+            throw new Exception("Ingen praktikforløb fundet på brugerens elevplan");
 
-        await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
+        // Find korrekt praktikperiode
+        var internship = user.Studentplan.Internship.FirstOrDefault(i => i.InternshipId == internshipId);
+        if (internship == null)
+            throw new Exception("Praktikperiode ikke fundet");
+
+        // Find det rigtige goal
+        var goal = internship.Goal?.FirstOrDefault(g => g.GoalId == goalId);
+        if (goal == null)
+            throw new Exception("Målet blev ikke fundet i den valgte praktikperiode");
+
+        // Fjern subgoal
+        var subgoal = goal.Subgoals?.FirstOrDefault(sg => sg.SubgoalID == subgoalId);
+        if (subgoal == null)
+            throw new Exception("Delmål ikke fundet i målet");
+
+        goal.Subgoals.Remove(subgoal);
+
+        // Gem ændringer
+        var updateResult = await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
+        if (!updateResult.IsAcknowledged || updateResult.ModifiedCount == 0)
+            throw new Exception("Fejl under gemning af opdateret brugerdata");
+
+        Console.WriteLine($"✅ Subgoal {subgoalId} slettet for bruger {userId}");
     }
 
-    public async Task UpdateSubgoalFromGoal(int userId, int goalId, int subgoalId, Subgoal updatedSubgoal)
+    
+    public async Task UpdateSubgoalFromGoal(int userId, int internshipId, int goalId, int subgoalId, Subgoal updatedSubgoal)
     {
-        // Først find brugeren
         var filter = Builders<User>.Filter.Eq(u => u.UserId, userId);
         var user = await _userCollection.Find(filter).FirstOrDefaultAsync();
-    
+
         if (user == null)
             throw new Exception("User not found");
 
-        // Find det relevante goal
-        var goal = user.Studentplan?.Goal?.FirstOrDefault(g => g.GoalId == goalId);
-        if (goal == null)
-            throw new Exception("Goal not found");
+        if (user.Studentplan?.Internship == null)
+            throw new Exception("No internships found for user");
 
-        // Find og opdater subgoalen
+        var internship = user.Studentplan.Internship.FirstOrDefault(i => i.InternshipId == internshipId);
+        if (internship == null)
+            throw new Exception("Internship not found");
+
+        var goal = internship.Goal?.FirstOrDefault(g => g.GoalId == goalId);
+        if (goal == null)
+            throw new Exception("Goal not found in selected internship");
+
         var subgoal = goal.Subgoals?.FirstOrDefault(s => s.SubgoalID == subgoalId);
         if (subgoal == null)
-            throw new Exception("Subgoal not found");
+            throw new Exception("Subgoal not found in selected goal");
 
-        // Opdater kun de felter der skal kunne ændres
         subgoal.Name = updatedSubgoal.Name;
         subgoal.Date = updatedSubgoal.Date;
         subgoal.Responsible = updatedSubgoal.Responsible;
         subgoal.Deadline = updatedSubgoal.Deadline;
         subgoal.Status = updatedSubgoal.Status;
         subgoal.Approval = updatedSubgoal.Approval;
-    
-        // Kommentarer skal muligvis håndteres separat
-        if (updatedSubgoal.Comments != null)
-        {
-            subgoal.Comments = updatedSubgoal.Comments;
-        }
 
-        // Gem ændringerne
+        if (updatedSubgoal.Comments != null)
+            subgoal.Comments = updatedSubgoal.Comments;
+
         var updateResult = await _userCollection.ReplaceOneAsync(filter, user);
-    
         if (!updateResult.IsAcknowledged || updateResult.ModifiedCount == 0)
             throw new Exception("Failed to update user in database");
     }
+
+
+
     
     public async Task<User[]> GetFilteredUsers(UserFilter filter)
     {

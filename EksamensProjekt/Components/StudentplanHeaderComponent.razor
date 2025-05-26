@@ -52,6 +52,16 @@
     
     private Goal[] GetUserGoals(User user)
     {
-        return user.Studentplan?.Goal?.ToArray() ?? Array.Empty<Goal>();
+        if (user.Studentplan?.Internship == null)
+            return Array.Empty<Goal>();
+
+        // Samler alle goals fra alle internships i én liste
+        var goals = user.Studentplan.Internship
+            .Where(i => i.Goal != null)
+            .SelectMany(i => i.Goal)
+            .ToArray();
+
+        return goals;
     }
+
 }

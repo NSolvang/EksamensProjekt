@@ -24,15 +24,15 @@ else
 
     <div class="internship-section">
         <div class="internship-period-buttons">
-            <button>Praktikperiode 1</button>
-            <button>Praktikperiode 2</button>
-            <button>Praktikperiode 3</button>
-            <button>Afslutning</button>
+            <button class="@(selectedInternshipId == 1 ? "active" : "")" @onclick="() => SelectInternshipPeriod(1)">Praktikperiode 1</button>
+            <button class="@(selectedInternshipId == 2 ? "active" : "")" @onclick="() => SelectInternshipPeriod(2)">Praktikperiode 2</button>
+            <button class="@(selectedInternshipId == 3 ? "active" : "")" @onclick="() => SelectInternshipPeriod(3)">Praktikperiode 3</button>
+            <button class="@(selectedInternshipId == 4 ? "active" : "")" @onclick="() => SelectInternshipPeriod(4)">Afslutning</button>
         </div>
     </div>
 
     <div class="Student-plan-container">
-        @foreach (var goal in goals)
+        @foreach (var goal in currentGoals)
         {
             <button @onclick="() => ToggleTable(goal.GoalId)" class="goal-toggle-btn @(expandedGoalId == goal.GoalId ? "active" : "")">
                 @goal.Name
@@ -189,6 +189,8 @@ else
     private User? users;
     private User? currentUser;
     private Goal[]? goals;
+    private Goal[]? currentGoals = new Goal[0]; // Goals for den valgte praktikperiode
+    private int selectedInternshipId = 1; // Default til praktikperiode 1
 
     private bool newSubgoalError = false;
     private bool showNewSubgoalForm = false;
@@ -226,11 +228,39 @@ else
         }
 
         users = await mService.GetUserById(userId);
-        goals = users?.Studentplan?.Goal?.ToArray();
+        goals = users?.Studentplan?.Internship?
+            .Where(i => i.Goal != null)
+            .SelectMany(i => i.Goal)
+            .ToArray();
+        
+        // Sæt default praktikperiode til 1
+        SelectInternshipPeriod(1);
         
         // Load alle comment counts når komponenten initialiseres
         await LoadAllCommentCounts();
     }
+
+    // Ny metode til at vælge praktikperiode
+    private void SelectInternshipPeriod(int internshipId, bool resetUI = true)
+    {
+        selectedInternshipId = internshipId;
+
+        var selectedInternship = users?.Studentplan?.Internship?
+            .FirstOrDefault(i => i.InternshipId == internshipId);
+
+        currentGoals = selectedInternship?.Goal?.ToArray() ?? new Goal[0];
+
+        if (resetUI)
+        {
+            expandedGoalId = null;
+            expandedSubgoalId = null;
+            showNewSubgoalForm = false;
+            selectedGoalId = null;
+        }
+
+        StateHasChanged();
+    }
+
 
     // Ny metode til at load alle comment counts
     private async Task LoadAllCommentCounts()
@@ -259,7 +289,7 @@ else
     {
         try
         {
-            var comments = await mServiceComment.GetCommentsBySubgoalId(userId, goalId, subgoalId);
+            var comments = await mServiceComment.GetCommentsBySubgoalId(userId, selectedInternshipId, goalId, subgoalId);
             commentCounts[subgoalId] = comments?.Count ?? 0;
         }
         catch (Exception ex)
@@ -305,10 +335,10 @@ else
         selectedSubgoal = subgoal;
         showCommentModal = true;
 
-        var goal = goals?.FirstOrDefault(g => g.Subgoals.Any(sg => sg.SubgoalID == subgoal.SubgoalID));
+        var goal = currentGoals?.FirstOrDefault(g => g.Subgoals.Any(sg => sg.SubgoalID == subgoal.SubgoalID));
         if (goal != null)
         {
-            currentComments = await mServiceComment.GetCommentsBySubgoalId(userId, goal.GoalId, subgoal.SubgoalID) ?? new List<Comment>();
+            currentComments = await mServiceComment.GetCommentsBySubgoalId(userId, selectedInternshipId, goal.GoalId, subgoal.SubgoalID) ?? new List<Comment>();
         
             // Her sætter vi selectedGoalId til det tilhørende GoalId
             selectedGoalId = goal.GoalId;
@@ -333,10 +363,9 @@ else
         if (selectedSubgoal == null || !selectedGoalId.HasValue)
             return;
 
-        await mServiceComment.AddComment(userId, selectedGoalId.Value, selectedSubgoal.SubgoalID, comment);
-
-        // Opdater currentComments
-        currentComments = await mServiceComment.GetCommentsBySubgoalId(userId, selectedGoalId.Value, selectedSubgoal.SubgoalID);
+        await mServiceComment.AddComment(userId, selectedInternshipId, selectedGoalId.Value, selectedSubgoal.SubgoalID, comment);
+        
+        currentComments = await mServiceComment.GetCommentsBySubgoalId(userId, selectedInternshipId, selectedGoalId.Value, selectedSubgoal.SubgoalID);
         
         // Opdater også cache så count bliver vist korrekt når modal lukkes
         commentCounts[selectedSubgoal.SubgoalID] = currentComments.Count;
@@ -381,13 +410,24 @@ else
         {
             if (selectedGoalId.HasValue)
             {
-                bool success = await mServiceSubgoal.AddSubgoalToGoal(userId, selectedGoalId.Value, newSubgoal);
+                bool success = await mServiceSubgoal.AddSubgoalToGoal(userId, selectedInternshipId, selectedGoalId.Value, newSubgoal);
 
                 if (success)
                 {
                     users = await mService.GetUserById(userId);
-                    goals = users?.Studentplan?.Goal?.ToArray();
+                    goals = users?.Studentplan?.Internship?
+                        .Where(i => i.Goal != null)
+                        .SelectMany(i => i.Goal)
+                        .ToArray();
 
+                    // Behold visning af det samme mål
+                    var previouslyExpandedGoalId = expandedGoalId;
+
+                    SelectInternshipPeriod(selectedInternshipId, resetUI: false);
+
+                    expandedGoalId = previouslyExpandedGoalId;
+                    selectedGoalId = previouslyExpandedGoalId;
+                    
                     showNewSubgoalForm = false;
                     selectedGoalId = null;
                     newSubgoal = new Subgoal();
@@ -409,12 +449,22 @@ else
 
     private async Task DeleteSubgoal(int userId, int goalId, int subgoalId)
     {
-        bool success = await mServiceSubgoal.DeleteSubgoal(userId, goalId, subgoalId);
+        bool success = await mServiceSubgoal.DeleteSubgoal(userId, selectedInternshipId, goalId, subgoalId);
 
         if (success)
         {
             users = await mService.GetUserById(userId);
-            goals = users?.Studentplan?.Goal?.ToArray();
+            goals = users?.Studentplan?.Internship?
+                .Where(i => i.Goal != null)
+                .SelectMany(i => i.Goal)
+                .ToArray();
+                
+            var previouslyExpandedGoalId = expandedGoalId;
+
+            SelectInternshipPeriod(selectedInternshipId, resetUI: false);
+
+            expandedGoalId = previouslyExpandedGoalId;
+            
             StateHasChanged();
         }
         else
@@ -435,12 +485,18 @@ else
     {
         subgoal.Approval = true;
 
-        bool success = await mServiceSubgoal.UpdateSubgoal(userId, goalId, subgoal.SubgoalID, subgoal);
+        bool success = await mServiceSubgoal.UpdateSubgoal(userId, selectedInternshipId, goalId, subgoal.SubgoalID, subgoal);
 
         if (success)
         {
             users = await mService.GetUserById(userId);
-            goals = users?.Studentplan?.Goal?.ToArray();
+            goals = users?.Studentplan?.Internship?
+                .Where(i => i.Goal != null)
+                .SelectMany(i => i.Goal)
+                .ToArray();
+                
+            // Opdater currentGoals efter godkendelse
+            SelectInternshipPeriod(selectedInternshipId);
             StateHasChanged();
         }
         else
@@ -469,7 +525,7 @@ else
         try
         {
             // Opdater subgoalen i databasen
-            bool success = await mServiceSubgoal.UpdateSubgoal(userId, goalId, subgoal.SubgoalID, subgoal);
+            bool success = await mServiceSubgoal.UpdateSubgoal(userId, selectedInternshipId, goalId, subgoal.SubgoalID, subgoal);
         
             if (!success)
             {
@@ -482,7 +538,17 @@ else
             {
                 // Opdater den lokale kopi af brugerdata
                 users = await mService.GetUserById(userId);
-                goals = users?.Studentplan?.Goal?.ToArray();
+                goals = users?.Studentplan?.Internship?
+                    .Where(i => i.Goal != null)
+                    .SelectMany(i => i.Goal)
+                    .ToArray();
+                    
+                // Opdater currentGoals efter status ændring
+                var previouslyExpandedGoalId = expandedGoalId;
+
+                SelectInternshipPeriod(selectedInternshipId, resetUI: false);
+
+                expandedGoalId = previouslyExpandedGoalId;
             }
         }
         catch (Exception ex)

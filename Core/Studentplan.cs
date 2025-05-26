@@ -13,6 +13,6 @@ public class Studentplan
     public string Name { get; set; }
     public string Description { get; set; }
     
-    public List<Goal> Goal { get; set; }
+    public List<Internship> Internship { get; set; }
     
 }

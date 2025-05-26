@@ -1,117 +1,122 @@
 using Core;
 using EksamensProjekt.Service;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using ServerAPI.Repositories;
+
 namespace ServerAPI.Controllers;
 
 [ApiController]
-[Route("api/users/{userId}/studentplan/goals/{goalId}/subgoals")]
+[Route("api/users/{userId}/studentplan/internships/{internshipId}/goals/{goalId}/subgoals")]
 public class SubgoalController : ControllerBase
 {
-        private readonly IUserRepository _userRepository;
-        private readonly ICommentRepository _commentRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly ICommentRepository _commentRepository;
 
-        public SubgoalController(IUserRepository userRepository, ICommentRepository commentRepository)
-        {
-                _userRepository = userRepository;
-                _commentRepository = commentRepository;
-        }
-        
-        
-        [HttpPost]
-        public async Task<IActionResult> AddSubgoal(int userId, int goalId, [FromBody] Subgoal newSubgoal)
-        {
-                try
-                {
-                        Console.WriteLine($"AddSubgoal kaldt med userId={userId}, goalId={goalId}, subgoal={newSubgoal.Name}");
-        
-                        // Her kalder du repository metoden (fx AddSubgoalToGoal)
-                        var result = await _userRepository.AddSubgoalToGoal(userId, goalId, newSubgoal);
-                        if (!result)
-                        {
-                                Console.WriteLine("Kunne ikke finde user eller goal.");
-                                return NotFound();
-                        }
+    public SubgoalController(IUserRepository userRepository, ICommentRepository commentRepository)
+    {
+        _userRepository = userRepository;
+        _commentRepository = commentRepository;
+    }
 
-                        return Ok("Subgoal added");
-                }
-                catch (Exception ex)
-                {
-                        Console.WriteLine("Exception i AddSubgoal: " + ex.ToString());
-                        return StatusCode(500, "Intern serverfejl");
-                }
-        }
-        
-        [HttpDelete("{subgoalId}")]
-        public async Task<IActionResult> DeleteSubgoal(int userId, int goalId, int subgoalId)
+    // ✅ Tilføj delmål til bestemt internship/goal
+    [HttpPost]
+    public async Task<IActionResult> AddSubgoal(int userId, int internshipId, int goalId, [FromBody] Subgoal newSubgoal)
+    {
+        try
         {
-            await _userRepository.DeleteSubgoalFromGoal(userId, goalId, subgoalId);
+            Console.WriteLine($"AddSubgoal kaldt med userId={userId}, internshipId={internshipId}, goalId={goalId}, subgoal={newSubgoal.Name}");
+
+            var result = await _userRepository.AddSubgoalToGoal(userId, internshipId, goalId, newSubgoal);
+            if (!result)
+            {
+                Console.WriteLine("Kunne ikke finde user, internship eller goal.");
+                return NotFound();
+            }
+
+            return Ok("Subgoal added");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Exception i AddSubgoal: " + ex);
+            return StatusCode(500, "Intern serverfejl");
+        }
+    }
+
+    // ✅ Slet delmål
+    [HttpDelete("{subgoalId}")]
+    public async Task<IActionResult> DeleteSubgoal(int userId, int internshipId, int goalId, int subgoalId)
+    {
+        try
+        {
+            await _userRepository.DeleteSubgoalFromGoal(userId, internshipId, goalId, subgoalId);
             return Ok("Subgoal deleted");
         }
-
-        [HttpPut("{subgoalId}")]
-        public async Task<IActionResult> UpdateSubgoal(
-                int userId,
-                int goalId,
-                int subgoalId,
-                [FromBody] Subgoal updatedSubgoal)
+        catch (Exception ex)
         {
-                try
-                {
-                        await _userRepository.UpdateSubgoalFromGoal(userId, goalId, subgoalId, updatedSubgoal);
-                        return Ok("Subgoal opdateret");
-                }
-                catch (Exception ex)
-                {
-                        Console.WriteLine($"Fejl ved opdatering af subgoal: {ex}");
-                        return StatusCode(500, $"Intern serverfejl: {ex.Message}");
-                }
-        }
-        
-        [HttpPost("{subgoalId}/comments")]
-        public async Task<IActionResult> AddComment(int userId, int goalId, int subgoalId, [FromBody] Comment comment)
-        {
-                try
-                {
-                        Console.WriteLine($"Attempting to add comment for userId: {userId}, goalId: {goalId}, subgoalId: {subgoalId}");
-        
-                        comment.SubgoalID = subgoalId;
-                        comment.CreatedAt = DateTime.Now;
-
-                        await _commentRepository.AddComment(userId, goalId, subgoalId, comment);
-        
-                        Console.WriteLine("Comment added successfully");
-                        return Ok("Comment added");
-                }
-                catch (Exception ex)
-                {
-                        Console.WriteLine($"Error adding comment: {ex.ToString()}");
-                        return StatusCode(500, ex.Message);
-                }
+            Console.WriteLine($"Fejl: {ex.Message}");
+            return StatusCode(500, ex.Message);
         }
 
-        [HttpGet("{subgoalId}/comments")]
-        public async Task<IActionResult> GetCommentsBySubgoalId(int userId, int goalId, int subgoalId)
+    }
+
+    // ✅ Opdater delmål
+    [HttpPut("{subgoalId}")]
+    public async Task<IActionResult> UpdateSubgoal(
+        int userId,
+        int internshipId,
+        int goalId,
+        int subgoalId,
+        [FromBody] Subgoal updatedSubgoal)
+    {
+        try
         {
-                try
-                {
-                        var comments = await _commentRepository.GetCommentsBySubgoalId(userId, goalId, subgoalId);
-                        return Ok(comments);
-                }
-                catch (Exception ex)
-                {
-                        Console.WriteLine("Error fetching comments: " + ex.Message);
-                        return StatusCode(500, "Error fetching comments");
-                }
+            Console.WriteLine($"🔁 UpdateSubgoal kaldt med userId={userId}, internshipId={internshipId}, goalId={goalId}, subgoalId={subgoalId}");
+
+            await _userRepository.UpdateSubgoalFromGoal(userId, internshipId, goalId, subgoalId, updatedSubgoal);
+            return Ok("Subgoal opdateret");
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fejl ved opdatering af subgoal: {ex}");
+            return StatusCode(500, $"Intern serverfejl: {ex.Message}");
+        }
+    }
 
+    // ✅ Tilføj kommentar til delmål
+    [HttpPost("{subgoalId}/comments")]
+    public async Task<IActionResult> AddComment(int userId, int internshipId, int goalId, int subgoalId, [FromBody] Comment comment)
+    {
+        try
+        {
+            Console.WriteLine($"Attempting to add comment for userId={userId}, internshipId={internshipId}, goalId={goalId}, subgoalId={subgoalId}");
 
+            comment.SubgoalID = subgoalId;
+            comment.CreatedAt = DateTime.Now;
 
+            await _commentRepository.AddComment(userId, internshipId, goalId, subgoalId, comment);
 
+            return Ok("Comment added");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding comment: {ex}");
+            return StatusCode(500, ex.Message);
+        }
+    }
 
-
-
-        
-
+    // ✅ Hent kommentarer for subgoal
+    [HttpGet("{subgoalId}/comments")]
+    public async Task<IActionResult> GetCommentsBySubgoalId(int userId, int internshipId, int goalId, int subgoalId)
+    {
+        try
+        {
+            var comments = await _commentRepository.GetCommentsBySubgoalId(userId, internshipId, goalId, subgoalId);
+            return Ok(comments);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error fetching comments: " + ex.Message);
+            return StatusCode(500, "Error fetching comments");
+        }
+    }
 }

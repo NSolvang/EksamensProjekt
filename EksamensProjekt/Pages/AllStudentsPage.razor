@@ -166,6 +166,13 @@ else
     // Tilføj denne metode for at hente goals for hver bruger
     private Goal[] GetUserGoals(User user)
     {
-        return user.Studentplan?.Goal?.ToArray() ?? Array.Empty<Goal>();
+        if (user.Studentplan?.Internship == null)
+            return Array.Empty<Goal>();
+
+        return user.Studentplan.Internship
+            .Where(i => i.Goal != null)
+            .SelectMany(i => i.Goal)
+            .ToArray();
     }
+
 }
