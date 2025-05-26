@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace ServerAPI.Repositories;
 
-public class CommentRepositoryMongoDb : ICommentRepository
+public class CommentRepositoryMongodb : ICommentRepository
 {
     private readonly IMongoCollection<User> _userCollection;
 
-    public CommentRepositoryMongoDb()
+    public CommentRepositoryMongodb()
     {
         var client = new MongoClient("mongodb+srv://niko6041:1234@cluster.codevrj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster");
         var database = client.GetDatabase("comwellDB");

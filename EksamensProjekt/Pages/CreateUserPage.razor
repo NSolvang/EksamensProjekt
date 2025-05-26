@@ -4,6 +4,7 @@
 @inject NavigationManager nav
 @inject ILogin LoginService
 @inject IUser mService
+@inject ILocation mLocationService
 
 <h1>Opret bruger</h1>
 
@@ -163,26 +164,8 @@ else
     private User user = new() { Role = "", };
     private string[] roles = { "Elev", "Køkkenchef", "Admin", "Kok" };
     private string[] educations = { "EUX", "EUD", "EUV", "FGU", "Mesterlære" };
-    private List<Location> locations = new()
-    {
-        new Location { LocationId = 1, Name = "Aarhus" },
-        new Location { LocationId = 2, Name = "Borupgaard" },
-        new Location { LocationId = 3, Name = "Bygholm Park" },
-        new Location { LocationId = 4, Name = "Centralværkstedet" },
-        new Location { LocationId = 5, Name = "Copenhagen Portside" },
-        new Location { LocationId = 6, Name = "H.C. Andersen Odense" },
-        new Location { LocationId = 7, Name = "Holte" },
-        new Location { LocationId = 8, Name = "Hvide Hus Aalborg" },
-        new Location { LocationId = 9, Name = "Kellers Park" },
-        new Location { LocationId = 10, Name = "Klarskovgaard" },
-        new Location { LocationId = 11, Name = "Kolding" },
-        new Location { LocationId = 12, Name = "Kongebrogaarden" },
-        new Location { LocationId = 13, Name = "Kongens Lyngby" },
-        new Location { LocationId = 14, Name = "Køge Strand" },
-        new Location { LocationId = 15, Name = "Middelfart" },
-        new Location { LocationId = 16, Name = "Rebild Bakker" },
-        new Location { LocationId = 17, Name = "Roskilde" }
-    };
+    private List<Location> locations = new();
+    
     private EditContext editContext = default!;
     private User? currentUser;
     private bool isLoading = true;
@@ -208,6 +191,8 @@ else
         currentUser = await LoginService.GetUserLoggedIn();
         if (currentUser?.Role == "Admin")
         {
+            locations = await mLocationService.GetAllLocations();
+            locations = locations.OrderBy(l => l.Name).ToList();
             editContext = new EditContext(user);
         }
         isLoading = false;
@@ -267,16 +252,20 @@ else
             return;
         }
 
-        var newId = locations.Max(l => l.LocationId) + 1;
-        var newLocation = new Location { LocationId = newId, Name = newLocationName };
+        var newLocation = new Location { Name = newLocationName };
 
-        locations.Add(newLocation);
-        locations = locations.OrderBy(l => l.Name).ToList();
+        try
+        {
+            var addedLocation = await mLocationService.AddLocation(newLocation);
+            locations.Add(addedLocation);
+            locations = locations.OrderBy(l => l.Name).ToList();
+            user.Location = addedLocation;
+            CloseAddLocationDialog();
+        }
+        catch
+        {
+            locationErrorMessage = "Fejl under tilføjelse af lokation";
+        }
 
-        user.Location = newLocation;
-
-        CloseAddLocationDialog();
-
-        // Hvis nødvendigt: await LocationService.AddLocation(newLocation);
     }
 }
