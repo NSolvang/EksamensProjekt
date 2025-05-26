@@ -7,7 +7,6 @@ public class ExportService : IExport
 {
     private readonly IJSRuntime _jsRuntime;
 
-    // Constructor to inject JSRuntime
     public ExportService(IJSRuntime jsRuntime)
     {
         _jsRuntime = jsRuntime;
@@ -17,12 +16,11 @@ public class ExportService : IExport
     {
         using var workbook = new XLWorkbook();
         var worksheet = workbook.Worksheets.Add("Elever");
-        
-        // Tilføj headers med styling
+
         var headerRow = worksheet.Row(1);
         headerRow.Style.Font.Bold = true;
         headerRow.Style.Fill.BackgroundColor = XLColor.LightGray;
-        
+
         worksheet.Cell(1, 1).Value = "Navn";
         worksheet.Cell(1, 2).Value = "Rolle";
         worksheet.Cell(1, 3).Value = "Lokation";
@@ -30,13 +28,12 @@ public class ExportService : IExport
         worksheet.Cell(1, 5).Value = "Forløb";
         worksheet.Cell(1, 6).Value = "Status";
         worksheet.Cell(1, 7).Value = "Fremgang";
-        
-        // Tilføj data
+
         for (int i = 0; i < users.Length; i++)
         {
             var user = users[i];
-            var row = i + 2; // Start from row 2 (after header)
-            
+            var row = i + 2;
+
             worksheet.Cell(row, 1).Value = user.Name ?? "";
             worksheet.Cell(row, 2).Value = user.Role ?? "";
             worksheet.Cell(row, 3).Value = user.Location?.Name ?? "";
@@ -45,24 +42,20 @@ public class ExportService : IExport
             worksheet.Cell(row, 6).Value = user.IsActive ? "Aktiv" : "Inaktiv";
             worksheet.Cell(row, 7).Value = GetUserProgressSummary(user);
         }
-        
-        // Auto-size kolonner
+
         worksheet.Columns().AdjustToContents();
-        
-        // Add borders to the data range
+
         if (users.Length > 0)
         {
             var dataRange = worksheet.Range(1, 1, users.Length + 1, 7);
             dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
             dataRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
         }
-        
-        // Gem til MemoryStream
+
         using var stream = new MemoryStream();
         workbook.SaveAs(stream);
         stream.Position = 0;
-        
-        // Trigger download
+
         var fileBytes = stream.ToArray();
         var fileName = $"Elever_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
         await DownloadFile(fileName, fileBytes);
@@ -70,14 +63,18 @@ public class ExportService : IExport
 
     private string GetUserProgressSummary(User user)
     {
-        // Access goals through Studentplan.Goal path like in your Blazor component
-        var userGoals = user.Studentplan?.Goal?.ToArray() ?? Array.Empty<Goal>();
-        
-        if (!userGoals.Any())
+        var internships = user.Studentplan?.Internship ?? new List<Internship>();
+
+        var allGoals = internships
+            .Where(i => i.Goal != null)
+            .SelectMany(i => i.Goal!)
+            .ToList();
+
+        if (!allGoals.Any())
             return "Ingen opgaver";
 
-        var allSubgoals = userGoals
-            .Where(g => g?.Subgoals != null)
+        var allSubgoals = allGoals
+            .Where(g => g.Subgoals != null)
             .SelectMany(g => g.Subgoals)
             .Where(s => s != null)
             .ToList();
@@ -86,21 +83,23 @@ public class ExportService : IExport
             return "Ingen delopgaver";
 
         var totalTasks = allSubgoals.Count;
-        var completedTasks = allSubgoals.Count(s => 
-            (s.Status?.ToLower() == "færdig") || 
-            (s.Status?.ToLower() == "completed") || 
+        var completedTasks = allSubgoals.Count(s =>
+            (s.Status?.ToLower() == "færdig") ||
+            (s.Status?.ToLower() == "completed") ||
             s.Approval);
-        var inProgressTasks = allSubgoals.Count(s => 
-            s.Status?.ToLower() == "igang" || 
+        var inProgressTasks = allSubgoals.Count(s =>
+            s.Status?.ToLower() == "igang" ||
             s.Status?.ToLower() == "i gang" ||
             s.Status?.ToLower() == "in progress");
-        var pendingTasks = allSubgoals.Count(s => 
+        var pendingTasks = allSubgoals.Count(s =>
             s.Status?.ToLower() == "mangler" ||
             s.Status?.ToLower() == "pending" ||
             string.IsNullOrEmpty(s.Status));
-        
-        var completionPercentage = totalTasks > 0 ? (int)Math.Round((completedTasks * 100.0) / totalTasks) : 0;
-        
+
+        var completionPercentage = totalTasks > 0
+            ? (int)Math.Round((completedTasks * 100.0) / totalTasks)
+            : 0;
+
         return $"{completionPercentage}% ({completedTasks}/{totalTasks}) - Færdig: {completedTasks}, I gang: {inProgressTasks}, Mangler: {pendingTasks}";
     }
 
