@@ -226,15 +226,6 @@ h3 {
     max-width: 160px;
 }
 
-/* Hover-tilstand for knapper */
-.button-gold:hover {
-    background-color: #d4af37; /* Solid guld ved hover */
-    color: white; /* Hvid tekst ved hover */
-    border: 1px solid #d4af37;
-    box-shadow: 0 6px 15px rgba(212, 175, 55, 0.3);
-    transform: translateY(-1.5px);
-}
-
 /* Styling for input- og select-felter NÅR DE IKKE ER I FOKUS (STANDARD TILSTAND) */
 .filter-section input,
 .filter-section select {
@@ -260,16 +251,6 @@ h3 {
 }
 
 /* Fokus-tilstand for input og select-felter (NÅR MAN TRYKKER PÅ DEM) */
-.filter-section input:focus,
-.filter-section select:focus {
-    outline: none; /* Fjerner browserens standard outline */
-    background-color: #d4af37; /* Solid guld baggrund ved fokus */
-    color: white; /* Hvid tekst ved fokus */
-    border: 1px solid #d4af37; /* Solid guld kant ved fokus */
-    box-shadow: 0 0 5px rgba(212, 175, 55, 0.7); /* Mere prominent guld skygge ved fokus */
-    font-weight: 600; /* Kraftigere fontvægt ved fokus */
-    transform: translateY(-1px); /* Lidt løft ved fokus for visuel feedback */
-}
 
 /* Label styling */
 .filter-section label {
