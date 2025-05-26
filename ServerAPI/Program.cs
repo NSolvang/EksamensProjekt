@@ -25,7 +25,8 @@ public class Program
         });
         builder.Services.AddSingleton<IUserRepository, UserRepositoryMongodb>();
         builder.Services.AddSingleton<IStudentplanRepository, StudentplanRepositoryMongodb>();
-        builder.Services.AddSingleton<ICommentRepository, CommentRepositoryMongoDb>();
+        builder.Services.AddSingleton<ICommentRepository, CommentRepositoryMongodb>();
+        builder.Services.AddSingleton<ILocationRepository, LocationRepositoryMongodb>();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
