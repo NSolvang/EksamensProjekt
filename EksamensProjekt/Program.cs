@@ -19,5 +19,7 @@ builder.Services.AddScoped<ILogin, LoginService>();
 builder.Services.AddScoped<IComment, CommentService>();
 builder.Services.AddScoped<ILocation, LocationService>();
 builder.Services.AddScoped<AuthStateService>();
+builder.Services.AddScoped<IExport, ExportService>();
+
 
 await builder.Build().RunAsync();

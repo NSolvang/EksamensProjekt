@@ -1,5 +1,4 @@
 @page "/AllStudentsPage"
-@using System.Drawing
 @using Core
 @using Core.Filter
 @using EksamensProjekt.Service
@@ -7,6 +6,8 @@
 @inject ILogin LoginService
 @inject NavigationManager nav
 @inject IUser mService
+@inject IExport Export
+
 
 <h3>OVERSIGT OVER ELEVER</h3>
 
@@ -64,6 +65,7 @@
     <div class="filter-buttons">
         <button class="button-gold" @onclick="SearchWithFilter">Søg</button>
         <button class="button-gold" @onclick="ClearFilter">Nulstil filter</button>
+        <button class="button-gold" @onclick="ExportToExcel">Export</button>
     </div>
 </div>
 
@@ -83,9 +85,9 @@ else
                 <span>Lokation: @user.Location?.Name</span>
                 <span>Praktikperiode: @user.Internshipyear</span>
                 <span>Forløb: @user.Education</span>
-                <span class="status-label @(user.IsActive ? "active" : "inactive")">
+                <div class="status-label @(user.IsActive ? "active" : "inactive")">
                     @(user.IsActive ? "Aktiv" : "Inaktiv")
-                    </span>
+                    </div>
             </div>
             <div class="status-bar-container">
                 <StatusBarComponent UserName="@user.Name" Goals="@GetUserGoals(user)" />
@@ -100,6 +102,7 @@ else
     private User[]? users = Array.Empty<User>();
     private UserFilter filter = new();
     private string isActiveString = "true";
+    private string localStorage;
     
     private List<string> locations = new()
     {
@@ -167,5 +170,19 @@ else
     private Goal[] GetUserGoals(User user)
     {
         return user.Studentplan?.Goal?.ToArray() ?? Array.Empty<Goal>();
+    }
+    
+    private async Task ExportToExcel()
+    {
+        try
+        {
+            // Brug kun de allerede indlæste brugere
+            await Export.ExportUsersToExcel(users ?? Array.Empty<User>());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Export fejlede: {ex.Message}");
+            // Vis evt. fejl til brugeren
+        }
     }
 }
