@@ -3,7 +3,6 @@ using Core.Filter;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using ServerAPI.Repositories;
-using LoginRequest = Core.LoginRequest;
 
 
 namespace ServerAPI.Controllers;
@@ -74,9 +73,9 @@ public class UserController : ControllerBase
 
     
     [HttpPost("login")]
-    public async Task<ActionResult<User>> Login([FromBody] LoginRequest loginRequest)
+    public async Task<ActionResult<User>> Login([FromBody] LoginDto loginDto)
     {
-        var user = await _userRepository.Login(loginRequest.Username, loginRequest.Password);
+        var user = await _userRepository.Login(loginDto.Username, loginDto.Password);
 
         if (user == null)
         {

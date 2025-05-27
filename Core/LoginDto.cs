@@ -1,6 +1,6 @@
 namespace Core;
 
-public class LoginRequest
+public class LoginDto
 {
     public string Username { get; set; }
     
