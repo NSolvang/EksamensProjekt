@@ -1,5 +1,4 @@
 @page "/AllStudentsPage"
-@using System.Drawing
 @using Core
 @using Core.Filter
 @using EksamensProjekt.Service
@@ -8,6 +7,7 @@
 @inject NavigationManager nav
 @inject IUser mService
 @inject IExport Export
+@inject ILocation LocationService
 
 
 <h3>OVERSIGT OVER ELEVER</h3>
@@ -26,7 +26,7 @@
                 <option value="">Alle</option>
                 @foreach (var location in locations)
                 {
-                    <option value="@location">@location</option>
+                    <option value="@location.Name">@location.Name</option>
                 }
             </select>
         </div>
@@ -105,13 +105,7 @@ else
     private string isActiveString = "true";
     private string localStorage;
     
-    private List<string> locations = new()
-    {
-        "Aarhus", "Borupgaard", "Bygholm Park", "Centralværkstedet", "Copenhagen Portside",
-        "H.C. Andersen Odense", "Holte", "Hvide Hus Aalborg", "Kellers Park", "Klarskovgaard",
-        "Kolding", "Kongebrogaarden", "Kongens Lyngby", "Køge Strand", "Middelfart",
-        "Rebild Bakker", "Roskilde"
-    };
+    private List<Location> locations = new();
 
     private List<string> internshipyears = new()
     {
@@ -133,8 +127,25 @@ else
         }
 
         isActiveString = "true";   
-        filter.IsActive = true;    
+        filter.IsActive = true;
+        
+        // Load locations fra database
+        await LoadLocations();
+        
         await LoadAll();
+    }
+
+    private async Task LoadLocations()
+    {
+        try
+        {
+            locations = await LocationService.GetAllLocations();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fejl ved indlæsning af locations: {ex.Message}");
+            locations = new List<Location>(); // Fallback til tom liste
+        }
     }
 
     private async Task LoadAll()

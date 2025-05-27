@@ -215,7 +215,7 @@ else
 
     // Tilføj dictionary til at cache comment counts
     private Dictionary<int, int> commentCounts = new Dictionary<int, int>();
-    private bool commentCountsLoaded = false;
+    private bool isLoadingCommentCounts = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -236,12 +236,12 @@ else
         // Sæt default praktikperiode til 1
         SelectInternshipPeriod(1);
         
-        // Load alle comment counts når komponenten initialiseres
-        await LoadAllCommentCounts();
+        // Load comment counts for den valgte praktikperiode
+        await LoadCommentCountsForCurrentPeriod();
     }
 
     // Ny metode til at vælge praktikperiode
-    private void SelectInternshipPeriod(int internshipId, bool resetUI = true)
+    private async void SelectInternshipPeriod(int internshipId, bool resetUI = true)
     {
         selectedInternshipId = internshipId;
 
@@ -258,31 +258,62 @@ else
             selectedGoalId = null;
         }
 
+        // Load comment counts for den nye praktikperiode
+        await LoadCommentCountsForCurrentPeriod();
+
         StateHasChanged();
     }
 
-
-    // Ny metode til at load alle comment counts
-    private async Task LoadAllCommentCounts()
+    // Opdateret metode til at load comment counts kun for nuværende praktikperiode
+    private async Task LoadCommentCountsForCurrentPeriod()
     {
-        if (goals == null) return;
+        if (currentGoals == null || currentGoals.Length == 0 || isLoadingCommentCounts)
+            return;
 
-        var loadTasks = new List<Task>();
-        
-        foreach (var goal in goals)
+        isLoadingCommentCounts = true;
+
+        try
         {
-            if (goal.Subgoals != null)
+            // Clear gamle counts for denne periode
+            var subgoalIdsInCurrentPeriod = currentGoals
+                .Where(g => g.Subgoals != null)
+                .SelectMany(g => g.Subgoals)
+                .Select(sg => sg.SubgoalID)
+                .ToList();
+
+            // Fjern gamle counts der ikke er relevante længere
+            var keysToRemove = commentCounts.Keys.Except(subgoalIdsInCurrentPeriod).ToList();
+            foreach (var key in keysToRemove)
             {
-                foreach (var subgoal in goal.Subgoals)
+                commentCounts.Remove(key);
+            }
+
+            // Load counts for alle subgoals i den nuværende periode
+            var loadTasks = new List<Task>();
+            
+            foreach (var goal in currentGoals)
+            {
+                if (goal.Subgoals != null)
                 {
-                    loadTasks.Add(LoadCommentCountForSubgoal(goal.GoalId, subgoal.SubgoalID));
+                    foreach (var subgoal in goal.Subgoals)
+                    {
+                        loadTasks.Add(LoadCommentCountForSubgoal(goal.GoalId, subgoal.SubgoalID));
+                    }
                 }
             }
+
+            await Task.WhenAll(loadTasks);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fejl ved loading af comment counts: {ex.Message}");
+        }
+        finally
+        {
+            isLoadingCommentCounts = false;
         }
 
-        await Task.WhenAll(loadTasks);
-        commentCountsLoaded = true;
-        StateHasChanged(); // Trigger re-render når alle counts er loaded
+        StateHasChanged();
     }
 
     private async Task LoadCommentCountForSubgoal(int goalId, int subgoalId)
@@ -309,7 +340,7 @@ else
         }
         
         // Return cached count eller 0 hvis ikke loaded endnu
-        return commentCounts.ContainsKey(subgoal.SubgoalID) ? commentCounts[subgoal.SubgoalID] : 0;
+        return commentCounts.TryGetValue(subgoal.SubgoalID, out var count) ? count : 0;
     }
 
     private void ToggleTable(int goalId)
@@ -373,12 +404,6 @@ else
         StateHasChanged();
     }
 
-    // Valgfri: Metode til at refreshe comment counts (kan bruges hvis nødvendigt)
-    private async Task RefreshCommentCounts()
-    {
-        await LoadAllCommentCounts();
-    }
-
     private void FindGoalForNewSubgoal(int goalId)
     {
         selectedGoalId = goalId;
@@ -423,14 +448,19 @@ else
                     // Behold visning af det samme mål
                     var previouslyExpandedGoalId = expandedGoalId;
 
-                    SelectInternshipPeriod(selectedInternshipId, resetUI: false);
+                    // Opdater currentGoals for den valgte praktikperiode
+                    var selectedInternship = users?.Studentplan?.Internship?
+                        .FirstOrDefault(i => i.InternshipId == selectedInternshipId);
+                    currentGoals = selectedInternship?.Goal?.ToArray() ?? new Goal[0];
 
                     expandedGoalId = previouslyExpandedGoalId;
-                    selectedGoalId = previouslyExpandedGoalId;
                     
                     showNewSubgoalForm = false;
                     selectedGoalId = null;
                     newSubgoal = new Subgoal();
+
+                    // Reload comment counts efter ny subgoal
+                    await LoadCommentCountsForCurrentPeriod();
 
                     StateHasChanged();
                 }
@@ -461,9 +491,18 @@ else
                 
             var previouslyExpandedGoalId = expandedGoalId;
 
-            SelectInternshipPeriod(selectedInternshipId, resetUI: false);
+            // Opdater currentGoals for den valgte praktikperiode
+            var selectedInternship = users?.Studentplan?.Internship?
+                .FirstOrDefault(i => i.InternshipId == selectedInternshipId);
+            currentGoals = selectedInternship?.Goal?.ToArray() ?? new Goal[0];
 
             expandedGoalId = previouslyExpandedGoalId;
+            
+            // Fjern comment count for det slettede subgoal
+            commentCounts.Remove(subgoalId);
+            
+            // Reload comment counts efter sletning
+            await LoadCommentCountsForCurrentPeriod();
             
             StateHasChanged();
         }
@@ -496,7 +535,10 @@ else
                 .ToArray();
                 
             // Opdater currentGoals efter godkendelse
-            SelectInternshipPeriod(selectedInternshipId);
+            var selectedInternship = users?.Studentplan?.Internship?
+                .FirstOrDefault(i => i.InternshipId == selectedInternshipId);
+            currentGoals = selectedInternship?.Goal?.ToArray() ?? new Goal[0];
+            
             StateHasChanged();
         }
         else
@@ -546,7 +588,9 @@ else
                 // Opdater currentGoals efter status ændring
                 var previouslyExpandedGoalId = expandedGoalId;
 
-                SelectInternshipPeriod(selectedInternshipId, resetUI: false);
+                var selectedInternship = users?.Studentplan?.Internship?
+                    .FirstOrDefault(i => i.InternshipId == selectedInternshipId);
+                currentGoals = selectedInternship?.Goal?.ToArray() ?? new Goal[0];
 
                 expandedGoalId = previouslyExpandedGoalId;
             }
