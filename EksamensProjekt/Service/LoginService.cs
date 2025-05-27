@@ -29,7 +29,7 @@ public class LoginService : ILogin
         try
         {
             // Create login request object
-            var loginRequest = new LoginRequest
+            var loginRequest = new LoginDto
             {
                 Username = UserName,
                 Password = Password
