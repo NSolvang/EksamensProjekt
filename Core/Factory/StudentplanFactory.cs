@@ -258,16 +258,92 @@ namespace Core.Factory
                             new Goal
                             {
                                 GoalId = 1,
-                                Name = "Inden Første Dag",
+                                Name = "Evaluering",
                                 Subgoals = new List<Subgoal>
                                 {
                                     new Subgoal
                                     {
                                         SubgoalID = 1,
-                                        Name = "Bestil Uniform",
+                                        Name = "Første praktikperiode - nåede du gennem alle målene?",
                                         Date = DateTime.Today,
-                                        Responsible = "Elevansvarlig",
-                                        Deadline = "Inden første dag",
+                                        Responsible = "Elevansvarlig/Nærmeste Leder",
+                                        Deadline = "Efter skoleperiode 1",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    },
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 2,
+                                        Name = "Første skoleperiode og pensum - var der noget du manglede?",
+                                        Date = DateTime.Today,
+                                        Responsible = "Elevansvarlig/Nærmeste Leder",
+                                        Deadline = "Efter skoleperiode 1",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    },
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 3,
+                                        Name = "Gennemgang af uddannelsesplanen for kommende praktikperiode",
+                                        Date = DateTime.Today,
+                                        Responsible = "Elevansvarlig/Nærmeste Leder",
+                                        Deadline = "Efter skoleperiode 1",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    }
+                                }
+                            },
+                            new Goal
+                            {
+                                GoalId = 2,
+                                Name = "Interne kurser",
+                                Subgoals = new List<Subgoal>
+                                {
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 1,
+                                        Name = "Førstehjælpskursus",
+                                        Date = DateTime.Today,
+                                        Responsible = "Hotel",
+                                        Deadline = "Planlægges",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    },
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 2,
+                                        Name = "Crosstraining til andet hotel - elevudveksling i en uge ",
+                                        Date = DateTime.Today,
+                                        Responsible = "Elevansvarlig/Nærmeste leder",
+                                        Deadline = "Efter aftale",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    }
+                                }
+                            },
+                            new Goal
+                            {
+                                GoalId = 3,
+                                Name = "Faglige mål",
+                                Subgoals = new List<Subgoal>
+                                {
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 1,
+                                        Name = "Udskæring af kød",
+                                        Date = DateTime.Today,
+                                        Responsible = "Nærmeste Leder/anden",
+                                        Deadline = "I praktikperiode 2",    
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    },
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 2,
+                                        Name = "Fisk, skaldyr, bløddy og fjerkræ",
+                                        Date = DateTime.Today,
+                                        Responsible = "Nærmeste Leder/anden",
+                                        Deadline = "I praktikperiode 2",    
                                         Comments = new List<Comment>(),
                                         Approval = false
                                     }
@@ -285,16 +361,130 @@ namespace Core.Factory
                             new Goal
                             {
                                 GoalId = 1,
-                                Name = "Inden Første Dag",
+                                Name = "Evaluering",
                                 Subgoals = new List<Subgoal>
                                 {
                                     new Subgoal
                                     {
                                         SubgoalID = 1,
-                                        Name = "Bestil Uniform",
+                                        Name = "Anden praktikperiode - nåede du gennem alle målene?",
                                         Date = DateTime.Today,
-                                        Responsible = "Elevansvarlig",
-                                        Deadline = "Inden første dag",
+                                        Responsible = "Elevansvarlig/Nærmeste Leder",
+                                        Deadline = "Efter skoleperiode 2",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    },
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 2,
+                                        Name = "Anden skoleperiode og pensum - var der noget du manglede?",
+                                        Date = DateTime.Today,
+                                        Responsible = "Elevansvarlig/Nærmeste Leder",
+                                        Deadline = "Efter skoleperiode 2",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    },
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 3,
+                                        Name = "Gennemgang af uddannelsesplanen for kommende praktikperiode",
+                                        Date = DateTime.Today,
+                                        Responsible = "Elevansvarlig/Nærmeste Leder",
+                                        Deadline = "Efter skoleperiode 2",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    }
+                                }
+                            },
+                            new Goal
+                            {
+                                GoalId = 2,
+                                Name = "Interne kurser",
+                                Subgoals = new List<Subgoal>
+                                {
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 1,
+                                        Name = "F&B elev-tur (3 dage)",
+                                        Date = DateTime.Today,
+                                        Responsible = "Uddannelsesansvarlig/HR",
+                                        Deadline = "Forår/Sensommer",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    },
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 2,
+                                        Name = "Elev-ERFA (Kun elever som er udvalgt til dette deltager) ",
+                                        Date = DateTime.Today,
+                                        Responsible = "HR",
+                                        Deadline = "1x om året",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    }
+                                }
+                            },
+                            new Goal
+                            {
+                                GoalId = 3,
+                                Name = "Faglige mål",
+                                Subgoals = new List<Subgoal>
+                                {
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 1,
+                                        Name = "Menusammensætning",
+                                        Date = DateTime.Today,
+                                        Responsible = "Nærmeste leder/anden",
+                                        Deadline = "I praktikperiode 3",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    },
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 2,
+                                        Name = "Selvstændigt kunne køre konference",
+                                        Date = DateTime.Today,
+                                        Responsible = "Nærmeste leder/anden",
+                                        Deadline = "I praktikperiode 3",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    }
+                                }
+                            },
+                            new Goal
+                            {
+                                GoalId = 4,
+                                Name = "Klar-parat til fagprøve",
+                                Subgoals = new List<Subgoal>
+                                {
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 1,
+                                        Name = "Gennemgang af indhold til fagprøven",
+                                        Date = DateTime.Today,
+                                        Responsible = "Nærmeste leder/anden",
+                                        Deadline = "I praktikperiode 4",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    },
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 2,
+                                        Name = "Evt. mangler fra praktikperide 3 og individuelle ønsker ",
+                                        Date = DateTime.Today,
+                                        Responsible = "Nærmeste leder/anden",
+                                        Deadline = "I praktikperiode 4",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    },
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 3,
+                                        Name = "Karrieresamtale med køkkenchef omkring muligheder  ",
+                                        Date = DateTime.Today,
+                                        Responsible = "Nærmeste leder/anden",
+                                        Deadline = "I praktikperiode 4",
                                         Comments = new List<Comment>(),
                                         Approval = false
                                     }
@@ -308,19 +498,37 @@ namespace Core.Factory
                         InternshipName = "Praktikperiode 4",
                         Goal = new List<Goal>
                         {
-                            new Goal
+                           new Goal
                             {
                                 GoalId = 1,
-                                Name = "Inden Første Dag",
+                                Name = "Evaluering",
                                 Subgoals = new List<Subgoal>
                                 {
                                     new Subgoal
                                     {
                                         SubgoalID = 1,
-                                        Name = "Bestil Uniform",
+                                        Name = "Tredje skoleperiode og pensum - var der noget, du manglede?",
                                         Date = DateTime.Today,
-                                        Responsible = "Elevansvarlig",
-                                        Deadline = "Inden første dag",
+                                        Responsible = "Elevansvarlig/Nærmeste Leder",
+                                        Deadline = "Efter skoleperiode 3",
+                                        Comments = new List<Comment>(),
+                                        Approval = false
+                                    }
+                                }
+                            },
+                            new Goal
+                            {
+                                GoalId = 2,
+                                Name = "Interne kurser",
+                                Subgoals = new List<Subgoal>
+                                {
+                                    new Subgoal
+                                    {
+                                        SubgoalID = 1,
+                                        Name = "Karrieresamtale med nærmeste leder og evt. HR",
+                                        Date = DateTime.Today,
+                                        Responsible = "Nærmeste leder",
+                                        Deadline = "Planlægges",
                                         Comments = new List<Comment>(),
                                         Approval = false
                                     }

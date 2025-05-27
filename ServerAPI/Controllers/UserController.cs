@@ -51,7 +51,7 @@ public class UserController : ControllerBase
     [HttpDelete("{id}")]
     public void DeleteById(int id)
     {
-        Console.WriteLine($"Sletter annonce med id {id}");
+        Console.WriteLine($"Sletter bruger med id {id}");
         _userRepository.DeleteById(id);
     }
 

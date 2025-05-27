@@ -110,52 +110,76 @@ public class UserRepositoryMongodb : IUserRepository
     }
     
     public async Task<bool> AddSubgoalToGoal(int userId, int internshipId, int goalId, Subgoal subgoal)
+{
+    var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+    if (user == null)
     {
-        var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
-        if (user == null)
-        {
-            Console.WriteLine("User ikke fundet");
-            return false;
-        }
-
-        if (user.Studentplan?.Internship == null)
-        {
-            Console.WriteLine("Ingen internships fundet på user.Studentplan");
-            return false;
-        }
-
-        var internship = user.Studentplan.Internship.FirstOrDefault(i => i.InternshipId == internshipId);
-        if (internship == null)
-        {
-            Console.WriteLine("Internship ikke fundet");
-            return false;
-        }
-
-        var goal = internship.Goal?.FirstOrDefault(g => g.GoalId == goalId);
-        if (goal == null)
-        {
-            Console.WriteLine("Goal ikke fundet i det valgte internship");
-            return false;
-        }
-
-        if (goal.Subgoals == null)
-        {
-            goal.Subgoals = new List<Subgoal>();
-            Console.WriteLine("Oprettede ny subgoal-liste");
-        }
-
-        int nextId = goal.Subgoals.Any()
-            ? goal.Subgoals.Max(s => s.SubgoalID) + 1
-            : 1;
-
-        subgoal.SubgoalID = nextId;
-        goal.Subgoals.Add(subgoal);
-
-        await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
-        Console.WriteLine("Subgoal tilføjet og gemt");
-
-        return true;
+        Console.WriteLine("User ikke fundet");
+        return false;
     }
+
+    if (user.Studentplan?.Internship == null)
+    {
+        Console.WriteLine("Ingen internships fundet på user.Studentplan");
+        return false;
+    }
+
+    var internship = user.Studentplan.Internship.FirstOrDefault(i => i.InternshipId == internshipId);
+    if (internship == null)
+    {
+        Console.WriteLine("Internship ikke fundet");
+        return false;
+    }
+
+    var goal = internship.Goal?.FirstOrDefault(g => g.GoalId == goalId);
+    if (goal == null)
+    {
+        Console.WriteLine("Goal ikke fundet i det valgte internship");
+        return false;
+    }
+
+    if (goal.Subgoals == null)
+    {
+        goal.Subgoals = new List<Subgoal>();
+        Console.WriteLine("Oprettede ny subgoal-liste");
+    }
+
+    // Find det højeste subgoal ID på tværs af ALLE goals i ALLE internships
+    int nextId = GetNextUniqueSubgoalId(user);
+
+    subgoal.SubgoalID = nextId;
+    goal.Subgoals.Add(subgoal);
+
+    await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
+    Console.WriteLine($"Subgoal tilføjet med unikt ID: {nextId}");
+
+    return true;
+}
+
+private int GetNextUniqueSubgoalId(User user)
+{
+    var allSubgoalIds = new List<int>();
+
+    // Gennemgå alle internships
+    foreach (var internship in user.Studentplan.Internship)
+    {
+        if (internship.Goal != null)
+        {
+            // Gennemgå alle goals i dette internship
+            foreach (var goal in internship.Goal)
+            {
+                if (goal.Subgoals != null)
+                {
+                    // Tilføj alle subgoal ID'er til listen
+                    allSubgoalIds.AddRange(goal.Subgoals.Select(s => s.SubgoalID));
+                }
+            }
+        }
+    }
+
+    // Returner det næste unikke ID
+    return allSubgoalIds.Any() ? allSubgoalIds.Max() + 1 : 1;
+}
 
 
 
