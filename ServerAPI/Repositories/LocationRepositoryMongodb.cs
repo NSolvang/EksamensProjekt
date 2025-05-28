@@ -21,21 +21,18 @@ public class LocationRepositoryMongodb : ILocationRepository
 
     public async Task<Location> GetLocationById(int id)
     {
-        return await _locationCollection.Find(l => l.LocationId == id).FirstOrDefaultAsync();
+        return await _locationCollection.Find(l => l._id == id).FirstOrDefaultAsync();
     }
 
     public async Task<Location> AddLocation(Location location)
     {
-        // Generér et nyt LocationId
+        // Generér et nyt _id
         var last = await _locationCollection
             .Find(_ => true)
-            .SortByDescending(l => l.LocationId)
+            .SortByDescending(l => l._id)
             .FirstOrDefaultAsync();
 
-        location.LocationId = (last?.LocationId ?? 0) + 1;
-        
-        // MongoDB vil automatisk generere et ObjectId for Id feltet
-        location.Id = string.Empty; // Dette vil blive overskrevet af MongoDB
+        location._id = (last?._id ?? 0) + 1;
         
         await _locationCollection.InsertOneAsync(location);
         return location;

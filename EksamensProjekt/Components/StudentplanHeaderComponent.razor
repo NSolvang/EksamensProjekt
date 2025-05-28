@@ -29,13 +29,13 @@
 
     private async Task DeleteById(User user)
     {
-        await mService.DeleteById(user.UserId);
+        await mService.DeleteById(user._id);
         nav.NavigateTo("/AllStudentsPage");
     }
     
     private async Task MakeInactive(User user)
     {
-        Console.WriteLine("UserId: " + user.UserId); 
+        Console.WriteLine("_id: " + user._id); 
 
         user.IsActive = false;
 

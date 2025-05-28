@@ -78,7 +78,7 @@ else
 {
     @foreach (var user in users)
     {
-        <div class="student-card" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{user.UserId}"))">
+        <div class="student-card" @onclick="@(() => nav.NavigateTo($"/StudentplanPage/{user._id}"))">
             <div class="student-info">
                 <img src="@user.ProfilePicture" alt="Profilbillede" />
                 <h2>@user.Name</h2>

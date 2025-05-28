@@ -53,7 +53,7 @@ else
                     <option value="">-- Vælg en lokation --</option>
                     @foreach (var location in locations)
                     {
-                        <option value="@location.LocationId">@location.Name</option>
+                        <option value="@location._id">@location.Name</option>
                     }
                 </InputSelect>
                 <button type="button" class="btn-add-location" @onclick="ShowAddLocationDialog" title="Tilføj ny lokation">
@@ -182,8 +182,8 @@ else
     
     private int SelectedLocationId
     {
-        get => user.Location?.LocationId ?? 0;
-        set => user.Location = locations.FirstOrDefault(l => l.LocationId == value);
+        get => user.Location?._id ?? 0;
+        set => user.Location = locations.FirstOrDefault(l => l._id == value);
     }
 
     protected override async Task OnInitializedAsync()

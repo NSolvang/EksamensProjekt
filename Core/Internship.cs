@@ -4,11 +4,8 @@ namespace Core;
 
 public class Internship
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string? Id { get; set; }
     
-    public int InternshipId { get; set; }
+    public int _id { get; set; }
     
     public string InternshipName { get; set; }
     

@@ -26,12 +26,12 @@ public class CommentRepositoryMongodb : ICommentRepository
         comment.SubgoalID = subgoalId;
         comment.CreatedAt = DateTime.UtcNow;
 
-        var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+        var user = await _userCollection.Find(u => u._id == userId).FirstOrDefaultAsync();
 
         if (user == null)
             throw new Exception($"Bruger med id {userId} blev ikke fundet");
 
-        var internship = user.Studentplan?.Internship?.FirstOrDefault(i => i.InternshipId == internshipId);
+        var internship = user.Studentplan?.Internship?.FirstOrDefault(i => i._id == internshipId);
         if (internship == null)
             throw new Exception($"Internship med id {internshipId} blev ikke fundet");
 
@@ -48,7 +48,7 @@ public class CommentRepositoryMongodb : ICommentRepository
 
         subgoal.Comments.Add(comment);
 
-        var updateResult = await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
+        var updateResult = await _userCollection.ReplaceOneAsync(u => u._id == userId, user);
 
         if (!updateResult.IsAcknowledged || updateResult.ModifiedCount == 0)
             throw new Exception("Kunne ikke gemme kommentar til databasen");
@@ -57,14 +57,14 @@ public class CommentRepositoryMongodb : ICommentRepository
 
     public async Task<List<Comment>> GetCommentsBySubgoalId(int userId, int internshipId, int goalId, int subgoalId)
     {
-        var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+        var user = await _userCollection.Find(u => u._id == userId).FirstOrDefaultAsync();
         if (user == null)
         {
             Console.WriteLine($"Bruger med ID {userId} ikke fundet");
             return new List<Comment>();
         }
 
-        var internship = user.Studentplan?.Internship?.FirstOrDefault(i => i.InternshipId == internshipId);
+        var internship = user.Studentplan?.Internship?.FirstOrDefault(i => i._id == internshipId);
         if (internship == null)
         {
             Console.WriteLine($"Internship {internshipId} ikke fundet");

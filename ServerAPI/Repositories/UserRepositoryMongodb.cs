@@ -35,17 +35,17 @@ public class UserRepositoryMongodb : IUserRepository
 
     public async Task AddUser(User user)
     {
-        // Tildel nyt UserId baseret på højeste eksisterende ID
+        // Tildel nyt _id baseret på højeste eksisterende ID
         var maxUser = await _userCollection.Find(Builders<User>.Filter.Empty)
-            .SortByDescending(u => u.UserId)
+            .SortByDescending(u => u._id)
             .FirstOrDefaultAsync();
 
-        user.UserId = (maxUser?.UserId ?? 0) + 1;
+        user._id = (maxUser?._id ?? 0) + 1;
 
         if (user.Role == "Elev")
         {
             var template = await _studentplanRepository.GetDefaultPlan();
-            template.StudentplanID = user.UserId; 
+            template._id = user._id; 
             user.Studentplan = template;
         }
 
@@ -55,7 +55,7 @@ public class UserRepositoryMongodb : IUserRepository
 
     public async Task DeleteById(int id)
     {
-        var filter = Builders<User>.Filter.Eq(u => u.UserId, id);
+        var filter = Builders<User>.Filter.Eq(u => u._id, id);
         await _userCollection.DeleteOneAsync(filter);
     }
 
@@ -63,7 +63,7 @@ public class UserRepositoryMongodb : IUserRepository
     {
         try
         {
-            var filter = Builders<User>.Filter.Eq(u => u.UserId, user.UserId);
+            var filter = Builders<User>.Filter.Eq(u => u._id, user._id);
 
             var update = Builders<User>.Update
                 .Set(u => u.IsActive, user.IsActive)
@@ -96,7 +96,7 @@ public class UserRepositoryMongodb : IUserRepository
 
     public async Task<User> GetUserById(int id)
     {
-        var filter = Builders<User>.Filter.Eq(a => a.UserId, id);
+        var filter = Builders<User>.Filter.Eq(a => a._id, id);
         var user = await _userCollection.Find(filter).FirstOrDefaultAsync();
         return user;
     }
@@ -111,7 +111,7 @@ public class UserRepositoryMongodb : IUserRepository
     
     public async Task<bool> AddSubgoalToGoal(int userId, int internshipId, int goalId, Subgoal subgoal)
 {
-    var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+    var user = await _userCollection.Find(u => u._id == userId).FirstOrDefaultAsync();
     if (user == null)
     {
         Console.WriteLine("User ikke fundet");
@@ -124,7 +124,7 @@ public class UserRepositoryMongodb : IUserRepository
         return false;
     }
 
-    var internship = user.Studentplan.Internship.FirstOrDefault(i => i.InternshipId == internshipId);
+    var internship = user.Studentplan.Internship.FirstOrDefault(i => i._id == internshipId);
     if (internship == null)
     {
         Console.WriteLine("Internship ikke fundet");
@@ -150,7 +150,7 @@ public class UserRepositoryMongodb : IUserRepository
     subgoal.SubgoalID = nextId;
     goal.Subgoals.Add(subgoal);
 
-    await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
+    await _userCollection.ReplaceOneAsync(u => u._id == userId, user);
     Console.WriteLine($"Subgoal tilføjet med unikt ID: {nextId}");
 
     return true;
@@ -186,7 +186,7 @@ private int GetNextUniqueSubgoalId(User user)
     public async Task DeleteSubgoalFromGoal(int userId, int internshipId, int goalId, int subgoalId)
     {
         // Find brugeren
-        var user = await _userCollection.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+        var user = await _userCollection.Find(u => u._id == userId).FirstOrDefaultAsync();
         if (user == null)
             throw new Exception("Bruger ikke fundet");
 
@@ -194,7 +194,7 @@ private int GetNextUniqueSubgoalId(User user)
             throw new Exception("Ingen praktikforløb fundet på brugerens elevplan");
 
         // Find korrekt praktikperiode
-        var internship = user.Studentplan.Internship.FirstOrDefault(i => i.InternshipId == internshipId);
+        var internship = user.Studentplan.Internship.FirstOrDefault(i => i._id == internshipId);
         if (internship == null)
             throw new Exception("Praktikperiode ikke fundet");
 
@@ -211,7 +211,7 @@ private int GetNextUniqueSubgoalId(User user)
         goal.Subgoals.Remove(subgoal);
 
         // Gem ændringer
-        var updateResult = await _userCollection.ReplaceOneAsync(u => u.UserId == userId, user);
+        var updateResult = await _userCollection.ReplaceOneAsync(u => u._id == userId, user);
         if (!updateResult.IsAcknowledged || updateResult.ModifiedCount == 0)
             throw new Exception("Fejl under gemning af opdateret brugerdata");
 
@@ -221,7 +221,7 @@ private int GetNextUniqueSubgoalId(User user)
     
     public async Task UpdateSubgoalFromGoal(int userId, int internshipId, int goalId, int subgoalId, Subgoal updatedSubgoal)
     {
-        var filter = Builders<User>.Filter.Eq(u => u.UserId, userId);
+        var filter = Builders<User>.Filter.Eq(u => u._id, userId);
         var user = await _userCollection.Find(filter).FirstOrDefaultAsync();
 
         if (user == null)
@@ -230,7 +230,7 @@ private int GetNextUniqueSubgoalId(User user)
         if (user.Studentplan?.Internship == null)
             throw new Exception("No internships found for user");
 
-        var internship = user.Studentplan.Internship.FirstOrDefault(i => i.InternshipId == internshipId);
+        var internship = user.Studentplan.Internship.FirstOrDefault(i => i._id == internshipId);
         if (internship == null)
             throw new Exception("Internship not found");
 

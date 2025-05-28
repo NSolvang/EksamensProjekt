@@ -5,11 +5,7 @@ namespace Core;
 
 public class Location
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string Id { get; set; } = string.Empty;
-    
-    public int LocationId { get; set; }
+    public int _id { get; set; }
     
     [BsonRequired]
     public string Name { get; set; } = string.Empty;

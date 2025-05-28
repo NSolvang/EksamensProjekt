@@ -9,7 +9,7 @@ namespace Core.Factory
         {
             return new Studentplan
             {
-                StudentplanID = 1,
+                _id = 1,
                 Name = "Standard elevplan",
                 Description = "Denne plan gives til alle nye elever",
                 Internship = new List<Internship>
@@ -17,7 +17,7 @@ namespace Core.Factory
                     // Internship 1 med alle dine eksisterende goals
                     new Internship
                     {
-                        InternshipId = 1,
+                        _id = 1,
                         InternshipName = "Praktikperiode 1",
                         Goal = new List<Goal>
                         {
@@ -251,7 +251,7 @@ namespace Core.Factory
                     //Internship 2
                     new Internship
                     {
-                        InternshipId = 2,
+                        _id = 2,
                         InternshipName = "Praktikperiode 2",
                         Goal = new List<Goal>
                         {
@@ -354,7 +354,7 @@ namespace Core.Factory
                     //Internship 3
                     new Internship
                     {
-                        InternshipId = 3,
+                        _id = 3,
                         InternshipName = "Praktikperiode 3",
                         Goal = new List<Goal>
                         {
@@ -494,7 +494,7 @@ namespace Core.Factory
                     }, 
                     new Internship
                     {
-                        InternshipId = 4,
+                        _id = 4,
                         InternshipName = "Praktikperiode 4",
                         Goal = new List<Goal>
                         {

@@ -58,7 +58,7 @@
                         else if (currentUser.Role == "Elev")
                         {
                             <div class="nav-item px-3">
-                                <NavLink class="nav-link" href="@($"/StudentplanPage/{currentUser?.UserId}")">
+                                <NavLink class="nav-link" href="@($"/StudentplanPage/{currentUser?._id}")">
                                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Studieplan
                                 </NavLink>
                             </div>

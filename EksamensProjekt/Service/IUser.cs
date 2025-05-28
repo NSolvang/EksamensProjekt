@@ -11,7 +11,7 @@ public interface IUser
     //Tilføjer ny User og tildeler dem et id
     Task AddUser(User user);
     
-    //Fjerner bruger, hvor user.UserId == id
+    //Fjerner bruger, hvor user._id == id
     Task DeleteById(int id);
     
     Task<User[]> GetFilteredUsers(UserFilter filter);

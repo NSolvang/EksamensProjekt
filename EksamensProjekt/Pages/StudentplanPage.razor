@@ -221,7 +221,7 @@ else
     {
         currentUser = await LoginService.GetUserLoggedIn();
 
-        if (currentUser == null || (currentUser.Role == "Elev" && currentUser.UserId != userId))
+        if (currentUser == null || (currentUser.Role == "Elev" && currentUser._id != userId))
         {
             nav.NavigateTo("/");
             return;
@@ -246,7 +246,7 @@ else
         selectedInternshipId = internshipId;
 
         var selectedInternship = users?.Studentplan?.Internship?
-            .FirstOrDefault(i => i.InternshipId == internshipId);
+            .FirstOrDefault(i => i._id == internshipId);
 
         currentGoals = selectedInternship?.Goal?.ToArray() ?? new Goal[0];
 
@@ -450,7 +450,7 @@ else
 
                     // Opdater currentGoals for den valgte praktikperiode
                     var selectedInternship = users?.Studentplan?.Internship?
-                        .FirstOrDefault(i => i.InternshipId == selectedInternshipId);
+                        .FirstOrDefault(i => i._id == selectedInternshipId);
                     currentGoals = selectedInternship?.Goal?.ToArray() ?? new Goal[0];
 
                     expandedGoalId = previouslyExpandedGoalId;
@@ -493,7 +493,7 @@ else
 
             // Opdater currentGoals for den valgte praktikperiode
             var selectedInternship = users?.Studentplan?.Internship?
-                .FirstOrDefault(i => i.InternshipId == selectedInternshipId);
+                .FirstOrDefault(i => i._id == selectedInternshipId);
             currentGoals = selectedInternship?.Goal?.ToArray() ?? new Goal[0];
 
             expandedGoalId = previouslyExpandedGoalId;
@@ -536,7 +536,7 @@ else
                 
             // Opdater currentGoals efter godkendelse
             var selectedInternship = users?.Studentplan?.Internship?
-                .FirstOrDefault(i => i.InternshipId == selectedInternshipId);
+                .FirstOrDefault(i => i._id == selectedInternshipId);
             currentGoals = selectedInternship?.Goal?.ToArray() ?? new Goal[0];
             
             StateHasChanged();
@@ -589,7 +589,7 @@ else
                 var previouslyExpandedGoalId = expandedGoalId;
 
                 var selectedInternship = users?.Studentplan?.Internship?
-                    .FirstOrDefault(i => i.InternshipId == selectedInternshipId);
+                    .FirstOrDefault(i => i._id == selectedInternshipId);
                 currentGoals = selectedInternship?.Goal?.ToArray() ?? new Goal[0];
 
                 expandedGoalId = previouslyExpandedGoalId;

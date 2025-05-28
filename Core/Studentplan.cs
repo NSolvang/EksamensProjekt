@@ -5,11 +5,8 @@ using MongoDB.Bson;
 
 public class Studentplan
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string Id { get; set; }
     
-    public int StudentplanID { get; set; }
+    public int _id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     

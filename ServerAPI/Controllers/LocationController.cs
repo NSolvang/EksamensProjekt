@@ -62,7 +62,7 @@ public class LocationController : ControllerBase
             }
 
             var createdLocation = await _locationRepository.AddLocation(location);
-            return CreatedAtAction(nameof(GetLocationById), new { id = createdLocation.LocationId }, createdLocation);
+            return CreatedAtAction(nameof(GetLocationById), new { id = createdLocation._id }, createdLocation);
         }
         catch (Exception ex)
         {

@@ -8,7 +8,7 @@
 <h3>Oversigt over Medarbejder</h3>
 @foreach (var user in users)
 {
-    <div class="employee-card" @onclick="@(() => nav.NavigateTo($"/MyProfilePage/{user.UserId}"))">
+    <div class="employee-card" @onclick="@(() => nav.NavigateTo($"/MyProfilePage/{user._id}"))">
         <div class="employee-info">
             <img src=@user.ProfilePicture alt="">
             <h2>@user.Name</h2>

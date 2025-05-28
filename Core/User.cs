@@ -7,12 +7,7 @@ namespace Core;
 
 public class User
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    [System.Text.Json.Serialization.JsonIgnore]
-    public string? Id { get; set; }
-    
-    public int UserId { get; set; }
+    public int _id { get; set; }
     
     [Required(ErrorMessage = "Rolle er påkrævet")]
     public string Role { get; set; }
