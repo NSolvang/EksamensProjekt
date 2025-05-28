@@ -21,7 +21,6 @@ else
             
             @if (currentUser?.Role == "Admin")
             {
-                <td><button class="btn-primary" @onclick="() => DeleteById(user)">redigere</button></td>
                 <td><button class="btn-primary" @onclick="() => DeleteById(user)">Fjern bruger</button></td>
             }
         </div>
