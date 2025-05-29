@@ -43,7 +43,7 @@ public class UserService : IUser
     public async Task UpdateUser(User user)
     {
         var response = await client.PutAsJsonAsync("/api/User", user);
-        response.EnsureSuccessStatusCode(); // Smider exception hvis 4xx/5xx
+        response.EnsureSuccessStatusCode(); 
     }
     
     private string ToQueryString(UserFilter filter)

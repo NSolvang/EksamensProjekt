@@ -64,26 +64,8 @@ public class UserRepositoryMongodb : IUserRepository
         try
         {
             var filter = Builders<User>.Filter.Eq(u => u._id, user._id);
-
-            var update = Builders<User>.Update
-                .Set(u => u.IsActive, user.IsActive)
-                .Set(u => u.Name, user.Name)
-                .Set(u => u.Role, user.Role)
-                .Set(u => u.UserName, user.UserName)
-                .Set(u => u.Password, user.Password)
-                .Set(u => u.ProfilePicture, user.ProfilePicture)
-                .Set(u => u.Internshipyear, user.Internshipyear)
-                .Set(u => u.Location, user.Location)
-                .Set(u => u.Education, user.Education)
-                .Set(u => u.Studentplan, user.Studentplan)
-                .Set(u => u.DateOfStart, user.DateOfStart)
-                .Set(u => u.DateOfEnd, user.DateOfEnd);
-
-            await _userCollection.UpdateOneAsync(filter, update);
-            
-            var result = await _userCollection.UpdateOneAsync(filter, update);
-
-            Console.WriteLine($"Matched: {result.MatchedCount}, Modified: {result.ModifiedCount}");
+            await _userCollection.ReplaceOneAsync(filter, user);
+            Console.WriteLine("Bruger blev updated");
         }
         catch (Exception ex)
         {

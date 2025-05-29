@@ -23,9 +23,9 @@
 </div>
 
 @code {
+    
     [Parameter] public User user { get; set; } = default!;
     [Parameter] public User CurrentUser { get; set; } = default!;
-    [Parameter] public Goal[] Goals { get; set; } = Array.Empty<Goal>(); // Ændret fra User til Goal[]
 
     private async Task DeleteById(User user)
     {
