@@ -5,13 +5,25 @@ using Core.Factory;
 
 namespace ServerAPI.Repositories;
 
+/// <summary>
+/// Repository der håndterer CRUD-operationer og subgoal-håndtering for brugere i MongoDB.
+/// </summary>
 public class UserRepositoryMongodb : IUserRepository
 {
+    /// <summary>
+    /// MongoDB collection til brugere.
+    /// </summary>
     private readonly IMongoCollection<User> _userCollection;
     
+    /// <summary>
+    /// Repository til håndtering af standard elevplan.
+    /// </summary>
     private readonly IStudentplanRepository _studentplanRepository;
 
-
+    /// <summary>
+    /// Initialiserer UserRepositoryMongodb med reference til StudentplanRepository og forbinder til MongoDB.
+    /// </summary>
+    /// <param name="studentplanRepository">Repository til håndtering af studentplan.</param>
     public UserRepositoryMongodb(IStudentplanRepository studentplanRepository)
     {
         _studentplanRepository = studentplanRepository;
@@ -19,7 +31,7 @@ public class UserRepositoryMongodb : IUserRepository
         var client = new MongoClient("mongodb+srv://niko6041:1234@cluster.codevrj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster");
         var dbName = "comwellDB";
         var collectionName = "users";
-        
+
         _userCollection = client.GetDatabase(dbName)
             .GetCollection<User>(collectionName);
     }
@@ -30,7 +42,7 @@ public class UserRepositoryMongodb : IUserRepository
         var list = await _userCollection.Find(noFilter).ToListAsync();
         return list.ToArray();
     }
-    
+
     public async Task AddUser(User user)
     {
         // Tildel nyt _id baseret på højeste eksisterende ID
@@ -43,13 +55,12 @@ public class UserRepositoryMongodb : IUserRepository
         if (user.Role == "Elev")
         {
             var template = await _studentplanRepository.GetDefaultPlan();
-            template._id = user._id; 
+            template._id = user._id;
             user.Studentplan = template;
         }
 
         await _userCollection.InsertOneAsync(user);
     }
-
 
     public async Task DeleteById(int id)
     {
@@ -71,99 +82,95 @@ public class UserRepositoryMongodb : IUserRepository
             throw;
         }
     }
-    
+
     public async Task<User> GetUserById(int id)
     {
         var filter = Builders<User>.Filter.Eq(a => a._id, id);
         var user = await _userCollection.Find(filter).FirstOrDefaultAsync();
         return user;
     }
-    
+
     public async Task<User?> Login(string username, string password)
-    { 
+    {
         var filter = Builders<User>.Filter.Eq(u => u.UserName, username) &
                      Builders<User>.Filter.Eq(u => u.Password, password);
 
         return await _userCollection.Find(filter).FirstOrDefaultAsync();
     }
-    
+
     public async Task<bool> AddSubgoalToGoal(int userId, int internshipId, int goalId, Subgoal subgoal)
-{
-    var user = await _userCollection.Find(u => u._id == userId).FirstOrDefaultAsync();
-    if (user == null)
     {
-        Console.WriteLine("User ikke fundet");
-        return false;
-    }
-
-    if (user.Studentplan?.Internship == null)
-    {
-        Console.WriteLine("Ingen internships fundet på user.Studentplan");
-        return false;
-    }
-
-    var internship = user.Studentplan.Internship.FirstOrDefault(i => i._id == internshipId);
-    if (internship == null)
-    {
-        Console.WriteLine("Internship ikke fundet");
-        return false;
-    }
-
-    var goal = internship.Goal?.FirstOrDefault(g => g.GoalId == goalId);
-    if (goal == null)
-    {
-        Console.WriteLine("Goal ikke fundet i det valgte internship");
-        return false;
-    }
-
-    if (goal.Subgoals == null)
-    {
-        goal.Subgoals = new List<Subgoal>();
-        Console.WriteLine("Oprettede ny subgoal-liste");
-    }
-
-    // Find det højeste subgoal ID på tværs af ALLE goals i ALLE internships
-    int nextId = GetNextUniqueSubgoalId(user);
-
-    subgoal.SubgoalID = nextId;
-    goal.Subgoals.Add(subgoal);
-
-    await _userCollection.ReplaceOneAsync(u => u._id == userId, user);
-    Console.WriteLine($"Subgoal tilføjet med unikt ID: {nextId}");
-
-    return true;
-}
-
-private int GetNextUniqueSubgoalId(User user)
-{
-    var allSubgoalIds = new List<int>();
-
-    // Gennemgå alle internships
-    foreach (var internship in user.Studentplan.Internship)
-    {
-        if (internship.Goal != null)
+        var user = await _userCollection.Find(u => u._id == userId).FirstOrDefaultAsync();
+        if (user == null)
         {
-            // Gennemgå alle goals i dette internship
-            foreach (var goal in internship.Goal)
+            Console.WriteLine("User ikke fundet");
+            return false;
+        }
+
+        if (user.Studentplan?.Internship == null)
+        {
+            Console.WriteLine("Ingen internships fundet på user.Studentplan");
+            return false;
+        }
+
+        var internship = user.Studentplan.Internship.FirstOrDefault(i => i._id == internshipId);
+        if (internship == null)
+        {
+            Console.WriteLine("Internship ikke fundet");
+            return false;
+        }
+
+        var goal = internship.Goal?.FirstOrDefault(g => g.GoalId == goalId);
+        if (goal == null)
+        {
+            Console.WriteLine("Goal ikke fundet i det valgte internship");
+            return false;
+        }
+
+        if (goal.Subgoals == null)
+        {
+            goal.Subgoals = new List<Subgoal>();
+            Console.WriteLine("Oprettede ny subgoal-liste");
+        }
+
+        int nextId = GetNextUniqueSubgoalId(user);
+        subgoal.SubgoalID = nextId;
+        goal.Subgoals.Add(subgoal);
+
+        await _userCollection.ReplaceOneAsync(u => u._id == userId, user);
+        Console.WriteLine($"Subgoal tilføjet med unikt ID: {nextId}");
+
+        return true;
+    }
+
+    /// <summary>
+    /// Finder næste unikke ID til et subgoal på tværs af alle mål og internships for en bruger.
+    /// </summary>
+    /// <param name="user">Brugeren hvorfra subgoal IDs skal findes.</param>
+    /// <returns>Næste ledige subgoal ID.</returns>
+    private int GetNextUniqueSubgoalId(User user)
+    {
+        var allSubgoalIds = new List<int>();
+
+        foreach (var internship in user.Studentplan.Internship)
+        {
+            if (internship.Goal != null)
             {
-                if (goal.Subgoals != null)
+                foreach (var goal in internship.Goal)
                 {
-                    // Tilføj alle subgoal ID'er til listen
-                    allSubgoalIds.AddRange(goal.Subgoals.Select(s => s.SubgoalID));
+                    if (goal.Subgoals != null)
+                    {
+                        allSubgoalIds.AddRange(goal.Subgoals.Select(s => s.SubgoalID));
+                    }
                 }
             }
         }
+
+        return allSubgoalIds.Any() ? allSubgoalIds.Max() + 1 : 1;
     }
-
-    // Returner det næste unikke ID
-    return allSubgoalIds.Any() ? allSubgoalIds.Max() + 1 : 1;
-}
-
-
 
     public async Task DeleteSubgoalFromGoal(int userId, int internshipId, int goalId, int subgoalId)
     {
-        // Find brugeren
         var user = await _userCollection.Find(u => u._id == userId).FirstOrDefaultAsync();
         if (user == null)
             throw new Exception("Bruger ikke fundet");
@@ -171,24 +178,20 @@ private int GetNextUniqueSubgoalId(User user)
         if (user.Studentplan?.Internship == null)
             throw new Exception("Ingen praktikforløb fundet på brugerens elevplan");
 
-        // Find korrekt praktikperiode
         var internship = user.Studentplan.Internship.FirstOrDefault(i => i._id == internshipId);
         if (internship == null)
             throw new Exception("Praktikperiode ikke fundet");
 
-        // Find det rigtige goal
         var goal = internship.Goal?.FirstOrDefault(g => g.GoalId == goalId);
         if (goal == null)
             throw new Exception("Målet blev ikke fundet i den valgte praktikperiode");
 
-        // Fjern subgoal
         var subgoal = goal.Subgoals?.FirstOrDefault(sg => sg.SubgoalID == subgoalId);
         if (subgoal == null)
             throw new Exception("Delmål ikke fundet i målet");
 
         goal.Subgoals.Remove(subgoal);
 
-        // Gem ændringer
         var updateResult = await _userCollection.ReplaceOneAsync(u => u._id == userId, user);
         if (!updateResult.IsAcknowledged || updateResult.ModifiedCount == 0)
             throw new Exception("Fejl under gemning af opdateret brugerdata");
@@ -196,7 +199,6 @@ private int GetNextUniqueSubgoalId(User user)
         Console.WriteLine($"✅ Subgoal {subgoalId} slettet for bruger {userId}");
     }
 
-    
     public async Task UpdateSubgoalFromGoal(int userId, int internshipId, int goalId, int subgoalId, Subgoal updatedSubgoal)
     {
         var filter = Builders<User>.Filter.Eq(u => u._id, userId);
@@ -235,9 +237,6 @@ private int GetNextUniqueSubgoalId(User user)
             throw new Exception("Failed to update user in database");
     }
 
-
-
-    
     public async Task<User[]> GetFilteredUsers(UserFilter filter)
     {
         var builder = Builders<User>.Filter;
@@ -261,7 +260,4 @@ private int GetNextUniqueSubgoalId(User user)
         var results = await _userCollection.Find(mongoFilter).ToListAsync();
         return results.ToArray();
     }
-
-
-    
 }

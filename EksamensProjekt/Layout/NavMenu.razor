@@ -3,18 +3,24 @@
 @using EksamensProjekt.Service
 @implements IDisposable
 
+<!-- Navigation bar med logo og dynamiske menupunkter afhængigt af loginstatus og brugerrolle -->
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
+
+        <!-- Logo -->
         <a class="navbar-brand me-5" href="">
             <img src="https://koldingvenue.dk/wp-content/uploads/2021/11/HOTELS_logo.png" alt="Hotels Logo">
         </a>
 
         @if (!isLoading)
         {
+            <!-- Navigation vises kun når brugeroplysninger er hentet -->
             <div class="@NavMenuCssClass nav-scrollable">
                 <nav class="nav flex-row justify-content-center">
+
                     @if (currentUser == null)
                     {
+                        <!-- Hvis brugeren ikke er logget ind, vis login-link -->
                         <div class="nav-item px-3">
                             <NavLink class="nav-link" href="LoginPage">
                                 <span class="bi bi-box-arrow-in-right"></span> Login
@@ -26,6 +32,7 @@
                     {
                         @if (currentUser.Role == "Admin")
                         {
+                            <!-- Admin har adgang til følgende sider -->
                             <div class="nav-item px-3">
                                 <NavLink class="nav-link" href="AllStudentsPage">
                                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Elever
@@ -44,6 +51,7 @@
                         }
                         else if (currentUser.Role == "Køkkenchef" || currentUser.Role == "Kok")
                         {
+                            <!-- Køkkenpersonale har adgang til elever og medarbejdere -->
                             <div class="nav-item px-3">
                                 <NavLink class="nav-link" href="AllStudentsPage">
                                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Elever
@@ -57,67 +65,104 @@
                         }
                         else if (currentUser.Role == "Elev")
                         {
+                            <!-- Elev har kun adgang til egen studieplan -->
                             <div class="nav-item px-3">
                                 <NavLink class="nav-link" href="@($"/StudentplanPage/{currentUser?._id}")">
                                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Studieplan
                                 </NavLink>
                             </div>
                         }
+
+                        <!-- Logout-knap synlig for alle loggede brugere -->
                         <div class="nav-item px-3 d-flex align-items-center">
                             <a role="button" class="nav-link" @onclick="OnLogout">
                                 <i class="bi bi-box-arrow-right"></i> Log ud
                             </a>
                         </div>
                     }
+
                 </nav>
             </div>
         }
+
     </div>
 </div>
 
 @code {
+    // Flag til at styre visning af navigation – foldet sammen som standard
     private bool collapseNavMenu = true;
+
+    // Dynamisk CSS-klasse baseret på collapseNavMenu (styres via binding)
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    // Den aktuelt loggede ind bruger (kan være null)
     private User? currentUser;
+
+    // Flag til at forhindre visning af navigation før brugerdata er hentet
     private bool isLoading = true;
 
+    /// <summary>
+    /// Service til login og brugerdata
+    /// </summary>
     [Inject] private ILogin LoginService { get; set; } = default!;
+
+    /// <summary>
+    /// AuthStateService udløser events ved login/logud
+    /// </summary>
     [Inject] private AuthStateService AuthState { get; set; } = default!;
+
+    /// <summary>
+    /// NavigationManager bruges til at skifte side (f.eks. ved logout)
+    /// </summary>
     [Inject] private NavigationManager navManager { get; set; } = default!;
+
+    /// <summary>
+    /// Bruges til at læse og skrive til browserens lokale lager
+    /// </summary>
     [Inject] private ILocalStorageService localStorage { get; set; } = default!;
 
+    /// <summary>
+    /// Initialiserer komponenten:
+    /// Henter bruger, sætter login-status og tilmelder auth state event
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        // Check login status and update user state
         currentUser = await LoginService.GetUserLoggedIn();
-
-        // Subscribe to auth state changes
         AuthState.AuthStateChanged += OnAuthStateChanged;
         isLoading = false;
     }
 
+    /// <summary>
+    /// Kaldes automatisk når loginstatus ændres. Henter ny brugerdata.
+    /// </summary>
     private async void OnAuthStateChanged()
     {
         await UpdateUserState();
     }
 
+    /// <summary>
+    /// Henter og opdaterer brugeroplysninger og tvinger UI-opdatering
+    /// </summary>
     private async Task UpdateUserState()
     {
         currentUser = await LoginService.GetUserLoggedIn();
         await InvokeAsync(StateHasChanged);
     }
 
+    /// <summary>
+    /// Logger brugeren ud og navigerer til login-siden
+    /// </summary>
     private async Task OnLogout()
     {
         await LoginService.LogOut();
-
-        // Navigate to login page
         navManager.NavigateTo("/LoginPage", forceLoad: true);
     }
 
+    /// <summary>
+    /// Afmelder event subscription for at undgå memory leaks
+    /// </summary>
     public void Dispose()
     {
         AuthState.AuthStateChanged -= OnAuthStateChanged;
     }
-    
 }

@@ -11,8 +11,12 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-
         builder.Services.AddControllers();
+        
+        // Adding Swagger services
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+        
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("policy",
@@ -27,6 +31,7 @@ public class Program
         builder.Services.AddSingleton<IStudentplanRepository, StudentplanRepositoryMongodb>();
         builder.Services.AddSingleton<ICommentRepository, CommentRepositoryMongodb>();
         builder.Services.AddSingleton<ILocationRepository, LocationRepositoryMongodb>();
+        
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
@@ -36,13 +41,16 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
+            
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
 
         app.UseHttpsRedirection();
         app.UseCors("policy");
 
         app.UseAuthorization();
-
 
         app.MapControllers();
 

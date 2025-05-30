@@ -7,6 +7,10 @@ public class ExportService : IExport
 {
     private readonly IJSRuntime _jsRuntime;
 
+    /// <summary>
+    /// Initialiserer en ny instans af <see cref="ExportService"/> med en JavaScript runtime.
+    /// </summary>
+    /// <param name="jsRuntime">JavaScript runtime til at udføre JS-interop, fx til fil-download.</param>
     public ExportService(IJSRuntime jsRuntime)
     {
         _jsRuntime = jsRuntime;
@@ -61,6 +65,11 @@ public class ExportService : IExport
         await DownloadFile(fileName, fileBytes);
     }
 
+    /// <summary>
+    /// Udregner en tekstbaseret opsummering af brugerens fremgang baseret på delmålstatus.
+    /// </summary>
+    /// <param name="user">Brugeren hvis fremgang skal opsummeres.</param>
+    /// <returns>En streng med procentfærdiggørelse og status for delmål.</returns>
     private string GetUserProgressSummary(User user)
     {
         var internships = user.Studentplan?.Internship ?? new List<Internship>();
@@ -103,6 +112,13 @@ public class ExportService : IExport
         return $"{completionPercentage}% ({completedTasks}/{totalTasks}) - Færdig: {completedTasks}, I gang: {inProgressTasks}, Mangler: {pendingTasks}";
     }
 
+    /// <summary>
+    /// Downloader en fil i browseren ved hjælp af JavaScript.
+    /// </summary>
+    /// <param name="filename">Navnet på filen, som brugeren skal hente.</param>
+    /// <param name="data">Filens binære data som byte-array.</param>
+    /// <exception cref="InvalidOperationException">Kastes hvis JavaScript-funktionen til download ikke er tilgængelig.</exception>
+    /// <exception cref="Exception">Kastes hvis andre fejl opstår under download-processen.</exception>
     private async Task DownloadFile(string filename, byte[] data)
     {
         try

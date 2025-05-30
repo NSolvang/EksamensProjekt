@@ -6,30 +6,36 @@ namespace EksamensProjekt.Service;
 
 public class UserService : IUser
 {
-
     private HttpClient client;
-    
+
+    /// <summary>
+    /// Initialiserer en ny instans af UserService med en HttpClient til API-kald.
+    /// </summary>
+    /// <param name="client">HttpClient til kommunikation med backend API.</param>
     public UserService(HttpClient client)
     {
         this.client = client;
     }
+
 
     public async Task<User[]> GetAll()
     {
         return await client.GetFromJsonAsync<User[]>($"/api/User");
     }
 
+
     public Task<User> GetUserById(int id)
     {
-        return  client.GetFromJsonAsync<User>($"/api/User/{id}");
+        return client.GetFromJsonAsync<User>($"/api/User/{id}");
     }
     
+
     public async Task DeleteById(int id)
     {
         await client.DeleteAsync($"/api/User/{id}");
     }
 
-    
+
     public async Task AddUser(User user)
     {
         var response = await client.PostAsJsonAsync($"/api/User", user);
@@ -39,13 +45,19 @@ public class UserService : IUser
             throw new Exception($"Fejl ved oprettelse: {response.StatusCode}, {error}");
         }
     }
-    
+
+
     public async Task UpdateUser(User user)
     {
         var response = await client.PutAsJsonAsync("/api/User", user);
         response.EnsureSuccessStatusCode(); 
     }
-    
+
+    /// <summary>
+    /// Konverterer et UserFilter-objekt til en query-string, der kan vedhæftes til URL.
+    /// </summary>
+    /// <param name="filter">Filterparametre til brugerfiltrering.</param>
+    /// <returns>Query-string repræsentation af filteret.</returns>
     private string ToQueryString(UserFilter filter)
     {
         var queryParams = new List<string>();
@@ -68,6 +80,7 @@ public class UserService : IUser
         return string.Join("&", queryParams);
     }
 
+
     public async Task<User[]> GetFilteredUsers(UserFilter filter)
     {
         var queryString = ToQueryString(filter);
@@ -78,6 +91,4 @@ public class UserService : IUser
 
         return await client.GetFromJsonAsync<User[]>(url);
     }
-
-    
 }

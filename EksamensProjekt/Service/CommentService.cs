@@ -3,10 +3,18 @@ using Core;
 
 namespace EksamensProjekt.Service;
 
+/// <summary>
+/// Service til håndtering af kommentarer relateret til delmål (subgoals).
+/// Kommunikerer med backend via HTTP og implementerer IComment interfacet.
+/// </summary>
 public class CommentService : IComment
 {
     private readonly HttpClient _client;
 
+    /// <summary>
+    /// Initialiserer en ny instans af <see cref="CommentService"/> med en HTTP-klient.
+    /// </summary>
+    /// <param name="client">HTTP-klient, der bruges til at sende forespørgsler til API'et.</param>
     public CommentService(HttpClient client)
     {
         _client = client;
