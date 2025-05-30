@@ -24,15 +24,20 @@
 
 @code {
     
+    // Brugeren der vises i headeren. Bliver sat i parent-komponenten
     [Parameter] public User user { get; set; } = default!;
+    
+    // Den bruger der er logget ind. Bruges til rollebaseret adgang
     [Parameter] public User CurrentUser { get; set; } = default!;
 
+    //Sletter brugeren fra databasen og sender tilbage til AllStudentsPage
     private async Task DeleteById(User user)
     {
         await mService.DeleteById(user._id);
         nav.NavigateTo("/AllStudentsPage");
     }
     
+    //Sætter brugerens isActive til false og opdaterer brugeren i databasen
     private async Task MakeInactive(User user)
     {
         Console.WriteLine("_id: " + user._id); 
@@ -50,6 +55,7 @@
         }
     }
     
+    // Returnerer en samlet liste over alle mål fra alle praktikperioder
     private Goal[] GetUserGoals(User user)
     {
         if (user.Studentplan?.Internship == null)

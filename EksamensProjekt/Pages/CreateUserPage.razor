@@ -161,31 +161,55 @@ else
 }
 
 @code {
-    private User user = new() { Role = "", };
-    private string[] roles = { "Elev", "Køkkenchef", "Admin", "Kok" };
-    private string[] educations = { "EUX", "EUD", "EUV", "FGU", "Mesterlære" };
-    private List<Location> locations = new();
     
+    // Den bruger der aktuelt bliver oprettet i formularen
+    private User user = new() { Role = "", };
+
+    // Roller som brugeren kan vælge mellem i formularen
+    private string[] roles = { "Elev", "Køkkenchef", "Admin", "Kok" };
+
+    // Uddannelsestyper brugeren kan vælge i formularen
+    private string[] educations = { "EUX", "EUD", "EUV", "FGU", "Mesterlære" };
+
+    // Liste med alle lokationer, bruges i vores dropdown menu
+    private List<Location> locations = new();
+
+    // Bruges til validering af formularen
     private EditContext editContext = default!;
+
+    // Den bruger som er logget ind – Adgang er kun godkendt, hvis brugeren har rollen "Admin"
     private User? currentUser;
+
+    // Viser om siden stadig er ved at loade data
     private bool isLoading = true;
+
+    // Angiver om der er fejl ved valg af uddannelse
     private bool educationError = false;
 
+    // Styrer om modal-vinduet til at tilføje ny lokation er åbent
     private bool showAddLocationModal = false;
+
+    // Navnet på den nye lokation, som indtastes i modal-vinduet
     private string newLocationName = string.Empty;
+
+    // Fejlbesked hvis oprettelse af ny lokation fejler
     private string locationErrorMessage = string.Empty;
-    
-    private List<string> internshipyears = new()
-    {
-        "1","2","3","4"
-    };
-    
+
+    // Mulige praktikår som kan vælges i formularen
+    private List<string> internshipyears = new() { "1", "2", "3", "4" };
+
+    // Property til binding af lokationens ID i UI’et.
+    // Getter: returnerer det valgte lokations-ID eller 0, hvis ingen er valgt.
+    // Setter: finder og sætter den valgte lokation ud fra ID.
     private int SelectedLocationId
     {
         get => user.Location?._id ?? 0;
         set => user.Location = locations.FirstOrDefault(l => l._id == value);
     }
 
+    // Kører ved initialisering af komponenten.
+    // Hvis brugeren er Admin, hentes alle lokationer, sorteres alfabetisk,
+    // og et nyt EditContext oprettes til formularvalidering.
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
@@ -198,6 +222,9 @@ else
         isLoading = false;
     }
 
+    // Håndterer formularens indsendelse.
+    // Validerer at "Elev"-brugere har valgt en uddannelse.
+    // Hvis formularen er gyldig, gemmes brugeren og man navigerer videre.
     private async Task HandleSubmit()
     {
         educationError = false;
@@ -219,11 +246,13 @@ else
         }
     }
 
+    //Navigerer til siden AllStudentsPage
     private void NavigateAllStudentPage()
     {
         nav.NavigateTo("/AllStudentsPage");
     }
 
+    //Viser modalvinduet til at oprette en ny lokation
     private void ShowAddLocationDialog()
     {
         showAddLocationModal = true;
@@ -231,6 +260,7 @@ else
         locationErrorMessage = string.Empty;
     }
 
+    //Lukker modalvinduet, når lokation bliver oprettet 
     private void CloseAddLocationDialog()
     {
         showAddLocationModal = false;
@@ -238,6 +268,8 @@ else
         locationErrorMessage = string.Empty;
     }
 
+    //Tilføjer en ny lokation, hvis feltet ikke er tom eller ikke findes i forvejen 
+    //Viser fejlbeskeder og opdaterer listen med lokationer
     private async Task AddNewLocation()
     {
         if (string.IsNullOrWhiteSpace(newLocationName))

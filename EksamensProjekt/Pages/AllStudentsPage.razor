@@ -99,18 +99,27 @@ else
 
 @code {
     
+    // Den aktuelt loggede bruger (bruges til at bestemme rettigheder og visning)
     private User? currentUser;
+
+    // Liste over alle brugere, som er hentet fra backend
     private User[]? users = Array.Empty<User>();
+
+    // Filterobjekt, som styrer visning/søgning af brugere i UI'et
     private UserFilter filter = new();
+
+    // Gemmer om brugeren er aktiv som en string (f.eks. "true" eller "false" – bruges til binding)
     private string isActiveString = "true";
-    
+
+    // Liste over alle lokationer (hentes fra backend og bruges i vores dropdowns)
     private List<Location> locations = new();
 
-    private List<string> internshipyears = new()
-    {
-        "1","2","3","4"
-    };
-        
+    // Liste over praktikår, som vises som valgmuligheder i UI'et (1. år, 2. år, ...)
+    private List<string> internshipyears = new() { "1", "2", "3", "4" };
+    
+    
+    // Kaldes automatisk ved initialisering af komponenten.
+    // Logger brugeren ind og tjekker rolle. Loader lokationer og brugere.
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
@@ -131,6 +140,8 @@ else
         await LoadAll();
     }
 
+    // Henter alle lokationer fra backend og gemmer dem i listen "locations".
+    // Hvis der opstår fejl, logges fejlen, og listen sættes til tom.
     private async Task LoadLocations()
     {
         try
@@ -144,6 +155,7 @@ else
         }
     }
 
+    // Henter alle aktive brugere med rollen "Elev" fra backend og gemmer dem i "users".
     private async Task LoadAll()
     {
         var allUsers = await mService.GetAll();
@@ -153,6 +165,8 @@ else
             .ToArray();
     }
     
+    // Anvender det aktuelle filter til at hente brugere fra backend.
+    // Filtrerer yderligere, så kun brugere med rollen "Elev" vises.
     private async Task SearchWithFilter()
     {
         filter.IsActive = isActiveString switch
@@ -167,6 +181,7 @@ else
             .ToArray();
     }
 
+    // Nulstiller filter og genindlæser alle brugere.
     private async Task ClearFilter()
     {
         filter = new UserFilter(); // nulstil filter
@@ -174,7 +189,8 @@ else
         await LoadAll(); // load alle brugere igen
     }
 
-    // Tilføj denne metode for at hente goals for hver bruger
+    // Returnerer alle mål (goals) for en given bruger baseret på deres praktikperioder.
+    // Hvis brugeren ikke har nogen praktikperiode, returneres en tom liste.
     private Goal[] GetUserGoals(User user)
     {
         if (user.Studentplan?.Internship == null)
@@ -186,17 +202,17 @@ else
             .ToArray();
     }
     
+    // Eksporterer listen af brugere til en Excel-fil ved hjælp af hjælpeklasse.
+    // Hvis eksporten fejler, logges fejlen til konsollen.
     private async Task ExportToExcel()
     {
         try
         {
-            // Brug kun de allerede indlæste brugere
             await Export.ExportUsersToExcel(users ?? Array.Empty<User>());
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Export fejlede: {ex.Message}");
-            // Vis evt. fejl til brugeren
         }
     }
 }

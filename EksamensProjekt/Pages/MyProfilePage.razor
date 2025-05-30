@@ -29,13 +29,18 @@ else
 
 
 @code {
+    // Modtager brugerens ID fra URL'en
     [Parameter]
     public int userId { get; set; }
-    
+
+    // Den bruger, som vises på siden
     private User user;
+
+    // Den aktuelle bruger, som er logget ind. Bruges til rollerettigheder 
     private User? currentUser;
 
-    
+    // Henter den loggede bruger og tjekker rettigheder.
+    // Henter derefter brugerdata baseret på userId fra URL.
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
@@ -49,11 +54,11 @@ else
 
         user = await mService.GetUserById(userId);
     }
-    
+
+    // Sletter brugeren fra databasen og sender tilbage til medarbejdersiden
     private async Task DeleteById(User user)
     {
         await mService.DeleteById(user._id);
         nav.NavigateTo("/EmployeePage");
-
     }
 }

@@ -105,16 +105,6 @@ else
                                     </td>
                                 }
                             </tr>
-
-                            @if (expandedSubgoalId == subgoal.SubgoalID)
-                            {
-                                <tr class="dropdown-table">
-                                    <td colspan="7">
-                                        <!-- Ekstra detaljer for subgoal -->
-                                        <p><strong>Detaljer for opgave:</strong> @subgoal.Name</p>
-                                    </td>
-                                </tr>
-                            }
                         }
                         </tbody>
                     </table>
@@ -184,20 +174,40 @@ else
 
 
 @code {
+    // Parameter modtager brugerens ID fra URL’en
     [Parameter] public int userId { get; set; }
 
+    // Er den bruger hvis elevplan vises
     private User? users;
-    private User? currentUser;
-    private Goal[]? goals;
-    private Goal[]? currentGoals = new Goal[0]; // Goals for den valgte praktikperiode
-    private int selectedInternshipId = 1; // Default til praktikperiode 1
 
+    // Den bruger der er logget ind, som bruges til adgangsrettigheder
+    private User? currentUser;
+
+    // Alle mål fra hele elevplanen (alle praktikperioder)
+    private Goal[]? goals;
+
+    // Aktuelle mål for den valgte praktikperiode
+    private Goal[]? currentGoals = new Goal[0];
+
+    // ID for den valgte praktikperiode (standard: 1)
+    private int selectedInternshipId = 1;
+
+    // Bruges til at vise fejlbesked ved oprettelse af ny delopgave
     private bool newSubgoalError = false;
+
+    // Styrer om formularen til ny delopgave vises
     private bool showNewSubgoalForm = false;
+
+    // Det valgte mål, som ny delopgave skal tilføjes til
     private int? selectedGoalId;
+
+    // Den nye delopgave der oprettes
     private Subgoal newSubgoal = new Subgoal();
+
+    // ID for hvilket mål der er foldet ud
     private int? expandedGoalId;
-    private int? expandedSubgoalId;
+    
+    // Liste med valgmuligheder til "Ansvarlig"
     private List<string> responsiblePeople = new()
     {
         "Elevansvarlig ",
@@ -209,14 +219,22 @@ else
         "AV/Ejendom"
     };
 
+    // Styrer om kommentarmodal er synlig
     private bool showCommentModal = false;
+
+    // Den delopgave, der vises kommentarer for
     private Subgoal? selectedSubgoal;
+
+    // Kommentarer til den valgte delopgave
     private List<Comment> currentComments = new();
 
-    // Tilføj dictionary til at cache comment counts
+    // Cache til at holde antal kommentarer pr. delopgave
     private Dictionary<int, int> commentCounts = new Dictionary<int, int>();
+
+    // Flag for om comment-counts er ved at blive hentet
     private bool isLoadingCommentCounts = false;
 
+    // Initialiserer siden ved at hente bruger, elevplan og kommentarantal
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
@@ -233,14 +251,11 @@ else
             .SelectMany(i => i.Goal)
             .ToArray();
         
-        // Sæt default praktikperiode til 1
         SelectInternshipPeriod(1);
-        
-        // Load comment counts for den valgte praktikperiode
         await LoadCommentCountsForCurrentPeriod();
     }
 
-    // Ny metode til at vælge praktikperiode
+    // Vælger praktikperiode og opdaterer aktuelle mål.
     private async void SelectInternshipPeriod(int internshipId, bool resetUI = true)
     {
         selectedInternshipId = internshipId;
@@ -253,18 +268,15 @@ else
         if (resetUI)
         {
             expandedGoalId = null;
-            expandedSubgoalId = null;
             showNewSubgoalForm = false;
             selectedGoalId = null;
         }
 
-        // Load comment counts for den nye praktikperiode
         await LoadCommentCountsForCurrentPeriod();
-
         StateHasChanged();
     }
 
-    // Opdateret metode til at load comment counts kun for nuværende praktikperiode
+    // Henter kommentarer for alle delopgaver i den valgte praktikperiode
     private async Task LoadCommentCountsForCurrentPeriod()
     {
         if (currentGoals == null || currentGoals.Length == 0 || isLoadingCommentCounts)
@@ -274,21 +286,18 @@ else
 
         try
         {
-            // Clear gamle counts for denne periode
             var subgoalIdsInCurrentPeriod = currentGoals
                 .Where(g => g.Subgoals != null)
                 .SelectMany(g => g.Subgoals)
                 .Select(sg => sg.SubgoalID)
                 .ToList();
 
-            // Fjern gamle counts der ikke er relevante længere
             var keysToRemove = commentCounts.Keys.Except(subgoalIdsInCurrentPeriod).ToList();
             foreach (var key in keysToRemove)
             {
                 commentCounts.Remove(key);
             }
 
-            // Load counts for alle subgoals i den nuværende periode
             var loadTasks = new List<Task>();
             
             foreach (var goal in currentGoals)
@@ -316,6 +325,7 @@ else
         StateHasChanged();
     }
 
+    // Henter antal kommentarer for én specifik delopgave 
     private async Task LoadCommentCountForSubgoal(int goalId, int subgoalId)
     {
         try
@@ -330,19 +340,18 @@ else
         }
     }
 
-    // Opdateret GetCommentCount metode
+    // Returnerer antal kommentarer for en given delopgave
     private int GetCommentCount(Subgoal subgoal)
     {
-        // Hvis modal er åben for samme subgoal, brug currentComments
         if (selectedSubgoal != null && selectedSubgoal.SubgoalID == subgoal.SubgoalID)
         {
             return currentComments.Count;
         }
         
-        // Return cached count eller 0 hvis ikke loaded endnu
         return commentCounts.TryGetValue(subgoal.SubgoalID, out var count) ? count : 0;
     }
 
+    // Åbner eller lukker visningen af et mål
     private void ToggleTable(int goalId)
     {
         if (expandedGoalId == goalId)
@@ -357,10 +366,10 @@ else
         else
         {
             expandedGoalId = goalId;
-            expandedSubgoalId = null;
         }
     }
-
+    
+    // Åbner modal og henter kommentarer til delopgave
     private async Task OpenCommentModal(Subgoal subgoal)
     {
         selectedSubgoal = subgoal;
@@ -381,6 +390,7 @@ else
         }
     }
 
+    // Lukker kommentarmodal og rydder valgte data
     private void CloseCommentModal()
     {
         showCommentModal = false;
@@ -388,7 +398,7 @@ else
         currentComments.Clear();
     }
 
-    // Opdateret SaveComment metode
+    // Gemmer kommentar og opdaterer comment count
     private async Task SaveComment(Comment comment)
     {
         if (selectedSubgoal == null || !selectedGoalId.HasValue)
@@ -398,12 +408,12 @@ else
         
         currentComments = await mServiceComment.GetCommentsBySubgoalId(userId, selectedInternshipId, selectedGoalId.Value, selectedSubgoal.SubgoalID);
         
-        // Opdater også cache så count bliver vist korrekt når modal lukkes
         commentCounts[selectedSubgoal.SubgoalID] = currentComments.Count;
         
         StateHasChanged();
     }
-
+    
+    // Forbereder visning af ny delopgaveformular
     private void FindGoalForNewSubgoal(int goalId)
     {
         selectedGoalId = goalId;
@@ -415,12 +425,14 @@ else
         };
     }
 
+    // Annullerer tilføjelse af ny delopgave
     private void CancelNewSubgoal()
     {
         showNewSubgoalForm = false;
         selectedGoalId = null;
     }
 
+    // Opretter ny delopgave til valgt mål og opdaterer view
     private async Task CreateNewSubgoal()
     {
         newSubgoalError = false;
@@ -445,7 +457,6 @@ else
                         .SelectMany(i => i.Goal)
                         .ToArray();
 
-                    // Behold visning af det samme mål
                     var previouslyExpandedGoalId = expandedGoalId;
 
                     // Opdater currentGoals for den valgte praktikperiode
@@ -459,9 +470,7 @@ else
                     selectedGoalId = null;
                     newSubgoal = new Subgoal();
 
-                    // Reload comment counts efter ny subgoal
                     await LoadCommentCountsForCurrentPeriod();
-
                     StateHasChanged();
                 }
                 else
@@ -477,6 +486,7 @@ else
         }
     }
 
+    // Sletter delopgave og opdaterer view + kommentarer
     private async Task DeleteSubgoal(int userId, int goalId, int subgoalId)
     {
         bool success = await mServiceSubgoal.DeleteSubgoal(userId, selectedInternshipId, goalId, subgoalId);
@@ -511,7 +521,8 @@ else
             Console.WriteLine("Kunne ikke slette delmålet");
         }
     }
-
+    
+    // Returnerer CSS-klasse baseret på status
     private string GetStatusClass(string status) => status switch
     {
         "Mangler" => "status-Mangler",
@@ -520,6 +531,7 @@ else
         _ => ""
     };
 
+    // Godkender en delopgave og opdaterer visning
     private async Task ApproveSubgoal(int userId, int goalId, Subgoal subgoal)
     {
         subgoal.Approval = true;
@@ -547,6 +559,7 @@ else
         }
     }
 
+    // Ændrer status på en delopgave og gemmer i databasen
     private async Task OnStatusChanged(ChangeEventArgs e, int userId, int goalId, Subgoal subgoal)
     {
         var newStatus = e.Value?.ToString();

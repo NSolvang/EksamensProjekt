@@ -55,28 +55,41 @@
 
 @code {
     
+    // Bruges til at holde login-brugerdata (bliver sat senere)
     private User user;
+
+    // Brugernavn indtastet af brugeren
     string username = "";
+
+    // Adgangskode indtastet af brugeren
     string password = "";
+
+    // Fejlbeskedtekst, hvis login mislykkes
     string errorText = "";
+
+    // Viser eller skjuler fejlbesked
     bool showError = false;
+
+    // Viser loading spinner og deaktiverer knap under login
     bool isProcessing = false;
 
+    // Tjekker om brugeren allerede er logget ind ved initialisering.
+    // Hvis ja, sendes brugeren videre til den rette side baseret på rolle.
     protected override async Task OnInitializedAsync()
     {
-        // Check if user is already logged in
         var isLoggedIn = await localStorage.GetItemAsync<bool>("isLoggedIn");
         if (isLoggedIn)
         {
             var loggedInUser = await LoginService.GetUserLoggedIn();
             if (loggedInUser != null)
             {
-                // Redirect to appropriate page based on role
                 RedirectBasedOnRole(loggedInUser);
             }
         }
     }
 
+    // Håndterer login-knappens klik. Validerer input og forsøger login via LoginService.
+    // Viser fejl hvis login mislykkes. Hvis login lykkes, gemmes login-status og bruger omdirigeres.
     private async Task OnClickLogin()
     {
         showError = false;
@@ -103,10 +116,8 @@
                 var loggedInUser = await LoginService.GetUserLoggedIn();
                 if (loggedInUser != null)
                 {
-                    // Sæt isLoggedIn flag
                     await localStorage.SetItemAsync("isLoggedIn", true);
 
-                    // Naviger baseret på brugerens rolle
                     RedirectBasedOnRole(loggedInUser); 
                 }
             }
@@ -122,6 +133,7 @@
         }
     }
 
+    // Navigerer brugeren til den rigtige side afhængigt af brugerens rolle.
     private void RedirectBasedOnRole(User user)
     {
         switch (user.Role)

@@ -17,16 +17,24 @@
     }
 </div>
 
-
-
 @code {
+    
+    // Brugernavn (kan bruges til visning, hvis ønsket)
     [Parameter] public string UserName { get; set; } = "";
+
+    // Liste over brugerens mål (Goal indeholder Subgoals)
     [Parameter] public Goal[] Goals { get; set; } = Array.Empty<Goal>();
 
+    // Det samlede antal opgaver (subgoals)
     private int TotalTasks => GetAllSubgoals().Count;
+
+    // Antal opgaver der er godkendt
     private int TotalApprovedTasks => GetAllSubgoals().Count(s => s.Approval);
+
+    // Beregnet færdiggørelsesprocent (afrundet til heltal)
     private int OverallCompletionPercentage => TotalTasks > 0 ? (int)Math.Round((TotalApprovedTasks * 100.0) / TotalTasks) : 0;
 
+    // Henter alle subgoals fra alle mål
     private List<Subgoal> GetAllSubgoals()
     {
         return Goals?
@@ -35,11 +43,12 @@
             .ToList() ?? new List<Subgoal>();
     }
 
+    // Returnerer farve til progress-bar'en
     private string GetProgressColor()
     {
         return OverallCompletionPercentage switch
         {
-            _ => "#d4af37"      
+            _ => "#d4af37" 
         };
     }
 }
