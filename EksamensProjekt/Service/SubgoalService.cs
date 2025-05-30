@@ -3,15 +3,24 @@ using Core;
 
 namespace EksamensProjekt.Service;
 
+/// <summary>
+/// Service til håndtering af delmål (Subgoal) via HTTP-kald til API.
+/// Implementerer ISubgoal interface for at tilføje, slette og opdatere delmål.
+/// </summary>
 public class SubgoalService : ISubgoal
 {
     private readonly HttpClient client;
 
+    /// <summary>
+    /// Initialiserer en ny instans af SubgoalService med en HttpClient.
+    /// </summary>
+    /// <param name="client">HttpClient til at udføre HTTP-forespørgsler.</param>
     public SubgoalService(HttpClient client)
     {
         this.client = client;
     }
 
+    /// <inheritdoc />
     public async Task<bool> AddSubgoalToGoal(int userId, int internshipId, int goalId, Subgoal newSubgoal)
     {
         try
@@ -27,6 +36,7 @@ public class SubgoalService : ISubgoal
         }
     }
 
+    /// <inheritdoc />
     public async Task<bool> DeleteSubgoal(int userId, int internshipId, int goalId, int subgoalId)
     {
         try
@@ -42,6 +52,7 @@ public class SubgoalService : ISubgoal
         }
     }
 
+    /// <inheritdoc />
     public async Task<bool> UpdateSubgoal(int userId, int internshipId, int goalId, int subgoalId, Subgoal updatedSubgoal)
     {
         try

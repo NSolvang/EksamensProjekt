@@ -9,10 +9,19 @@ using System.Threading.Tasks;
 
 namespace ServerAPI.Repositories;
 
+/// <summary>
+/// Repository der håndterer kommentarer på subgoals i MongoDB.
+/// </summary>
 public class CommentRepositoryMongodb : ICommentRepository
 {
+    /// <summary>
+    /// MongoDB collection til brugere, hvor kommentarerne ligger inde under user-stucturen.
+    /// </summary>
     private readonly IMongoCollection<User> _userCollection;
 
+    /// <summary>
+    /// Opretter en ny instans af CommentRepositoryMongodb og forbinder til MongoDB.
+    /// </summary>
     public CommentRepositoryMongodb()
     {
         var client = new MongoClient("mongodb+srv://niko6041:1234@cluster.codevrj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster");
@@ -22,12 +31,12 @@ public class CommentRepositoryMongodb : ICommentRepository
 
     public async Task AddComment(int userId, int internshipId, int goalId, int subgoalId, Comment comment)
     {
+        // Genererer et nyt unikt ID til kommentaren og sætter nødvendige properties
         comment.Id = ObjectId.GenerateNewId().ToString();
         comment.SubgoalID = subgoalId;
         comment.CreatedAt = DateTime.UtcNow;
 
         var user = await _userCollection.Find(u => u._id == userId).FirstOrDefaultAsync();
-
         if (user == null)
             throw new Exception($"Bruger med id {userId} blev ikke fundet");
 
@@ -49,11 +58,9 @@ public class CommentRepositoryMongodb : ICommentRepository
         subgoal.Comments.Add(comment);
 
         var updateResult = await _userCollection.ReplaceOneAsync(u => u._id == userId, user);
-
         if (!updateResult.IsAcknowledged || updateResult.ModifiedCount == 0)
             throw new Exception("Kunne ikke gemme kommentar til databasen");
     }
-
 
     public async Task<List<Comment>> GetCommentsBySubgoalId(int userId, int internshipId, int goalId, int subgoalId)
     {
@@ -87,6 +94,4 @@ public class CommentRepositoryMongodb : ICommentRepository
 
         return subgoal.Comments ?? new List<Comment>();
     }
-
-
 }

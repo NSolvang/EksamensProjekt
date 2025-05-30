@@ -1,18 +1,27 @@
 @using Core
 
+<!-- Modal vises kun hvis IsVisible er true -->
 @if (IsVisible)
 {
+    <!-- Halvgennemsigtig baggrund der lukker modal ved klik -->
     <div class="modal-backdrop" @onclick="CloseModal"></div>
+
+    <!-- Modalens dialogvindue -->
     <div class="modal-dialog">
         <div class="modal-content">
+
+            <!-- Modal header med titel og luk-knap -->
             <div class="modal-header">
                 <h5 class="modal-title">Kommentar til @Subgoal?.Name</h5>
                 <button type="button" class="modal-close-btn" @onclick="CloseModal">×</button>
             </div>
+
+            <!-- Modal body: viser kommentarer og giver mulighed for ny -->
             <div class="modal-body">
                 <div class="comments-section">
                     @if (Comments != null && Comments.Any())
                     {
+                        <!-- Liste over eksisterende kommentarer -->
                         @foreach (var comment in Comments)
                         {
                             <div class="comment-item @GetCommentRoleClass(comment.UserRole)">
@@ -31,10 +40,12 @@
                     }
                     else
                     {
+                        <!-- Ingen kommentarer endnu -->
                         <p class="no-comments">Ingen kommentarer endnu</p>
                     }
                 </div>
 
+                <!-- Brugere med relevante roller kan tilføje kommentar -->
                 @if (CurrentUser != null && (CurrentUser.Role == "Elev" || CurrentUser.Role == "Kok" || CurrentUser.Role == "Køkkenchef"))
                 {
                     <div class="new-comment-section">
@@ -44,6 +55,7 @@
                 }
             </div>
 
+            <!-- Modal footer: luk og gem knapper -->
             <div class="modal-footer">
                 <button type="button" class="btn-secondary" @onclick="CloseModal">Luk</button>
 
@@ -52,26 +64,61 @@
                     <button type="button" class="btn-primary" @onclick="HandleSaveComment">Gem kommentar</button>
                 }
             </div>
+
         </div>
     </div>
 }
 
+
 @code {
+    /// <summary>
+    /// Angiver om modal-vinduet skal vises.
+    /// </summary>
     [Parameter] public bool IsVisible { get; set; }
+
+    /// <summary>
+    /// Det delmål (Subgoal) som kommentarerne tilhører.
+    /// </summary>
     [Parameter] public Subgoal? Subgoal { get; set; }
+
+    /// <summary>
+    /// Liste over eksisterende kommentarer til delmålet.
+    /// </summary>
     [Parameter] public List<Comment>? Comments { get; set; }
+
+    /// <summary>
+    /// Den bruger der aktuelt er logget ind og kan kommentere.
+    /// </summary>
     [Parameter] public User? CurrentUser { get; set; }
+
+    /// <summary>
+    /// Event callback der aktiveres når modal lukkes.
+    /// </summary>
     [Parameter] public EventCallback OnClose { get; set; }
+
+    /// <summary>
+    /// Event callback der kaldes når en ny kommentar gemmes.
+    /// </summary>
     [Parameter] public EventCallback<Comment> OnSaveComment { get; set; }
 
+    /// <summary>
+    /// Midlertidigt tekstfelt til ny kommentar.
+    /// </summary>
     private string newComment = "";
 
+    /// <summary>
+    /// Lukker modal og rydder inputfeltet.
+    /// </summary>
     private async Task CloseModal()
     {
         newComment = "";
         await OnClose.InvokeAsync();
     }
 
+    /// <summary>
+    /// Håndterer logik for at oprette og sende ny kommentar.
+    /// Kommentaren bliver kun sendt hvis der er tekst og en bruger er logget ind.
+    /// </summary>
     private async Task HandleSaveComment()
     {
         if (string.IsNullOrWhiteSpace(newComment) || CurrentUser == null)
@@ -90,6 +137,12 @@
         newComment = "";
     }
 
+    /// <summary>
+    /// Returnerer CSS-klasse baseret på brugerens rolle.
+    /// Bruges til at style kommentarer forskelligt efter rolle.
+    /// </summary>
+    /// <param name="role">Brugerens rolle (Elev, Kok, Køkkenchef osv)</param>
+    /// <returns>CSS klasse string</returns>
     private string GetCommentRoleClass(string role)
     {
         return role switch
@@ -101,3 +154,4 @@
         };
     }
 }
+

@@ -11,6 +11,12 @@ public class LoginService : ILogin
     private readonly ILocalStorageService localStorage;
     private readonly AuthStateService authStateService;  
 
+    /// <summary>
+    /// Initialiserer en ny instans af LoginService med nødvendige services.
+    /// </summary>
+    /// <param name="httpClient">HttpClient til API-kald.</param>
+    /// <param name="localStorageService">Service til lokal lagring.</param>
+    /// <param name="authState">Service til håndtering af autentificeringstilstand.</param>
     public LoginService(HttpClient httpClient, ILocalStorageService localStorageService, AuthStateService authState)
     {
         client = httpClient;
@@ -28,14 +34,12 @@ public class LoginService : ILogin
     {
         try
         {
-            // Create login request object
             var loginRequest = new LoginDto
             {
                 Username = UserName,
                 Password = Password
             };
 
-            // Send POST request with JSON body
             var response = await client.PostAsJsonAsync($"api/User/login", loginRequest);
 
             if (response.IsSuccessStatusCode)
@@ -44,10 +48,10 @@ public class LoginService : ILogin
                 if (user != null)
                 {
                     await localStorage.SetItemAsync("user", user);
-                    
-                    // Notificer alle subscribers om auth state change
+
+                    // Notificer abonnenter om ændring i autentificeringstilstand
                     authStateService.NotifyAuthStateChanged();
-                    
+
                     return true;
                 }
             }
@@ -60,21 +64,21 @@ public class LoginService : ILogin
             return false;
         }
     }
-    
+
     public async Task LogOut()
     {
         try
         {
             await localStorage.RemoveItemAsync("user");
- 
+
             var response = await client.PostAsync($"api/User/logout", null);
- 
+
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine("Logout failed on the server side.");
             }
-            
-            // Notificer alle subscribers om auth state change
+
+            // Notificer abonnenter om ændring i autentificeringstilstand
             authStateService.NotifyAuthStateChanged();
         }
         catch (Exception ex)
