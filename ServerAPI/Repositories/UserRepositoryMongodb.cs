@@ -31,8 +31,6 @@ public class UserRepositoryMongodb : IUserRepository
         return list.ToArray();
     }
     
-    
-
     public async Task AddUser(User user)
     {
         // Tildel nyt _id baseret på højeste eksisterende ID
@@ -73,9 +71,7 @@ public class UserRepositoryMongodb : IUserRepository
             throw;
         }
     }
-
-
-
+    
     public async Task<User> GetUserById(int id)
     {
         var filter = Builders<User>.Filter.Eq(a => a._id, id);

@@ -60,12 +60,7 @@ public class LoginService : ILogin
             return false;
         }
     }
-
-    public async Task AddUser(User user)
-    {
-        await client.PostAsJsonAsync($"api/User", user);
-    }
-
+    
     public async Task LogOut()
     {
         try

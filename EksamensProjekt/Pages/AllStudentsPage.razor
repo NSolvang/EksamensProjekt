@@ -103,7 +103,6 @@ else
     private User[]? users = Array.Empty<User>();
     private UserFilter filter = new();
     private string isActiveString = "true";
-    private string localStorage;
     
     private List<Location> locations = new();
 
@@ -111,10 +110,7 @@ else
     {
         "1","2","3","4"
     };
-    
-    private string? chosenLocation;
-
-    
+        
     protected override async Task OnInitializedAsync()
     {
         currentUser = await LoginService.GetUserLoggedIn();
