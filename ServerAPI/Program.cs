@@ -13,9 +13,17 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllers();
         
-        // Adding Swagger services
+        // Tilføj Swagger services
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new() { Title = "ServerAPI", Version = "v1" });
+            
+            // Inkluder XML kommentarer
+            var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            c.IncludeXmlComments(xmlPath);
+        });
         
         builder.Services.AddCors(options =>
         {
@@ -42,7 +50,7 @@ public class Program
         {
             app.MapOpenApi();
             
-
+            // Tilføj Swagger middleware
             app.UseSwagger();
             app.UseSwaggerUI();
         }

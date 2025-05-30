@@ -10,8 +10,10 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("http://localhost:5094")
-});
+   BaseAddress = new Uri("https://itaapi8.azurewebsites.net")
+   // BaseAddress = new Uri("http://localhost:5094")
+
+}); 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<IUser, UserService>();
 builder.Services.AddScoped<ISubgoal, SubgoalService>();
